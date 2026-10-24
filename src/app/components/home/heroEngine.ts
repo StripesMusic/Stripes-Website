@@ -1,0 +1,557 @@
+// The hero S: dust particles and faint hairlines on one tilted 3D plane, rendered to a
+// texture, then passed through a glass pass that bends the scene around each click ripple
+// with a bevelled, colour-fringed rim. Everything settles and stops drawing when idle.
+import { LOGO_H, LOGO_PATHS, LOGO_W } from "./logoPaths";
+import { audio } from "../../lib/audio";
+import { onFrame } from "../../lib/ticker";
+
+export type HeroScroll = { reveal: number; cover: number };
+
+const ANG = (-24.2 * Math.PI) / 180;
+const U = [Math.cos(ANG), Math.sin(ANG)];
+const N = [-U[1], U[0]];
+const LIFE = 1600;
+const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+// plane coords (px, centred on the stage) -> tilted, perspective, risen screen position
+const PROJ = `
+uniform vec2 uRes; uniform vec2 uHalf; uniform float uDpr; uniform float uTheta; uniform float uRise; uniform float uScale; uniform float uD;
+vec4 project(vec3 p, out float k){
+  float c = cos(uTheta), s = sin(uTheta);
+  float y = p.y * c - p.z * s;
+  float z = p.y * s + p.z * c;
+  k = uD / (uD - z);
+  vec2 sc = uHalf + vec2(p.x, y) * k * uScale + vec2(0.0, uRise);
+  vec2 cl = sc * uDpr / uRes * 2.0 - 1.0; cl.y = -cl.y;
+  return vec4(cl, 0.0, 1.0);
+}`;
+
+// Hairlines: lit faintly inside the S, and outside it only in a soft pool around the cursor.
+const LINE_VS = `
+attribute vec2 aBase; attribute float aSide; attribute float aMask;
+uniform vec2 uN; uniform vec3 uPtr; uniform float uAct; uniform vec2 uPv; uniform vec4 uRip[4]; uniform float uGlow;
+varying float vMask; varying float vA; varying float vSide; varying float vE;
+${PROJ}
+void main(){
+  vec2 d = aBase - uPtr.xy;
+  float dist = length(d) + 0.001;
+  float g = exp(-dist * dist / 32400.0);
+  float disp = clamp(dot(uPv, uN), -10.0, 10.0) * 0.8 * g * uAct;
+  disp += dot(d / dist, uN) * 8.0 * g * uAct;
+  float ring = 0.0;
+  for (int i = 0; i < 4; i++) {
+    vec4 r = uRip[i];
+    vec2 q = aBase - r.xy; float qd = length(q) + 0.001;
+    float w = (qd - r.z) / 34.0;
+    float e = exp(-w * w) * r.w;
+    disp += dot(q / qd, uN) * 7.0 * e;
+    ring += e;
+  }
+  vec2 p = aBase + uN * (disp + aSide * 0.9);
+  float k; gl_Position = project(vec3(p, 0.0), k);
+  float fog = smoothstep(0.6, 0.95, k);
+  float spot = exp(-dist * dist / 78400.0) * uPtr.z;
+  vMask = aMask; vSide = aSide; vE = clamp(ring * 0.6 + abs(disp) / 14.0, 0.0, 1.0);
+  vA = (aMask * (0.15 + uGlow * 0.3) + spot * mix(0.08, 0.12, aMask) + min(ring, 1.0) * 0.14) * fog;
+}`;
+const LINE_FS = `
+precision mediump float;
+varying float vMask; varying float vA; varying float vSide; varying float vE;
+void main(){
+  float aa = 1.0 - abs(vSide);
+  vec3 col = mix(vec3(0.42, 0.46, 0.41), vec3(0.70, 0.84, 0.30), vMask);
+  col = mix(col, vec3(0.47, 0.81, 0.83), vE * 0.5);
+  float a = vA * aa;
+  gl_FragColor = vec4(col * a, a);
+}`;
+
+const DUST_VS = `
+attribute vec3 aPos; attribute float aKind; attribute float aSpd;
+uniform float uGlow;
+varying float vK; varying float vS; varying float vFog;
+${PROJ}
+void main(){
+  float k; gl_Position = project(aPos, k);
+  gl_PointSize = (aKind > 0.5 ? 1.5 + uGlow * 0.6 : 1.2) * k * uScale * uDpr;
+  vFog = smoothstep(0.55, 0.95, k);
+  vK = aKind; vS = clamp(aSpd / 5.0, 0.0, 1.0);
+}`;
+const DUST_FS = `
+precision mediump float;
+varying float vK; varying float vS; varying float vFog;
+void main(){
+  vec2 q = gl_PointCoord - 0.5; float r = dot(q, q); if (r > 0.25) discard;
+  float soft = smoothstep(0.25, 0.04, r);
+  vec3 col = mix(vec3(0.45, 0.48, 0.43), vec3(0.85, 0.95, 0.55), vK);
+  col = mix(col, vec3(0.55, 0.86, 0.88), vS * 0.6);
+  float a = ((vK > 0.5 ? 0.85 : 0.16) * soft + vS * 0.2) * vFog;
+  gl_FragColor = vec4(col * a, a);
+}`;
+
+// Glass: each ripple is a raised ring. The scene refracts through its slope, each colour
+// channel bends a little differently (fringing), and the rim catches light from the upper left.
+const POST_VS = `
+attribute vec2 aQuad;
+void main(){ gl_Position = vec4(aQuad, 0.0, 1.0); }`;
+const POST_FS = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform sampler2D uTex; uniform vec2 uRes; uniform float uDpr; uniform vec4 uG[4];
+void main(){
+  vec2 fc = gl_FragCoord.xy;
+  vec2 off = vec2(0.0); vec3 rim = vec3(0.0); float shade = 0.0; float body = 0.0;
+  for (int i = 0; i < 4; i++) {
+    vec4 r = uG[i];
+    if (r.w > 0.0005) {
+      vec2 d = fc - r.xy; float dist = length(d) + 0.001; vec2 n = d / dist;
+      float wd = 16.0 * uDpr + r.z * 0.07;
+      float w = (dist - r.z) / wd;
+      float h = exp(-w * w);
+      float dh = -2.0 * w * h;
+      off -= n * dh * r.w * 11.0 * uDpr;
+      float lit = dot(n, vec2(-0.55, 0.83));
+      float sh = 3.0 * uDpr / wd;
+      vec3 cw = vec3(w + sh, w, w - sh);
+      vec3 slope = -2.0 * cw * exp(-cw * cw);
+      rim += max(vec3(0.0), -slope * lit) * r.w;
+      shade += max(0.0, dh * lit) * r.w;
+      body += h * r.w;
+    }
+  }
+  vec2 px = 1.0 / uRes;
+  vec3 col;
+  col.r = texture2D(uTex, (fc + off * 1.3) * px).r;
+  col.g = texture2D(uTex, (fc + off) * px).g;
+  col.b = texture2D(uTex, (fc + off * 0.7) * px).b;
+  col *= 1.0 - min(shade, 1.0) * 0.25;
+  col += rim * rim * vec3(0.62, 0.66, 0.58) * 0.42 + rim * vec3(0.03, 0.035, 0.03);
+  col += vec3(0.47, 0.81, 0.83) * min(body, 1.0) * 0.012;
+  vec2 uv = fc * px - 0.5;
+  col *= 1.0 - dot(uv, uv) * 0.55;
+  // dither so the dark vignette doesn't band
+  col += (fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+type Pulse = { x: number; y: number; t: number; a: number; glass: number };
+
+export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll: () => HeroScroll) {
+  const ctx = cv.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: true, powerPreference: "high-performance" });
+  if (!ctx) return () => {};
+  const gl: WebGLRenderingContext = ctx;
+  const uintExt = gl.getExtension("OES_element_index_uint");
+
+  const mk = (type: number, src: string) => {
+    const o = gl.createShader(type)!;
+    gl.shaderSource(o, src);
+    gl.compileShader(o);
+    if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o) || "shader");
+    return o;
+  };
+  const program = (vs: string, fs: string) => {
+    const p = gl.createProgram()!;
+    gl.attachShader(p, mk(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, mk(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    return p;
+  };
+  const lineP = program(LINE_VS, LINE_FS), dustP = program(DUST_VS, DUST_FS), postP = program(POST_VS, POST_FS);
+  const locs = new Map<string, WebGLUniformLocation | null>();
+  const uni = (p: WebGLProgram, name: string) => {
+    const key = (p === lineP ? "l" : p === dustP ? "d" : "p") + name;
+    if (!locs.has(key)) locs.set(key, gl.getUniformLocation(p, name));
+    return locs.get(key)!;
+  };
+  const enabled: number[] = [];
+  const attr = (p: WebGLProgram, b: WebGLBuffer, name: string, size: number) => {
+    const l = gl.getAttribLocation(p, name);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.enableVertexAttribArray(l);
+    gl.vertexAttribPointer(l, size, gl.FLOAT, false, 0, 0);
+    enabled.push(l);
+  };
+  const unbind = () => {
+    while (enabled.length) gl.disableVertexAttribArray(enabled.pop()!);
+  };
+  const upload = (b: WebGLBuffer, data: ArrayBufferView, usage: number = gl.STATIC_DRAW) => {
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, data as BufferSource, usage);
+  };
+
+  const LB = { base: gl.createBuffer()!, side: gl.createBuffer()!, mask: gl.createBuffer()!, idx: gl.createBuffer()! };
+  const DB = { pos: gl.createBuffer()!, kind: gl.createBuffer()!, spd: gl.createBuffer()! };
+  const quad = gl.createBuffer()!;
+  upload(quad, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]));
+  const tex = gl.createTexture()!;
+  const fbo = gl.createFramebuffer()!;
+
+  const S = { W: 0, H: 0, DPR: 1, cx: 0, cy: 0, theta: 0.9, rise: 0, scale: 0.86, D: 1400, mask: new Uint8ClampedArray(0) };
+  const ptr = { sx: 0, sy: 0, x: 0, y: 0, fx: 0, fy: 0, vx: 0, vy: 0, pvx: 0, pvy: 0, inside: false, last: 0, amt: 0, act: 0 };
+  const pulses: Pulse[] = [];
+  let lineCount = 0, lineBig = false;
+  let DN = 0, hx: Float32Array, hy: Float32Array, px: Float32Array, py: Float32Array, dvx: Float32Array, dvy: Float32Array;
+  let dkind: Float32Array, dPos: Float32Array, dSpd: Float32Array;
+  let awake = 60, dBeat = 0, prog = 0, drawnProg = -1, needDraw = true, visible = true;
+
+  const maskAt = (x: number, y: number) => {
+    const ix = Math.round(x + S.W / 2), iy = Math.round(y + S.H / 2);
+    return ix >= 0 && iy >= 0 && ix < S.W && iy < S.H ? S.mask[(iy * S.W + ix) * 4 + 3] / 255 : 0;
+  };
+
+  function measure() {
+    const r = stage.getBoundingClientRect();
+    S.W = Math.max(1, Math.round(r.width));
+    S.H = Math.max(1, Math.round(r.height));
+    S.DPR = Math.min(window.devicePixelRatio || 1, S.W * S.H > 2.4e6 ? 1.5 : 2);
+    cv.width = Math.round(S.W * S.DPR);
+    cv.height = Math.round(S.H * S.DPR);
+    S.D = Math.max(S.W, S.H) * 1.3;
+    const { W, H } = S, mobile = W < 700;
+    const hS = mobile ? Math.min(H * 0.4, (W * 0.8 * LOGO_H) / LOGO_W) : H * 0.6;
+    const sc = hS / LOGO_H;
+    S.cx = mobile ? 0 : W * 0.16;
+    S.cy = mobile ? H * 0.03 : -H * 0.11; // on phones the lede sits above the S instead of beside it
+    const mc = document.createElement("canvas");
+    mc.width = W;
+    mc.height = H;
+    const mx = mc.getContext("2d")!;
+    mx.filter = "blur(0.7px)";
+    mx.translate(W / 2 + S.cx - (LOGO_W * sc) / 2, H / 2 + S.cy - (LOGO_H * sc) / 2);
+    mx.scale(sc, sc);
+    mx.fillStyle = "#fff";
+    LOGO_PATHS.forEach((p) => mx.fill(new Path2D(p)));
+    S.mask = mx.getImageData(0, 0, W, H).data;
+
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, cv.width, cv.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    buildLines();
+    buildDust();
+    needDraw = true;
+  }
+
+  function buildLines() {
+    const { W, H } = S, SP = W < 700 ? 8 : 9, STEP = 8, MX = W * 0.3 + 60;
+    const x0 = -W / 2 - MX, x1 = W / 2 + MX, y0 = -H * 1.5, y1 = H * 0.75;
+    const cs = [[x0, y0], [x1, y0], [x0, y1], [x1, y1]];
+    const pn = cs.map((c) => c[0] * N[0] + c[1] * N[1]), pu = cs.map((c) => c[0] * U[0] + c[1] * U[1]);
+    const o0 = Math.min(...pn), o1 = Math.max(...pn), s0 = Math.min(...pu), s1 = Math.max(...pu);
+    const X: number[] = [], Y: number[] = [], MK: number[] = [], runs: [number, number][] = [];
+    for (let o = o0; o <= o1; o += SP) {
+      let started = false;
+      const st = X.length;
+      for (let s = s0; s <= s1; s += STEP) {
+        const x = N[0] * o + U[0] * s, y = N[1] * o + U[1] * s;
+        if (x < x0 || x > x1 || y < y0 || y > y1) {
+          if (started) break;
+          continue;
+        }
+        started = true;
+        X.push(x);
+        Y.push(y);
+        MK.push(maskAt(x, y));
+      }
+      if (X.length - st > 1) runs.push([st, X.length - 1]);
+      else X.length = Y.length = MK.length = st;
+    }
+    const P = X.length, VC = P * 2;
+    const base = new Float32Array(VC * 2), side = new Float32Array(VC), mask = new Float32Array(VC);
+    for (let i = 0; i < P; i++)
+      for (let s = 0; s < 2; s++) {
+        const j = i * 2 + s;
+        base[j * 2] = X[i];
+        base[j * 2 + 1] = Y[i];
+        side[j] = s ? 1 : -1;
+        mask[j] = MK[i];
+      }
+    lineBig = VC > 65535 && !!uintExt;
+    let segs = 0;
+    runs.forEach(([a, b]) => (segs += b - a));
+    const idx = lineBig ? new Uint32Array(segs * 6) : new Uint16Array(segs * 6);
+    let q = 0;
+    for (const [a, b] of runs) {
+      for (let i = a; i < b; i++) {
+        const v = i * 2;
+        if (!lineBig && v + 3 > 65535) break;
+        idx[q++] = v; idx[q++] = v + 1; idx[q++] = v + 2;
+        idx[q++] = v + 1; idx[q++] = v + 3; idx[q++] = v + 2;
+      }
+    }
+    lineCount = q;
+    upload(LB.base, base);
+    upload(LB.side, side);
+    upload(LB.mask, mask);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, LB.idx);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+  }
+
+  function buildDust() {
+    const { W, H } = S, inS = Math.round(Math.min(26000, (W * H) / 45)), amb = Math.round((W * H) / 2600);
+    const HX: number[] = [], HY: number[] = [], Z: number[] = [], K: number[] = [];
+    let tries = 0;
+    while (HX.length < inS && tries < inS * 60) {
+      tries++;
+      const x = (Math.random() - 0.5) * W, y = (Math.random() - 0.5) * H;
+      if (Math.random() < maskAt(x, y)) {
+        HX.push(x); HY.push(y); Z.push((Math.random() - 0.5) * 50); K.push(1);
+      }
+    }
+    for (let i = 0; i < amb; i++) {
+      HX.push((Math.random() - 0.5) * (W + 120));
+      HY.push(-H * 1.1 + Math.random() * H * 1.8);
+      Z.push((Math.random() - 0.5) * 420);
+      K.push(0);
+    }
+    DN = HX.length;
+    hx = Float32Array.from(HX); hy = Float32Array.from(HY); dkind = Float32Array.from(K);
+    px = Float32Array.from(HX); py = Float32Array.from(HY);
+    dvx = new Float32Array(DN); dvy = new Float32Array(DN);
+    dPos = new Float32Array(DN * 3); dSpd = new Float32Array(DN);
+    for (let i = 0; i < DN; i++) {
+      dPos[i * 3] = hx[i]; dPos[i * 3 + 1] = hy[i]; dPos[i * 3 + 2] = Z[i];
+    }
+    upload(DB.pos, dPos, gl.DYNAMIC_DRAW);
+    upload(DB.kind, dkind);
+    upload(DB.spd, dSpd, gl.DYNAMIC_DRAW);
+    awake = 60;
+  }
+
+  // screen -> plane, the inverse of the shader's projection at z = 0
+  const toPlane = (sx: number, sy: number) => {
+    const c = Math.cos(S.theta), s = Math.sin(S.theta);
+    const X1 = (sx - S.W / 2) / S.scale, Y1 = (sy - S.H / 2 - S.rise) / S.scale;
+    const Y = (Y1 * S.D) / (S.D * c + Y1 * s);
+    const k = S.D / (S.D - Y * s);
+    return [X1 / k, Y];
+  };
+  const toScreen = (x: number, y: number) => {
+    const c = Math.cos(S.theta), s = Math.sin(S.theta), k = S.D / (S.D - y * s);
+    return [S.W / 2 + x * k * S.scale, S.H / 2 + y * c * k * S.scale + S.rise, k * S.scale];
+  };
+
+  const onMove = (e: PointerEvent) => {
+    const r = stage.getBoundingClientRect();
+    ptr.sx = e.clientX - r.left;
+    ptr.sy = e.clientY - r.top;
+    const [x, y] = toPlane(ptr.sx, ptr.sy);
+    if (ptr.inside) {
+      ptr.vx = ptr.vx * 0.5 + (x - ptr.x) * 0.5;
+      ptr.vy = ptr.vy * 0.5 + (y - ptr.y) * 0.5;
+    } else {
+      ptr.fx = x;
+      ptr.fy = y;
+    }
+    ptr.x = x;
+    ptr.y = y;
+    ptr.inside = true;
+    ptr.last = performance.now();
+    awake = 90;
+  };
+  const onLeave = () => {
+    ptr.inside = false;
+    ptr.vx = ptr.vy = 0;
+  };
+  const onDown = (e: PointerEvent) => {
+    if ((e.target as Element).closest("a,button,label,input")) return;
+    const r = stage.getBoundingClientRect(), [x, y] = toPlane(e.clientX - r.left, e.clientY - r.top);
+    pulses.push({ x, y, t: performance.now(), a: 1.8, glass: 1 });
+    awake = 200;
+  };
+  stage.addEventListener("pointermove", onMove);
+  stage.addEventListener("pointerleave", onLeave);
+  stage.addEventListener("pointercancel", onLeave);
+  stage.addEventListener("pointerdown", onDown);
+  const offKick = audio.onKick((s) => {
+    pulses.push({ x: S.cx, y: S.cy, t: performance.now(), a: 0.35 + s * 0.35, glass: 0.18 + s * 0.2 });
+    awake = 120;
+    dBeat = 1;
+  });
+
+  const DR = 190, DR2 = DR * DR;
+  type Live = { x: number; y: number; r: number; a: number; glass: number };
+  function stepDust(pr: Live[], act: boolean) {
+    let maxV = 0;
+    for (let i = 0; i < DN; i++) {
+      const grow = 1 + dBeat * 0.012 * dkind[i];
+      let ax = (hx[i] * grow - px[i]) * 0.011, ay = (hy[i] * grow - py[i]) * 0.011;
+      if (act) {
+        const dx = px[i] - ptr.x, dy = py[i] - ptr.y, r2 = dx * dx + dy * dy;
+        if (r2 < DR2 && r2 > 0.01) {
+          const r = Math.sqrt(r2), f = 1 - r / DR, f2 = f * f * (3 - 2 * f) * 0.32;
+          ax += (dx / r) * f2 + ptr.vx * 0.006 * f;
+          ay += (dy / r) * f2 + ptr.vy * 0.006 * f;
+        }
+      }
+      for (let j = 0; j < pr.length; j++) {
+        const q = pr[j], dx = px[i] - q.x, dy = py[i] - q.y, r = Math.sqrt(dx * dx + dy * dy) + 0.001, w = (r - q.r) / 30;
+        if (w > -3 && w < 3) {
+          const f = q.a * 0.7 * Math.exp(-w * w);
+          ax += (dx / r) * f;
+          ay += (dy / r) * f;
+        }
+      }
+      dvx[i] = (dvx[i] + ax) * 0.84;
+      dvy[i] = (dvy[i] + ay) * 0.84;
+      px[i] += dvx[i];
+      py[i] += dvy[i];
+      dPos[i * 3] = px[i];
+      dPos[i * 3 + 1] = py[i];
+      const sp = Math.abs(dvx[i]) + Math.abs(dvy[i]);
+      dSpd[i] = sp;
+      if (sp > maxV) maxV = sp;
+    }
+    dBeat *= 0.88;
+    return maxV;
+  }
+
+  const setCommon = (p: WebGLProgram) => {
+    gl.uniform2f(uni(p, "uRes"), cv.width, cv.height);
+    gl.uniform2f(uni(p, "uHalf"), S.W / 2, S.H / 2);
+    gl.uniform1f(uni(p, "uDpr"), S.DPR);
+    gl.uniform1f(uni(p, "uTheta"), S.theta);
+    gl.uniform1f(uni(p, "uRise"), S.rise);
+    gl.uniform1f(uni(p, "uScale"), S.scale);
+    gl.uniform1f(uni(p, "uD"), S.D);
+    gl.uniform1f(uni(p, "uGlow"), audio.level);
+  };
+  const ripPlane = new Float32Array(16), ripGlass = new Float32Array(16);
+
+  function draw(pr: Live[]) {
+    ripPlane.fill(0);
+    ripGlass.fill(0);
+    pr.slice(-4).forEach((q, i) => {
+      ripPlane.set([q.x, q.y, q.r, Math.min(1, q.a)], i * 4);
+      const [sx, sy, k] = toScreen(q.x, q.y);
+      ripGlass.set([sx * S.DPR, (S.H - sy) * S.DPR, q.r * k * S.DPR, q.glass], i * 4);
+    });
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.clearColor(0.051, 0.059, 0.043, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+    gl.useProgram(lineP);
+    attr(lineP, LB.base, "aBase", 2);
+    attr(lineP, LB.side, "aSide", 1);
+    attr(lineP, LB.mask, "aMask", 1);
+    setCommon(lineP);
+    gl.uniform2f(uni(lineP, "uN"), N[0], N[1]);
+    gl.uniform3f(uni(lineP, "uPtr"), ptr.fx, ptr.fy, ptr.amt);
+    gl.uniform1f(uni(lineP, "uAct"), ptr.act);
+    gl.uniform2f(uni(lineP, "uPv"), ptr.pvx, ptr.pvy);
+    gl.uniform4fv(uni(lineP, "uRip"), ripPlane);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, LB.idx);
+    gl.drawElements(gl.TRIANGLES, lineCount, lineBig ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
+    unbind();
+
+    gl.useProgram(dustP);
+    attr(dustP, DB.pos, "aPos", 3);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, dPos as BufferSource);
+    attr(dustP, DB.spd, "aSpd", 1);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, dSpd as BufferSource);
+    attr(dustP, DB.kind, "aKind", 1);
+    setCommon(dustP);
+    gl.drawArrays(gl.POINTS, 0, DN);
+    unbind();
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.disable(gl.BLEND);
+    gl.useProgram(postP);
+    attr(postP, quad, "aQuad", 2);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(uni(postP, "uTex"), 0);
+    gl.uniform2f(uni(postP, "uRes"), cv.width, cv.height);
+    gl.uniform1f(uni(postP, "uDpr"), S.DPR);
+    gl.uniform4fv(uni(postP, "uG"), ripGlass);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    unbind();
+  }
+
+  function frame(now: number) {
+    const sc = getScroll();
+    prog += (sc.reveal - prog) * 0.12;
+    if (Math.abs(sc.reveal - prog) < 1e-4) prog = sc.reveal;
+    if (!visible || sc.cover >= 0.999) return;
+    const e = ease(prog);
+    S.theta = (1 - e) * 0.9;
+    S.rise = (1 - e) * S.H * 0.32;
+    S.scale = 0.86 + 0.14 * e;
+
+    for (let p = pulses.length - 1; p >= 0; p--) if (now - pulses[p].t > LIFE) pulses.splice(p, 1);
+    const pr: Live[] = pulses.map((p) => {
+      const u = (now - p.t) / LIFE;
+      return { x: p.x, y: p.y, r: (now - p.t) * 0.45, a: p.a * (1 - u), glass: p.glass * Math.pow(1 - u, 1.6) };
+    });
+
+    // the pointer stays put on screen while the plane tilts under it
+    if (ptr.inside) {
+      const [x, y] = toPlane(ptr.sx, ptr.sy);
+      ptr.x = x;
+      ptr.y = y;
+    }
+    const act = ptr.inside && now - ptr.last < 120;
+    const amtT = ptr.inside ? 1 : 0;
+    const before = ptr.amt + ptr.act + ptr.fx + ptr.fy;
+    ptr.amt += (amtT - ptr.amt) * 0.06;
+    ptr.act += ((act ? 1 : 0) - ptr.act) * 0.06;
+    ptr.fx += (ptr.x - ptr.fx) * 0.25;
+    ptr.fy += (ptr.y - ptr.fy) * 0.25;
+    ptr.pvx += (ptr.vx - ptr.pvx) * 0.2;
+    ptr.pvy += (ptr.vy - ptr.pvy) * 0.2;
+    ptr.vx *= 0.8;
+    ptr.vy *= 0.8;
+    const ptrMoving = Math.abs(ptr.amt + ptr.act + ptr.fx + ptr.fy - before) > 0.002 || Math.abs(ptr.pvx) + Math.abs(ptr.pvy) > 0.01;
+
+    let dustMoving = false;
+    if (awake > 0 || act || pr.length || dBeat > 0.01) {
+      const mv = stepDust(pr, act);
+      awake = mv > 0.03 || act || pr.length ? 30 : awake - 1;
+      dustMoving = true;
+    }
+    if (needDraw || dustMoving || ptrMoving || pr.length || prog !== drawnProg || audio.level > 0.003) {
+      draw(pr);
+      drawnProg = prog;
+      needDraw = false;
+    }
+  }
+
+  measure();
+  let rt = 0;
+  const ro = new ResizeObserver(() => {
+    clearTimeout(rt);
+    rt = window.setTimeout(measure, 150);
+  });
+  ro.observe(stage);
+  const io = new IntersectionObserver((es) => {
+    visible = es[0].isIntersecting;
+    if (visible) needDraw = true;
+  });
+  io.observe(stage);
+  const offFrame = onFrame(frame);
+
+  return () => {
+    offFrame();
+    offKick();
+    ro.disconnect();
+    io.disconnect();
+    clearTimeout(rt);
+    stage.removeEventListener("pointermove", onMove);
+    stage.removeEventListener("pointerleave", onLeave);
+    stage.removeEventListener("pointercancel", onLeave);
+    stage.removeEventListener("pointerdown", onDown);
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+  };
+}

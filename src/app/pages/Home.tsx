@@ -1,315 +1,202 @@
+// Homepage. The hero is pinned while the S rises out from behind the first rounded panel,
+// then the panels slide up over it like cards.
+import { useEffect, useRef } from "react";
 import { Link } from "react-router";
-import { useState } from "react";
-import {
-  Play,
-  Radio,
-  Calendar,
-  Users,
-  Globe,
-} from "lucide-react";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { createHero, type HeroScroll } from "../components/home/heroEngine";
+import { Wordmark } from "../components/home/Wordmark";
+import { ReleaseList, trackFor } from "../components/home/ReleaseList";
+import { Packs } from "../components/home/Packs";
+import { NowPlaying } from "../components/home/NowPlaying";
+import { Eq } from "../components/home/Eq";
+import { releases } from "../data/releases";
+import { audio } from "../lib/audio";
+import { useAudio } from "../lib/useAudio";
+import { onFrame } from "../lib/ticker";
+
+const latest = releases[0];
+const HERO = trackFor(latest);
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 export function Home() {
-  const [mousePosition, setMousePosition] = useState({
-    x: 0,
-    y: 0,
-  });
+  const rootRef = useRef<HTMLDivElement>(null);
+  const introRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dimRef = useRef<HTMLDivElement>(null);
+  const uiRef = useRef<HTMLDivElement>(null);
+  const hintRef = useRef<HTMLSpanElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const scroll = useRef<HeroScroll>({ reveal: 0, cover: 0 });
+  const dims = useRef({ vh: 800, peek: 190, reveal: 720 });
+  const s = useAudio();
+  const heroPlaying = s.playing && s.track?.id === HERO.id;
+  const playHero = () => audio.toggle(HERO, { loop: true, demoFallback: true });
 
-  const handleMouseMove = (
-    e: React.MouseEvent<HTMLElement>,
-  ) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x =
-      (e.clientX - rect.left - rect.width / 2) / rect.width;
-    const y =
-      (e.clientY - rect.top - rect.height / 2) / rect.height;
-    setMousePosition({ x, y });
-  };
+  // Heights come from JS so the pinned stage, the peeking panel and the scroll maths agree.
+  // Small height changes (a phone's address bar) are ignored to avoid jumps mid-scroll.
+  useEffect(() => {
+    const root = rootRef.current!;
+    let lw = 0, lh = 0;
+    const size = () => {
+      const w = innerWidth, h = innerHeight;
+      if (lh && w === lw && Math.abs(h - lh) < 160) return;
+      lw = w;
+      lh = h;
+      const peek = Math.round(h * (w < 700 ? 0.2 : 0.24)), reveal = Math.round(h * 0.9);
+      dims.current = { vh: h, peek, reveal };
+      root.style.setProperty("--vh", h + "px");
+      root.style.setProperty("--peek", peek + "px");
+      root.style.setProperty("--reveal", reveal + "px");
+    };
+    size();
+    addEventListener("resize", size);
+    return () => removeEventListener("resize", size);
+  }, []);
+
+  useEffect(() => {
+    return onFrame(() => {
+      const { vh, peek, reveal: R } = dims.current;
+      const y = -introRef.current!.getBoundingClientRect().top;
+      const rv = clamp01(y / R), cv = clamp01((y - R) / (vh - peek));
+      scroll.current = { reveal: rv, cover: cv };
+      // the first panel holds its place while the S rises, then scrolls on normally
+      const T = Math.min(Math.max(y, 0), R) - R;
+      sheetRef.current!.style.transform = T < -0.5 ? `translate3d(0, ${T.toFixed(1)}px, 0)` : "";
+      innerRef.current!.style.transform = cv > 0 ? `scale(${(1 - 0.06 * cv).toFixed(4)})` : "";
+      dimRef.current!.style.opacity = (cv * 0.75).toFixed(3);
+      uiRef.current!.style.transform = `translate3d(0, ${(-rv * 48).toFixed(1)}px, 0)`;
+      hintRef.current!.style.opacity = String(1 - Math.min(1, rv * 3));
+    });
+  }, []);
+
+  useEffect(() => {
+    try {
+      return createHero(stageRef.current!, canvasRef.current!, () => scroll.current);
+    } catch (err) {
+      console.warn("Hero animation unavailable", err);
+    }
+  }, []);
 
   return (
-    <div className="bg-[#0a0a0a] text-white">
-      {/* Hero Section */}
-      <section
-        className="relative h-screen flex items-center overflow-hidden"
-        onMouseMove={handleMouseMove}
-      >
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 z-0 transition-transform duration-300 ease-out scale-110"
-          style={{
-            transform: `translate(${mousePosition.x * 20}px, ${mousePosition.y * 20}px) scale(1.03)`,
-          }}
-        >
-          <div className="w-full h-full scale-x-[-1] overflow-hidden translate-y-[25px]">
-            <img
-              src="https://assets.musicbystripes.com/5b476a474f9f969acdde1119b53772f2074cc9c8.webp"
-              alt="Jake - Stripes"
-              className="w-full h-full object-cover opacity-50 grayscale"
-              style={{ transform: "translateX(-10%)" }}
-            />
-          </div>
-          {/* Vignette overlays - heavy darkness on left, lighter on right */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black from-10% via-black/70 via-50% to-transparent to-70%"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90"></div>
-        </div>
-
-        {/* Hero Content */}
-        <div
-          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full transition-transform duration-300 ease-out"
-          style={{
-            transform: `translate(${mousePosition.x * 80}px, ${mousePosition.y * 80}px)`,
-          }}
-        >
-          <div className="max-w-2xl mr-auto">
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 tracking-tighter">
-              <span style={{ color: "var(--lime-green)" }}>
-                STRIPES
+    <div className="s-home" ref={rootRef}>
+      <section className="s-intro" ref={introRef}>
+        <div className="s-stage" ref={stageRef}>
+          <div className="s-stage-inner" ref={innerRef}>
+            <canvas ref={canvasRef} className="s-gl" aria-hidden="true" />
+            <div className="s-grain" aria-hidden="true" />
+            <div className="s-hero-ui s-pad" ref={uiRef}>
+              <div className="s-hero-lede">
+                <p className="s-mono">Producer · Cover artist</p>
+                <h1 className="s-lede">High-energy, melodic dance music, and the artwork that ships with it.</h1>
+                <div className="s-ctas">
+                  <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
+                    {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
+                    {heroPlaying ? "Stop" : "Play preview"}
+                  </button>
+                  <Link className="s-btn" to="/music">
+                    Listen ↗
+                  </Link>
+                  <Link className="s-btn s-btn-solid" to="/contact">
+                    Commission art
+                  </Link>
+                </div>
+              </div>
+              <span className="s-mono s-hint" ref={hintRef}>
+                Move · click · scroll ↓
               </span>
-            </h1>
-            <p
-              className="text-xl md:text-3xl mb-4 rounded-[1px] font-[Barlow]"
-              style={{ color: "var(--golden-yellow)" }}
-            >
-              <span className="">
-                <span className="">
-                  {" "}
-                  <span className="font-bold">
-                    EDM Producer{" "}
-                  </span>
-                  //{" "}
-                  <span className="font-bold">
-                    Cover Artist
-                  </span>
+            </div>
+            <div className="s-dim" ref={dimRef} aria-hidden="true" />
+          </div>
+        </div>
+      </section>
+
+      <div className="s-sheet" ref={sheetRef}>
+        <section className="s-panel s-first" aria-label="Latest">
+          <div className="s-lip s-pad">
+            <span className="s-mono s-lip-label">(01) Out now</span>
+            <Link to={latest.link} className="s-lip-release">
+              <img src={latest.image} alt="" />
+              <span>
+                <span className="s-lip-title">{latest.title}</span>
+                <span className="s-lip-sub">
+                  {HERO.sub} · {latest.type} · {latest.date}
                 </span>
               </span>
-            </p>
-            <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl font-[Barlow]">
-              Welcome to my site! :)
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/music"
-                className="px-8 py-4 font-bold uppercase tracking-wider rounded-lg transition-all hover:scale-105"
-                style={{
-                  backgroundColor: "var(--lime-green)",
-                  color: "#000",
-                }}
-              >
-                Listen Now
-              </Link>
-              <Link
-                to="/contact"
-                className="px-8 py-4 font-bold uppercase tracking-wider border-2 rounded-lg transition-all hover:bg-white/10"
-                style={{
-                  borderColor: "var(--golden-yellow)",
-                  color: "var(--golden-yellow)",
-                }}
-              >
-                Contact Me
+            </Link>
+            <div className="s-ctas">
+              <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
+                {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
+                {heroPlaying ? "Stop" : "Preview"}
+              </button>
+              <Link className="s-btn s-btn-solid" to={latest.link}>
+                Listen ↗
               </Link>
             </div>
           </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center px-[8px] py-[-49px]">
-            <div className="w-1.5 h-2 bg-white/50 rounded-full"></div>
+          <div className="s-pad">
+            <Wordmark />
+            <ReleaseList />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Featured Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h2
-            className="text-5xl md:text-6xl font-black mb-16 text-center"
-            style={{ color: "var(--lime-green)" }}
-          >
-            LATEST RELEASES
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Forget You",
-                type: "Single",
-                date: "09 Oct 2026",
-                image:
-                  "https://assets.musicbystripes.com/releases%20cover%20arts/Forget_You_Artwork.jpg",
-                collaborators: [
-                  {
-                    name: "7sunami",
-                    image:
-                      "https://assets.musicbystripes.com/releases%20collaborators/7sunami.jpg",
-                    link: "https://open.spotify.com/artist/5FINL72stprdOm9iCN7E5M",
-                  },
-                  {
-                    name: "Thome",
-                    image:
-                      "https://assets.musicbystripes.com/releases%20collaborators/Thome.jpg",
-                    link: "https://open.spotify.com/artist/46zB3pu5W8PMqhW6Nchb7i",
-                  },
-                ],
-              },
-              {
-                title: "Tell Me",
-                type: "Single",
-                date: "22 Apr 2026",
-                image:
-                  "https://assets.musicbystripes.com/releases%20cover%20arts/Tell_Me_Artwork.jpg",
-                collaborators: [
-                  {
-                    name: "ANAHĀTA",
-                    image:
-                      "https://assets.musicbystripes.com/releases%20collaborators/ANAHATA.jpg",
-                    link: "https://open.spotify.com/artist/53JGhjcwoSdXy14kOAE3vu",
-                  },
-                ],
-              },
-              {
-                title: "Catharina Remix",
-                type: "Unofficial Remix",
-                date: "18 Apr 2026",
-                image:
-                  "https://assets.musicbystripes.com/releases%20cover%20arts/Catharina_Artwork.jpg",
-                collaborators: [
-                  {
-                    name: "Thome",
-                    image:
-                      "https://assets.musicbystripes.com/releases%20collaborators/Thome.jpg",
-                    link: "https://open.spotify.com/artist/46zB3pu5W8PMqhW6Nchb7i",
-                  },
-                ],
-              },
-            ].map((release, index) => {
-              let link = "#";
-              if (release.title === "Forget You") {
-                link = "/link/forgetyou";
-              } else if (release.title === "Tell Me") {
-                link = "/link/tellme";
-              } else if (release.title === "Catharina Remix") {
-                link = "/link/catharinaremix";
-              }
+        <Packs />
 
-              return (
-                <Link
-                  key={index}
-                  to={link}
-                  className="group relative overflow-hidden rounded-xl border border-white/10 bg-zinc-900 hover:border-[var(--lime-green)] transition-all cursor-pointer block"
-                >
-                  <div className="aspect-square overflow-hidden">
-                    <ImageWithFallback
-                      src={release.image}
-                      alt={release.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span
-                        className="text-xs px-2 py-1 rounded-full font-[Barlow]"
-                        style={{
-                          backgroundColor: "var(--sky-blue)",
-                          color: "#000",
-                        }}
-                      >
-                        {release.type}
-                      </span>
-                      <span className="text-xs text-gray-400 font-[Barlow]">
-                        {release.date}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-black mb-2">
-                      {release.title}
-                    </h3>
-
-                    {/* Collaborators */}
-                    {release.collaborators &&
-                      release.collaborators.length > 0 && (
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-xs text-gray-400 font-[Barlow]">
-                            with
-                          </span>
-                          <div className="flex -space-x-2">
-                            {release.collaborators.map(
-                              (collab, collabIndex) => (
-                                <div
-                                  key={collabIndex}
-                                  title={collab.name}
-                                  className="relative w-8 h-8 rounded-full border-2 border-zinc-900 overflow-hidden hover:scale-110 hover:z-10 transition-transform cursor-pointer"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    window.open(
-                                      collab.link,
-                                      "_blank",
-                                    );
-                                  }}
-                                >
-                                  <ImageWithFallback
-                                    src={collab.image}
-                                    alt={collab.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              ),
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                    <button
-                      className="flex items-center gap-2 text-sm font-bold group-hover:gap-3 transition-all font-[Barlow]"
-                      style={{ color: "var(--lime-green)" }}
-                    >
-                      <Play className="w-4 h-4" />
-                      Play Now
-                    </button>
-                  </div>
+        <section className="s-panel s-pad s-duo" aria-label="Drums and tools">
+          <div>
+            <div className="s-sec-head">
+              <span className="s-mono">(05) Drums</span>
+            </div>
+            <p className="s-big">Drum covers of songs I enjoy, recorded for fun.</p>
+            <Link className="s-btn" to="/drums">
+              Watch covers ↗
+            </Link>
+          </div>
+          <div>
+            <div className="s-sec-head">
+              <span className="s-mono">(06) Tools</span>
+            </div>
+            <ul className="s-tools">
+              <li>
+                <Link to="/tools/gd-auto-export">
+                  <span>GD Auto Export</span>
+                  <span className="s-muted">Turn Google Drive links into direct downloads</span>
                 </Link>
-              );
-            })}
+              </li>
+              <li>
+                <Link to="/tools/audio-silence-padder">
+                  <span>Audio Silence Padder</span>
+                  <span className="s-muted">Add silence to the start or end of a track</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/tools/spotify-art-tester">
+                  <span>Spotify Art Tester</span>
+                  <span className="s-muted">Preview your cover across Spotify views</span>
+                </Link>
+              </li>
+            </ul>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Stats Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-black">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { icon: Play, number: "150K+", label: "Streams" },
-              { icon: Radio, number: "10+", label: "Releases" },
-              {
-                icon: Users,
-                number: "1500+",
-                label: "Followers",
-              },
-              {
-                icon: Globe,
-                number: "PLAYED",
-                label: "by DJs worldwide",
-              },
-            ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <stat.icon
-                  className="w-10 h-10 mx-auto mb-4"
-                  style={{ color: "var(--golden-yellow)" }}
-                />
-                <div
-                  className="text-4xl md:text-5xl font-black mb-2 font-[Barlow]"
-                  style={{ color: "var(--lime-green)" }}
-                >
-                  {stat.number}
-                </div>
-                <div className="text-gray-400 uppercase tracking-wider text-sm font-semibold font-[Barlow]">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+        <section className="s-panel s-pad s-about" aria-label="About">
+          <div className="s-sec-head">
+            <span className="s-mono">(07) About</span>
           </div>
-        </div>
-      </section>
+          <p className="s-big">
+            Stripes is a US-based electronic music producer and a drummer since the age of four. He also works with record labels on releases, A&amp;R and cover art.
+          </p>
+          <div className="s-ctas">
+            <Link className="s-btn" to="/about">
+              Read more ↗
+            </Link>
+            <Link className="s-btn s-btn-solid" to="/contact">
+              Get in touch
+            </Link>
+          </div>
+        </section>
+      </div>
+      <NowPlaying />
     </div>
   );
 }
