@@ -70,8 +70,8 @@ export function Privacy() {
           title: "Who runs this site",
           body: (
             <p>
-              musicbystripes.com is run by Stripes, an independent electronic music producer and cover artist based in Virginia, United States. For anything about your
-              privacy, write to {contact}.
+              musicbystripes.com is my site. I'm Stripes, an independent electronic music producer and cover artist based in Virginia, United States. For anything
+              about your privacy, write to me at {contact}.
             </p>
           ),
         },
@@ -85,7 +85,7 @@ export function Privacy() {
                 Cloudflare
               </a>
               . To deliver pages and protect them from abuse, Cloudflare processes technical details of each request, such as your IP address, browser type and the
-              page you asked for. We don't use those details to identify or profile you, and the fonts are served from this site, so loading a page doesn't contact
+              page you asked for. I don't use those details to identify or profile you, and the fonts are served from this site, so loading a page doesn't contact
               Google or any other font service.
             </p>
           ),
@@ -117,7 +117,7 @@ export function Privacy() {
                 <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">
                   Supabase
                 </a>
-                . We never see your SoundCloud password and we don't keep the permission afterwards; the server's logs may record that a request happened and whether
+                . I never see your SoundCloud password, and the permission isn't kept afterwards; the server's logs may record that a request happened and whether
                 the follow worked. You can unfollow, or remove the app's access, in your SoundCloud settings at any time.
               </p>
               <p>The Instagram step only opens Instagram in a new tab. This site receives nothing from Instagram.</p>
@@ -156,8 +156,8 @@ export function Privacy() {
           title: "Emails",
           body: (
             <p>
-              If you email us, we receive your message and your email address and use them only to reply and to handle what you asked about, such as a commission.
-              We keep emails only as long as they're needed for that.
+              If you email me, I get your message and your email address and use them only to reply and to handle what you asked about, such as a commission. I
+              keep emails only as long as they're needed for that.
             </p>
           ),
         },
@@ -167,13 +167,14 @@ export function Privacy() {
           body: (
             <>
               <p>
-                Depending on where you live, including the EU and UK (GDPR) and California and other US states, you can ask what personal information we have about
-                you, and ask us to correct or delete it. In practice that's usually just emails you've sent. Write to {contact} and we'll answer within 30 days.
+                Depending on where you live, including the EU and UK (GDPR) and California, Virginia and other US states, you can ask what personal information I have
+                about you, and ask me to correct or delete it. In practice that's usually just emails you've sent. Write to me at {contact} and I'll answer within 30
+                days.
               </p>
               <p>
-                Where the GDPR applies, we rely on our legitimate interest in running and protecting the site, on your consent when you connect SoundCloud, and on
-                your request when we reply to you. You can also complain to your local data protection authority. We don't sell or share personal information, so
-                there's nothing to opt out of.
+                Where the GDPR applies, I rely on my legitimate interest in running and protecting the site, on your consent when you connect SoundCloud, and on your
+                request when I reply to you. You can also complain to your local data protection authority. I don't sell or share personal information, so there's
+                nothing to opt out of.
               </p>
             </>
           ),
@@ -181,7 +182,7 @@ export function Privacy() {
         {
           id: "children",
           title: "Children",
-          body: <p>This site isn't directed at children under 13, and we don't knowingly collect their personal information.</p>,
+          body: <p>This site isn't directed at children under 13, and I don't knowingly collect their personal information.</p>,
         },
         {
           id: "changes",
@@ -206,7 +207,8 @@ export function Terms() {
           body: (
             <p>
               Unless it says otherwise, the music, artwork, photos, videos, the Stripes name and logo, and the design of this site are © Stripes, all rights reserved.
-              Please don't copy, re-upload, sell or edit them, or use them to train AI models, without written permission. Sharing links to the site is always fine.
+              Please don't copy, re-upload, sell or edit them, or use them to train AI models, without my written permission. Sharing links to the site is always
+              fine.
             </p>
           ),
         },
@@ -256,15 +258,15 @@ export function Terms() {
           title: "Copyright complaints",
           body: (
             <p>
-              If you believe something on this site uses your work without permission, write to {contact} with a description of the work, the page it's on, and how
-              to reach you. We'll look into it promptly and take it down where that's appropriate.
+              If you believe something on this site uses your work without permission, write to me at {contact} with a description of the work, the page it's on,
+              and how to reach you. I'll look into it promptly and take it down where that's appropriate.
             </p>
           ),
         },
         {
           id: "links",
           title: "Other sites",
-          body: <p>Links to other sites are there for convenience. We don't control those sites and aren't responsible for them.</p>,
+          body: <p>Links to other sites are there for convenience. I don't control those sites and I'm not responsible for them.</p>,
         },
         {
           id: "liability",
@@ -300,37 +302,43 @@ export function Terms() {
 export function Accessibility() {
   return (
     <LegalPage
-      label="Accessibility"
+      label="Accessibility statement"
       title="Accessibility"
-      intro={<p className="s-big">Everyone should be able to listen, look around and get in touch here, whatever device or assistive technology they use.</p>}
+      intro={<p className="s-big">This site is meant to work for everyone, whatever device or assistive technology you use.</p>}
       sections={[
         {
-          id: "aim",
-          title: "What we aim for",
+          id: "standard",
+          title: "Standard",
           body: (
-            <p>
-              We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.1 at level AA. The homepage, Designs page and these pages are built for keyboard
-              navigation with visible focus, have text alternatives for images, check text contrast in every colour scheme, and offer light and dark modes. Most
-              animations calm down or stop when your device's reduce-motion setting is on, and the animated hero is decorative.
-            </p>
+            <>
+              <p>This site is designed to meet the Web Content Accessibility Guidelines (WCAG) 2.1 at level AA. That includes:</p>
+              <ul>
+                <li>keyboard navigation with a visible focus outline</li>
+                <li>text alternatives for images</li>
+                <li>text contrast checked in both light and dark mode</li>
+                <li>calmer or stopped animation when your device's reduce-motion setting is on</li>
+                <li>decorative animation hidden from screen readers</li>
+              </ul>
+            </>
           ),
         },
         {
           id: "limits",
-          title: "Known gaps",
+          title: "Known limitations",
           body: (
             <p>
               Some older pages, including Music, Drums, About, Contact, the tools and the download pages, are still being redesigned and may not meet every guideline
-              yet. Embedded players from YouTube and other services are outside our control.
+              yet. Embedded players and videos from YouTube and other services come from those services.
             </p>
           ),
         },
         {
-          id: "contact",
-          title: "Tell us",
+          id: "feedback",
+          title: "Feedback",
           body: (
             <p>
-              If something doesn't work for you, write to {contact} and say which page and what happened. We'll fix it, or get you what you need another way.
+              If something on the site doesn't work for you, write to me at {contact} with the page and what happened. I'll fix it, or get you the content another
+              way.
             </p>
           ),
         },

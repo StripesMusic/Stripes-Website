@@ -164,8 +164,10 @@ void main(){
   col.r = texture2D(uTex, (fc + off * 1.3) * px).r;
   col.g = texture2D(uTex, (fc + off) * px).g;
   col.b = texture2D(uTex, (fc + off * 0.7) * px).b;
-  col *= 1.0 - min(shade, 1.0) * 0.25;
-  col += rim * rim * uRim * 0.42 + rim * uRim * 0.05;
+  // a deep shadow on the side facing away from the light and a bright rim on the lit side
+  col *= 1.0 - min(shade, 1.0) * 0.62;
+  rim = min(rim, vec3(1.0));
+  col += rim * rim * uRim * 0.95 + rim * uRim * 0.16;
   col += uFast * min(body, 1.0) * 0.012;
   vec2 uv = fc * px - 0.5;
   col *= 1.0 - dot(uv, uv) * uVig;
@@ -467,7 +469,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   // kicks ripple the S, push the dust out and flash it; the glow follows the sub bass in between
   let flash = 0;
   const offKick = audio.onKick((s) => {
-    pulses.push({ x: S.cx, y: S.cy, t: performance.now(), a: 0.35 + s * 0.35, glass: 0.18 + s * 0.2 });
+    pulses.push({ x: S.cx, y: S.cy, t: performance.now(), a: 0.35 + s * 0.35, glass: 0.3 + s * 0.3 });
     awake = 120;
     dBeat = s;
     flash = s;

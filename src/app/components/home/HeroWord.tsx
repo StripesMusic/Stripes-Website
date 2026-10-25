@@ -1,5 +1,5 @@
 // STRIPES beside the S, on the same tilting plane (the engine places it and turns the plane).
-// Letters near the cursor get heavier, a fast swipe slices them, kicks bounce them, they rise
+// Letters near the cursor get heavier, a fast swipe slices them, kicks bounce and slice them, they rise
 // in once the page is revealed, and the whole word gets bolder as you scroll on.
 import { useEffect, useRef, type RefObject } from "react";
 import { audio } from "../../lib/audio";
@@ -26,7 +26,7 @@ export function HeroWord({ area, getScroll }: { area: RefObject<HTMLElement | nu
       off: new Float32Array(SLICES),
       burst: new Float32Array(SLICES),
     }));
-    const p = { x: 0, y: 0, vx: 0, last: 0, active: false, lx: null as number | null };
+    const p = { x: 0, y: 0, vx: 0, last: 0, lt: 0, active: false, lx: null as number | null };
     const box = { top: 0, bottom: 0 };
     let snap = 0, beat = 0, glitch = 0, ph = 0, cv = 0, measured = false, born = 0, fontsIn = false;
 
@@ -41,8 +41,10 @@ export function HeroWord({ area, getScroll }: { area: RefObject<HTMLElement | nu
       measured = true;
     };
     const onMove = (e: PointerEvent) => {
-      if (p.lx !== null) p.vx = p.vx * 0.5 + (e.clientX - p.lx) * 0.5;
+      // speed in px per 60 Hz frame, so a fast swipe slices the same on a 144 Hz screen
+      if (p.lx !== null) p.vx = p.vx * 0.5 + ((e.clientX - p.lx) * 16.7) / Math.max(4, e.timeStamp - p.lt) * 0.5;
       p.lx = e.clientX;
+      p.lt = e.timeStamp;
       p.x = e.clientX;
       p.y = e.clientY;
       p.active = true;
@@ -80,7 +82,9 @@ export function HeroWord({ area, getScroll }: { area: RefObject<HTMLElement | nu
       L.forEach((l, i) => {
         l.delay = i * 2;
         l.kick = 9 + s * 8;
-        for (let k = 0; k < SLICES; k++) l.burst[k] = (Math.random() - 0.5) * (20 + s * 40) * (Math.random() < 0.45 ? 1 : 0);
+        // most slices jump a clear distance either way, so every kick visibly tears the word
+        for (let k = 0; k < SLICES; k++)
+          l.burst[k] = Math.random() < 0.6 ? (Math.random() < 0.5 ? -1 : 1) * (0.4 + Math.random() * 0.6) * (24 + s * 30) : 0;
       });
     });
 
@@ -133,10 +137,11 @@ export function HeroWord({ area, getScroll }: { area: RefObject<HTMLElement | nu
         const nearX = act ? Math.exp(-Math.pow((p.x - l.cx) / 220, 2)) * near : 0;
         let cut = false;
         l.sl.forEach((el, s) => {
-          l.burst[s] *= 0.82;
+          // a kick's tear holds for a moment, then snaps shut rather than creeping back
+          l.burst[s] = Math.abs(l.burst[s]) < 1 ? 0 : l.burst[s] * 0.87;
           const target = glitch * nearX * 70 * Math.sin(s * 1.7 + ph + i) + l.burst[s];
           l.off[s] += (target - l.off[s]) * 0.4;
-          const on = Math.abs(l.off[s]) > 0.3;
+          const on = Math.abs(l.off[s]) > 0.5;
           cut ||= on;
           el.style.transform = on ? `translateX(${l.off[s].toFixed(1)}px)` : "";
         });

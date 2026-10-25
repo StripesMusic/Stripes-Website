@@ -2178,6 +2178,10 @@ html.s-locked {
 }
 .s-legal-text ul {
   padding-left: 1.2em;
+  list-style: disc;
+}
+.s-legal-text li::marker {
+  color: var(--s-hi);
 }
 .s-legal-text a {
   color: inherit;
