@@ -9,7 +9,10 @@ import { Eq } from "./Eq";
 import { ImageSlot } from "../ImageSlot";
 
 const credits = (r: Release) => (r.collaborators.length ? "with " + r.collaborators.map((c) => c.name).join(", ") : "Stripes");
-export const trackFor = (r: Release): Track => ({ id: r.link, title: r.title, sub: credits(r), url: previewUrl(r), href: r.link });
+export const trackFor = (r: Release): Track | null => {
+  const url = previewUrl(r);
+  return url ? { id: r.link, title: r.title, sub: credits(r), url, href: r.link } : null;
+};
 
 export function ReleaseList({ count = 8 }: { count?: number }) {
   const list = releases.slice(0, count);
@@ -52,7 +55,8 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
     const fresh = hover < 0;
     setHover(i);
     if (fine) aim(e.clientX, e.clientY, e.currentTarget.parentElement!, fresh);
-    if (previews && fine) audio.play(trackFor(list[i]), { quiet: true });
+    const t = trackFor(list[i]);
+    if (previews && fine && t) audio.play(t, { quiet: true });
   };
   const leaveList = () => {
     setHover(-1);
@@ -84,6 +88,7 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
       <ol className="s-rel-list" onPointerMove={fine ? onMove : undefined} onPointerLeave={leaveList}>
         {list.map((r, i) => {
           const playing = state.playing && state.track?.id === r.link;
+          const track = trackFor(r);
           return (
             <li key={r.link} className={"s-rel-row" + (hover === i ? " is-hover" : "") + (playing ? " is-playing" : "")} onPointerEnter={(e) => enter(i, e)}>
               <span className="s-mono s-rel-n">{String(i + 1).padStart(2, "0")}</span>
@@ -94,15 +99,19 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
               </Link>
               <span className="s-mono s-rel-type">{r.type}</span>
               <span className="s-mono s-rel-date">{r.date}</span>
-              <button
-                type="button"
-                className="s-icon-btn"
-                aria-label={(playing ? "Stop " : "Preview ") + r.title}
-                aria-pressed={playing}
-                onClick={() => audio.toggle(trackFor(r))}
-              >
-                {playing ? <Eq on /> : <span className="s-tri" aria-hidden="true" />}
-              </button>
+              {track ? (
+                <button
+                  type="button"
+                  className="s-icon-btn"
+                  aria-label={(playing ? "Stop " : "Preview ") + r.title}
+                  aria-pressed={playing}
+                  onClick={() => audio.toggle(track)}
+                >
+                  {playing ? <Eq on /> : <span className="s-tri" aria-hidden="true" />}
+                </button>
+              ) : (
+                <span aria-hidden="true" />
+              )}
             </li>
           );
         })}

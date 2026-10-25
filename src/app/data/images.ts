@@ -1,31 +1,28 @@
-// Every photo slot on the site that isn't tied to a release or a cover. Upload the file to the
-// assets bucket (assets.musicbystripes.com) and paste its full URL here. An empty string shows
-// a striped placeholder with the label and the size to export at.
-const A = "https://assets.musicbystripes.com/";
+// Photos on the homepage. A few big ones rather than many small ones. Each lives in the assets
+// bucket under web-photos/ at two widths (name-2400.webp and name-1200.webp), exported as WebP
+// without location data. pos is the crop's focal point (CSS object-position).
+const W = "https://assets.musicbystripes.com/web-photos/";
 
-export const images = {
-  about: {
-    portrait: A + "about_section_pic.jpeg", // 4:5, 1200×1500
-    studio: "", // 3:2, 1500×1000
-    live: "", // 3:2, 1500×1000, on stage or at the kit
-  },
-  // 16:10 screenshots of each tool, 1600×1000
-  tools: {
-    gdAutoExport: "",
-    audioSilencePadder: "",
-    spotifyArtTester: "",
-  },
-  // 16:9, 1600×900: a mockup of a full release pack (cover, canvas, flyers on one board)
-  footerPack: "",
+export type Photo = { src: string; small: string; w: number; h: number; alt: string; pos: string };
+const photo = (name: string, w: number, h: number, alt: string, pos = "50% 50%"): Photo => ({
+  src: `${W}${name}-2400.webp`,
+  small: `${W}${name}-1200.webp`,
+  w,
+  h,
+  alt,
+  pos,
+});
+
+export const photos = {
+  amsterdamStreet: photo("amsterdam-street", 1452, 2029, "Stripes and two friends on a busy Amsterdam street during ADE 2025", "45% 18%"),
+  // only 602×900 for now, so it stays the smaller of the pair
+  amsterdamDoor: photo("amsterdam-laptop", 602, 900, "Two people with a laptop at a brick theatre doorway in Amsterdam", "50% 30%"),
+  drums: photo("drums-shop", 1477, 1969, "A blue drum kit in a drum shop, a wall of cymbals behind it", "50% 60%"),
+  portrait: photo("about-sky", 2400, 2215, "Stripes smiling up at a clear blue sky", "40% 40%"),
+  portraitAlt: photo("about-park", 2400, 1733, "Stripes in profile in a park", "50% 30%"),
 };
 
 // Pack pieces for the covers on the homepage, keyed by the cover's title in featuredWork.
 // canvas 9:16 (a still from the Spotify Canvas), flyer 4:5, thumbnail 16:9 (YouTube).
-export const packImages: Record<string, { canvas?: string; flyer?: string; thumbnail?: string }> = {
-  TMLS047: {},
-  TMLS044: {},
-  TMLS046: {},
-  "Through Hell": {},
-  SR043: {},
-  "Lost In You Remix": {},
-};
+// Only the pieces listed here are shown.
+export const packImages: Record<string, { canvas?: string; flyer?: string; thumbnail?: string }> = {};

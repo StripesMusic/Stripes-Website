@@ -1,32 +1,37 @@
-// Homepage. STRIPES stands on the edge of the first rounded panel; as you scroll, its letters
-// sink behind the panel while the S rises out from behind it, then the panels slide up like cards.
-import { useCallback, useEffect, useRef, useState } from "react";
+// Homepage. The hero is the S and STRIPES on one tilting 3D plane; the panels below slide up
+// over it like cards, and the page's colours change as each one reaches the middle of the screen.
+import { useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { createHero, type HeroScroll } from "../components/home/heroEngine";
 import { HeroWord } from "../components/home/HeroWord";
-import { ReleaseList, trackFor } from "../components/home/ReleaseList";
+import { ReleaseList } from "../components/home/ReleaseList";
 import { Packs } from "../components/home/Packs";
 import { NowPlaying } from "../components/home/NowPlaying";
 import { Eq } from "../components/home/Eq";
 import { ImageSlot } from "../components/ImageSlot";
-import { releases } from "../data/releases";
-import { featuredWork } from "../data/featuredWork";
+import { Photo } from "../components/Photo";
+import { ep, clipUrl } from "../data/releases";
 import { drumCovers, thumbUrl } from "../data/drums";
-import { images } from "../data/images";
-import { audio } from "../lib/audio";
+import { photos } from "../data/images";
+import { audio, type Track } from "../lib/audio";
 import { useAudio } from "../lib/useAudio";
 import { onFrame } from "../lib/ticker";
 
-const latest = releases[0];
-const HERO = trackFor(latest);
-const recent = featuredWork.slice(0, 4);
-const clients = [...new Set(featuredWork.map((w) => w.client).filter((c) => c !== "Self-released"))];
+const epTracks: Track[] = ep.tracks.map((t) => ({ id: `${ep.link}#${t.n}`, title: t.title, sub: t.artists, url: clipUrl(t.preview), href: ep.link }));
+const HERO = epTracks[0];
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
+const index = [
+  { n: "01", name: "Music", id: "music" },
+  { n: "02", name: "Designs", id: "designs" },
+  { n: "03", name: "Drums", id: "drums" },
+  { n: "04", name: "About", id: "about" },
+];
+
 const tools = [
-  { name: "GD Auto Export", path: "/tools/gd-auto-export", text: "Turn Google Drive links into direct downloads", shot: images.tools.gdAutoExport },
-  { name: "Audio Silence Padder", path: "/tools/audio-silence-padder", text: "Add silence to the start or end of a track", shot: images.tools.audioSilencePadder },
-  { name: "Spotify Art Tester", path: "/tools/spotify-art-tester", text: "Preview your cover across Spotify views", shot: images.tools.spotifyArtTester },
+  { name: "GD Auto Export", path: "/tools/gd-auto-export", text: "Turn Google Drive links into direct downloads" },
+  { name: "Audio Silence Padder", path: "/tools/audio-silence-padder", text: "Add silence to the start or end of a track" },
+  { name: "Spotify Art Tester", path: "/tools/spotify-art-tester", text: "Preview your cover across Spotify views" },
 ];
 
 export function Home() {
@@ -35,15 +40,15 @@ export function Home() {
   const stageRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const planeRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);
   const uiRef = useRef<HTMLDivElement>(null);
-  const coversRef = useRef<HTMLDivElement>(null);
-  const scroll = useRef<HeroScroll>({ reveal: 0, cover: 0 });
-  const dims = useRef({ vh: 800, peek: 190, reveal: 720 });
+  const scroll = useRef<HeroScroll>({ cover: 0 });
+  const dims = useRef({ vh: 800, peek: 96 });
   const getScroll = useCallback(() => scroll.current, []);
-  const [hoverCover, setHoverCover] = useState<number | null>(null);
   const s = useAudio();
-  const heroPlaying = s.playing && s.track?.id === HERO.id;
+  const playing = (t: Track) => s.playing && s.track?.id === t.id;
+  const heroPlaying = playing(HERO);
   const playHero = () => audio.toggle(HERO, { loop: true, demoFallback: true });
 
   // Heights come from JS so the pinned stage, the peeking panel and the scroll maths agree.
@@ -56,58 +61,54 @@ export function Home() {
       if (lh && w === lw && Math.abs(h - lh) < 160) return;
       lw = w;
       lh = h;
-      const peek = Math.round(h * (w < 700 ? 0.2 : 0.24)), reveal = Math.round(h * 0.9);
-      dims.current = { vh: h, peek, reveal };
+      const peek = Math.round(Math.max(88, h * 0.12));
+      dims.current = { vh: h, peek };
       root.style.setProperty("--vh", h + "px");
       root.style.setProperty("--peek", peek + "px");
-      root.style.setProperty("--reveal", reveal + "px");
     };
     size();
     addEventListener("resize", size);
     return () => removeEventListener("resize", size);
   }, []);
 
-  // Scroll only drives the canvas and things inside the pinned stage. The panels themselves
-  // are held by CSS sticky, so they move with native scrolling and never lag behind it.
+  // The first panel scrolls natively over the pinned stage; scroll only drives what's inside it.
   useEffect(() => {
-    let lastC = -1;
     return onFrame(() => {
-      const { vh, peek, reveal: R } = dims.current;
+      const { vh, peek } = dims.current;
       const y = -introRef.current!.getBoundingClientRect().top;
-      const rv = clamp01(y / R), cv = clamp01((y - R) / (vh - peek));
-      scroll.current = { reveal: rv, cover: cv };
+      const cv = clamp01(y / (vh - peek));
+      scroll.current = { cover: cv };
+      if (cv >= 1) return;
       innerRef.current!.style.transform = cv > 0 ? `scale(${(1 - 0.06 * cv).toFixed(4)})` : "";
       dimRef.current!.style.opacity = (cv * 0.75).toFixed(3);
-      uiRef.current!.style.transform = `translate3d(0, ${(-rv * 24).toFixed(1)}px, 0)`;
-      // the covers step aside for the rising S
-      const c = 1 - clamp01(rv * 2.2);
-      if (c !== lastC) {
-        lastC = c;
-        const el = coversRef.current!;
-        el.style.opacity = c.toFixed(3);
-        el.style.transform = c < 1 ? `translate3d(0, ${((1 - c) * -24).toFixed(1)}px, 0)` : "";
-        el.style.visibility = c < 0.01 ? "hidden" : "";
-      }
+      // the text drifts up a little slower than the panel, so it sits on a layer of its own
+      uiRef.current!.style.transform = cv > 0 ? `translate3d(0, ${(-cv * (vh - peek) * 0.22).toFixed(1)}px, 0)` : "";
     });
   }, []);
 
   useEffect(() => {
+    const ui = uiRef.current!;
+    const area = () => {
+      const nav = parseFloat(getComputedStyle(ui).getPropertyValue("--s-nav-h")) || 56;
+      return { top: nav + 12, bottom: ui.offsetTop - 20 };
+    };
     try {
-      return createHero(stageRef.current!, canvasRef.current!, getScroll);
+      return createHero(stageRef.current!, canvasRef.current!, getScroll, { plane: planeRef.current, area });
     } catch (err) {
       console.warn("Hero animation unavailable", err);
     }
   }, [getScroll]);
 
-  const hc = hoverCover === null ? null : recent[hoverCover];
   return (
     <div className="s-home" ref={rootRef}>
-      <section className="s-intro" ref={introRef}>
+      <section className="s-intro" ref={introRef} data-scene="hero">
         <div className="s-stage" ref={stageRef}>
           <div className="s-stage-inner" ref={innerRef}>
             <canvas ref={canvasRef} className="s-gl" aria-hidden="true" />
             <div className="s-grain" aria-hidden="true" />
-            <HeroWord area={stageRef} getScroll={getScroll} />
+            <div className="s-plane" ref={planeRef} aria-hidden="true">
+              <HeroWord area={stageRef} getScroll={getScroll} />
+            </div>
             <div className="s-hero-ui s-pad" ref={uiRef}>
               <div className="s-hero-lede">
                 <p className="s-mono">Producer · Cover artist</p>
@@ -115,71 +116,112 @@ export function Home() {
                 <div className="s-ctas">
                   <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
                     {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
-                    {heroPlaying ? "Stop" : `Play "${latest.title}"`}
+                    {heroPlaying ? "Stop" : `Play "${HERO.title}"`}
                   </button>
                   <Link className="s-btn s-btn-solid" to="/contact">
                     Commission art
                   </Link>
                 </div>
               </div>
-              <div className="s-hero-covers" ref={coversRef}>
-                <div className="s-hero-covers-head">
-                  <span className="s-mono">Recent covers</span>
-                  <Link to="/designs" className="s-mono">
-                    All ↗
-                  </Link>
-                </div>
-                <ul onMouseLeave={() => setHoverCover(null)}>
-                  {recent.map((w, i) => (
-                    <li key={w.title}>
-                      <Link to="/designs" onMouseEnter={() => setHoverCover(i)} onFocus={() => setHoverCover(i)} onBlur={() => setHoverCover(null)}>
-                        <ImageSlot src={w.image} alt={`${w.release}, cover for ${w.client}`} label={w.title} eager />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-                <p className="s-mono s-hero-covers-cap" aria-live="polite">
-                  {hc ? `${hc.client} · ${hc.release}` : `Covers for ${clients.join(" · ")}`}
-                </p>
-              </div>
+              <nav className="s-hero-index" aria-label="On this page">
+                {index.map((x) => (
+                  <a key={x.id} href={`#${x.id}`}>
+                    <span className="s-num">{x.n}</span>
+                    {x.name}
+                  </a>
+                ))}
+              </nav>
             </div>
             <div className="s-dim" ref={dimRef} aria-hidden="true" />
           </div>
         </div>
       </section>
 
-      <div className="s-sheet-wrap">
-        <div className="s-sheet">
-          <section className="s-panel s-first" aria-label="Latest">
-            <div className="s-lip s-pad">
-              <span className="s-mono s-lip-label">Out now</span>
-              <Link to={latest.link} className="s-lip-release">
-                <ImageSlot src={latest.image} alt="" label="Cover" eager />
-                <span>
-                  <span className="s-lip-title">{latest.title}</span>
-                  <span className="s-lip-sub">
-                    {HERO.sub} · {latest.type} · {latest.date}
-                  </span>
+      <div className="s-sheet">
+        <section className="s-panel s-ep" data-scene="ep" id="music" aria-label="Out now">
+          <div className="s-lip s-pad">
+            <Link to={ep.link} className="s-lip-release">
+              <ImageSlot src={ep.image} alt="" label="Cover" eager />
+              <span>
+                <span className="s-mono s-lip-label">Out now</span>
+                <span className="s-lip-title">
+                  {ep.title} {ep.type}
                 </span>
+                <span className="s-lip-sub">
+                  {ep.date} · {ep.tracks.length} tracks
+                </span>
+              </span>
+            </Link>
+            <div className="s-ctas">
+              <button type="button" className="s-btn s-lip-play" aria-pressed={heroPlaying} aria-label={heroPlaying ? "Stop" : `Preview ${HERO.title}`} onClick={playHero}>
+                {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
+                <span>{heroPlaying ? "Stop" : "Preview"}</span>
+              </button>
+              <Link className="s-btn s-lip-listen" to={ep.link}>
+                Listen ↗
               </Link>
+            </div>
+          </div>
+          <div className="s-ep-body s-pad">
+            <Link to={ep.link} className="s-ep-cover">
+              <ImageSlot src={ep.image} alt={`${ep.title} ${ep.type} cover`} label="Cover" />
+            </Link>
+            <div className="s-ep-info">
+              <p className="s-mono">
+                New {ep.type} · {ep.date}
+              </p>
+              <h2 className="s-ep-title">{ep.title}</h2>
+              <ol className="s-ep-tracks">
+                {ep.tracks.map((t, i) => {
+                  const tr = epTracks[i], on = playing(tr);
+                  return (
+                    <li key={t.n} className={on ? "is-playing" : ""}>
+                      <button type="button" aria-pressed={on} aria-label={on ? `Stop ${t.title}` : `Preview ${t.title}`} onClick={() => audio.toggle(tr)}>
+                        <span className="s-num">{t.n}</span>
+                        <span className="s-ep-track">
+                          <span>{t.title}</span>
+                          <span className="s-muted">{t.artists}</span>
+                        </span>
+                        <span className="s-ep-tplay" aria-hidden="true">
+                          {on ? <Eq on /> : <span className="s-tri s-tri-sm" />}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
               <div className="s-ctas">
-                <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
-                  {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
-                  {heroPlaying ? "Stop" : "Preview"}
-                </button>
-                <Link className="s-btn" to={latest.link}>
-                  Listen ↗
+                <Link className="s-btn s-btn-solid" to={ep.link}>
+                  Listen to the {ep.type} ↗
+                </Link>
+                <Link className="s-btn" to="/music">
+                  All music
                 </Link>
               </div>
             </div>
-            <div className="s-pad s-first-body">
-              <ReleaseList />
-            </div>
-          </section>
+          </div>
+        </section>
 
-          <Packs />
+        <section className="s-panel s-pad s-rels" data-scene="releases" aria-label="Releases">
+          <ReleaseList />
+        </section>
 
-          <section className="s-panel s-pad s-drums" aria-label="Drums">
+        <section className="s-panel s-pad s-ams" data-scene="olive" aria-label="Amsterdam">
+          <p className="s-mono s-ams-cap">Amsterdam · ADE 2025</p>
+          <figure className="s-ams-a">
+            <Photo p={photos.amsterdamStreet} ratio="3 / 4" sizes="(max-width: 700px) 78vw, 44vw" label="Amsterdam" />
+          </figure>
+          <figure className="s-ams-b">
+            <Photo p={photos.amsterdamDoor} ratio="2 / 3" sizes="(max-width: 700px) 52vw, 26vw" label="Amsterdam" />
+            <figcaption className="s-mono">Oct 2025</figcaption>
+          </figure>
+        </section>
+
+        <Packs />
+
+        <section className="s-panel s-drums" data-scene="drums" id="drums" aria-label="Drums">
+          <Photo p={photos.drums} ratio="auto" sizes="100vw" label="Drums" className="s-drums-bg" />
+          <div className="s-drums-in s-pad">
             <div className="s-drums-text">
               <div className="s-sec-head">
                 <span className="s-mono">Drums</span>
@@ -195,7 +237,7 @@ export function Home() {
                 <li key={c.youtubeId}>
                   <Link to="/drums">
                     <span className="s-drums-thumb">
-                      <ImageSlot src={thumbUrl(c)} ratio="16 / 9" alt={`${c.title} drum cover`} label="Video thumbnail" hint="16:9 · 1280×720" />
+                      <ImageSlot src={thumbUrl(c)} ratio="16 / 9" alt={`${c.title} drum cover`} label={c.title} />
                       <span className="s-drums-play" aria-hidden="true">
                         <span className="s-tri" />
                       </span>
@@ -210,74 +252,69 @@ export function Home() {
                 </li>
               ))}
             </ul>
-          </section>
+          </div>
+        </section>
 
-          <section className="s-panel s-pad s-toolsp" aria-label="Tools">
+        <section className="s-panel s-pad s-toolsp" data-scene="hero" aria-label="Tools">
+          <div className="s-sec-head">
+            <span className="s-mono">Tools</span>
+            <span className="s-mono">For getting a release out the door</span>
+          </div>
+          <ul className="s-tools-list">
+            {tools.map((t, i) => (
+              <li key={t.path}>
+                <Link to={t.path}>
+                  <span className="s-num">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="s-tools-name">{t.name}</span>
+                  <span className="s-muted">{t.text}</span>
+                  <span aria-hidden="true" className="s-tools-go">
+                    ↗
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="s-panel s-pad s-about" data-scene="about" id="about" aria-label="About">
+          <div className="s-about-text">
             <div className="s-sec-head">
-              <span className="s-mono">Tools</span>
-              <span className="s-mono">For getting a release out the door</span>
+              <span className="s-mono">About</span>
             </div>
-            <ul className="s-tools-grid">
-              {tools.map((t) => (
-                <li key={t.path}>
-                  <Link to={t.path}>
-                    <ImageSlot src={t.shot} ratio="16 / 10" label={t.name} hint="Screenshot · 1600×1000" alt={t.shot ? `${t.name} screenshot` : ""} />
-                    <span className="s-tools-name">
-                      {t.name} <span aria-hidden="true">↗</span>
-                    </span>
-                    <span className="s-muted">{t.text}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="s-panel s-pad s-about" aria-label="About">
-            <div className="s-about-media">
-              <ImageSlot src={images.about.portrait} ratio="4 / 5" alt="Stripes with his dog" label="Portrait" hint="4:5 · 1200×1500" />
-              <div className="s-about-pair">
-                <ImageSlot src={images.about.studio} ratio="3 / 2" label="Studio" hint="3:2 · 1500×1000" />
-                <ImageSlot src={images.about.live} ratio="3 / 2" label="Live / drums" hint="3:2 · 1500×1000" />
+            <p className="s-big">Stripes is a US-based electronic music producer and a drummer since the age of four.</p>
+            <dl className="s-facts">
+              <div>
+                <dt>Labels</dt>
+                <dd>Releases, A&amp;R and cover art for three record labels</dd>
               </div>
+              <div>
+                <dt>2025</dt>
+                <dd>Won BUTTER and Andrew A's Ghost Of You remix contest with E2D2, with Tomorrowland support from Andrew A</dd>
+              </div>
+              <div>
+                <dt>Studied</dt>
+                <dd>Production classes at Berklee College of Music</dd>
+              </div>
+              <div>
+                <dt>Inspired by</dt>
+                <dd>Brooks, RudeLies</dd>
+              </div>
+            </dl>
+            <div className="s-ctas">
+              <Link className="s-btn" to="/about">
+                Read more ↗
+              </Link>
+              <Link className="s-btn" to="/contact">
+                Get in touch
+              </Link>
             </div>
-            <div className="s-about-text">
-              <div className="s-sec-head">
-                <span className="s-mono">About</span>
-              </div>
-              <p className="s-big">Stripes is a US-based electronic music producer and a drummer since the age of four.</p>
-              <dl className="s-facts">
-                <div>
-                  <dt>Labels</dt>
-                  <dd>Releases, A&amp;R and cover art for three record labels</dd>
-                </div>
-                <div>
-                  <dt>2025</dt>
-                  <dd>Won BUTTER and Andrew A's Ghost Of You remix contest with E2D2, with Tomorrowland support from Andrew A</dd>
-                </div>
-                <div>
-                  <dt>Studied</dt>
-                  <dd>Production classes at Berklee College of Music</dd>
-                </div>
-                <div>
-                  <dt>Inspired by</dt>
-                  <dd>Brooks, RudeLies</dd>
-                </div>
-              </dl>
-              <div className="s-ctas">
-                <Link className="s-btn" to="/about">
-                  Read more ↗
-                </Link>
-                <Link className="s-btn" to="/contact">
-                  Get in touch
-                </Link>
-              </div>
-            </div>
-          </section>
-        </div>
-        <div className="s-sheet-hold" aria-hidden="true" />
+          </div>
+          <figure className="s-about-photo">
+            <Photo p={photos.portrait} ratio="4 / 5" sizes="(max-width: 860px) 92vw, 46vw" label="Portrait" />
+          </figure>
+        </section>
       </div>
       <NowPlaying />
     </div>
   );
 }
-

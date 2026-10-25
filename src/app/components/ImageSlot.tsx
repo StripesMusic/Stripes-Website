@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 
 type Props = {
   src?: string;
+  srcSet?: string;
+  sizes?: string;
+  pos?: string;
   alt?: string;
   ratio?: string;
   label: string;
@@ -12,7 +15,7 @@ type Props = {
   className?: string;
 };
 
-export function ImageSlot({ src, alt = "", ratio = "1 / 1", label, hint, eager, className = "" }: Props) {
+export function ImageSlot({ src, srcSet, sizes, pos, alt = "", ratio = "1 / 1", label, hint, eager, className = "" }: Props) {
   const [state, setState] = useState<"wait" | "ok" | "empty">(src ? "wait" : "empty");
   useEffect(() => setState(src ? "wait" : "empty"), [src]);
 
@@ -21,7 +24,10 @@ export function ImageSlot({ src, alt = "", ratio = "1 / 1", label, hint, eager, 
       {src && state !== "empty" && (
         <img
           src={src}
+          srcSet={srcSet}
+          sizes={srcSet ? sizes : undefined}
           alt={alt}
+          style={pos ? { objectPosition: pos } : undefined}
           loading={eager ? "eager" : "lazy"}
           decoding="async"
           className={state === "ok" ? "on" : ""}

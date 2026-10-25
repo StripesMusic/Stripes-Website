@@ -1,37 +1,57 @@
-// The hero S: dust particles and faint hairlines on one tilted 3D plane, rendered to a
-// texture, then passed through a glass pass that bends the scene around each click ripple
-// with a bevelled, colour-fringed rim. Everything settles and stops drawing when idle.
+// The hero S: dust particles in three depth layers and faint hairlines behind them, on one 3D
+// plane that tilts toward the cursor and leans back as you scroll, so the layers slide apart.
+// On load the layers start far apart on a plane lying back and close up as it stands.
+// The scene renders to a texture, then a glass pass bends it around each click ripple with a
+// bevelled, colour-fringed rim. Everything settles and stops drawing when idle.
 import { LOGO_H, LOGO_PATHS, LOGO_W } from "./logoPaths";
 import { audio } from "../../lib/audio";
 import { onFrame } from "../../lib/ticker";
+import { whenReady } from "../../lib/intro";
 
-export type HeroScroll = { reveal: number; cover: number };
+// cover: 0 with the hero in full view, 1 once the first panel has slid over it
+export type HeroScroll = { cover: number };
+type HeroOpts = { plane?: HTMLElement | null; area: () => { top: number; bottom: number } };
 
-// Where the S stands, in px from the stage centre. Shared with the hero wordmark, whose
-// letters sink in order of distance from the S. Phones and portrait tablets centre it below the lede.
-export function markLayout(W: number, H: number) {
+// The lockup: the S with STRIPES beside it (stacked under it on phones), sized to fit between
+// the nav and the hero text. cx/cy are the S centre from the stage centre; the word box is in
+// stage px (on phones wx is the word's centre). Bricolage at rest: the word is 1.7 font-sizes
+// wide, its caps 0.66 tall, the cap top 0.056 below the box top.
+const ASPECT = LOGO_W / LOGO_H;
+export function lockupLayout(W: number, H: number, top: number, bottom: number) {
   const narrow = W < 700 || W < H * 0.9;
-  return {
-    narrow,
-    h: narrow ? Math.min(H * 0.4, (W * 0.8 * LOGO_H) / LOGO_W) : H * 0.6,
-    cx: narrow ? 0 : W * 0.16,
-    cy: narrow ? H * 0.03 : -H * 0.11,
-  };
+  const room = Math.max(120, bottom - top);
+  if (narrow) {
+    const h = Math.min(H * 0.27, W * 0.56, room * 0.62);
+    const fs = h * 0.42, gap = h * 0.1, total = h + gap + fs * 0.66;
+    const y0 = top + (room - total) / 2;
+    return { narrow, h, cx: 0, cy: y0 + h / 2 - H / 2, fs, wx: W / 2, wy: y0 + h + gap - fs * 0.056 };
+  }
+  const h = Math.min(H * 0.42, room * 0.9, W * 0.26);
+  const fs = h * 0.66, gap = h * 0.15, sw = h * ASPECT, total = sw + gap + fs * 1.7;
+  const x0 = (W - total) / 2, mid = top + room / 2;
+  return { narrow, h, cx: x0 + sw / 2 - W / 2, cy: mid - H / 2, fs, wx: x0 + sw + gap, wy: mid - fs * 0.33 - fs * 0.056 };
 }
 
 const ANG = (-24.2 * Math.PI) / 180;
 const U = [Math.cos(ANG), Math.sin(ANG)];
 const N = [-U[1], U[0]];
 const LIFE = 1600;
+const INTRO = 1900;
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 // plane coords (px, centred on the stage) -> tilted, perspective, risen screen position
 const PROJ = `
-uniform vec2 uRes; uniform vec2 uHalf; uniform float uDpr; uniform float uTheta; uniform float uRise; uniform float uScale; uniform float uD;
+uniform vec2 uRes; uniform vec2 uHalf; uniform float uDpr; uniform float uTheta; uniform float uPhi; uniform float uRise; uniform float uScale; uniform float uD;
 vec4 project(vec3 p, out float k){
+  // layers off the plane are pre-shrunk or grown so they line up when it faces you square on
+  p.xy *= (uD - p.z) / uD;
+  float cp = cos(uPhi), sp = sin(uPhi);
+  vec3 q = vec3(p.x * cp + p.z * sp, p.y, -p.x * sp + p.z * cp);
   float c = cos(uTheta), s = sin(uTheta);
-  float y = p.y * c - p.z * s;
-  float z = p.y * s + p.z * c;
+  float y = q.y * c - q.z * s;
+  float z = q.y * s + q.z * c;
+  p.x = q.x;
   k = uD / (uD - z);
   vec2 sc = uHalf + vec2(p.x, y) * k * uScale + vec2(0.0, uRise);
   vec2 cl = sc * uDpr / uRes * 2.0 - 1.0; cl.y = -cl.y;
@@ -60,7 +80,7 @@ void main(){
     ring += e;
   }
   vec2 p = aBase + uN * (disp + aSide * 0.9);
-  float k; gl_Position = project(vec3(p, 0.0), k);
+  float k; gl_Position = project(vec3(p, -140.0), k);
   float fog = smoothstep(0.6, 0.95, k);
   float spot = exp(-dist * dist / 78400.0) * uPtr.z;
   vMask = aMask; vSide = aSide; vE = clamp(ring * 0.6 + abs(disp) / 14.0, 0.0, 1.0);
@@ -79,11 +99,13 @@ void main(){
 
 const DUST_VS = `
 attribute vec3 aPos; attribute float aKind; attribute float aSpd;
-uniform float uGlow;
+uniform float uGlow; uniform float uSpread;
 varying float vK; varying float vS; varying float vFog;
 ${PROJ}
 void main(){
-  float k; gl_Position = project(aPos, k);
+  vec3 p = aPos;
+  if (aKind > 0.5) p.z *= uSpread;
+  float k; gl_Position = project(p, k);
   gl_PointSize = (aKind > 0.5 ? 1.5 + uGlow * 0.6 : 1.2) * k * uScale * uDpr;
   vFog = smoothstep(0.55, 0.95, k);
   vK = aKind; vS = clamp(aSpd / 5.0, 0.0, 1.0);
@@ -150,7 +172,7 @@ void main(){
 
 type Pulse = { x: number; y: number; t: number; a: number; glass: number };
 
-export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll: () => HeroScroll) {
+export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll: () => HeroScroll, { plane, area }: HeroOpts) {
   const ctx = cv.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: true, powerPreference: "high-performance" });
   if (!ctx) return () => {};
   const gl: WebGLRenderingContext = ctx;
@@ -200,13 +222,17 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   const tex = gl.createTexture()!;
   const fbo = gl.createFramebuffer()!;
 
-  const S = { W: 0, H: 0, DPR: 1, cx: 0, cy: 0, theta: 0.8, rise: 0, scale: 0.86, D: 1400, mask: new Uint8ClampedArray(0) };
+  const S = { W: 0, H: 0, DPR: 1, cx: 0, cy: 0, theta: 0.9, phi: 0, rise: 0, scale: 0.92, spread: 2.6, D: 1400, mask: new Uint8ClampedArray(0) };
+  // the pose: tilt and lean toward the pointer (or a slow orbit on touch), smoothed
+  const pose = { tx: 0, ty: 0, born: 0, key: "", css: "" };
+  const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const ptr = { sx: 0, sy: 0, x: 0, y: 0, fx: 0, fy: 0, vx: 0, vy: 0, pvx: 0, pvy: 0, inside: false, last: 0, amt: 0, act: 0 };
   const pulses: Pulse[] = [];
   let lineCount = 0, lineBig = false;
   let DN = 0, hx: Float32Array, hy: Float32Array, px: Float32Array, py: Float32Array, dvx: Float32Array, dvy: Float32Array;
   let dkind: Float32Array, dPos: Float32Array, dSpd: Float32Array;
-  let awake = 60, dBeat = 0, prog = 0, drawnProg = -1, needDraw = true, visible = true;
+  let awake = 60, dBeat = 0, prog = 0, needDraw = true, visible = true;
 
   const maskAt = (x: number, y: number) => {
     const ix = Math.round(x + S.W / 2), iy = Math.round(y + S.H / 2);
@@ -221,10 +247,17 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     cv.width = Math.round(S.W * S.DPR);
     cv.height = Math.round(S.H * S.DPR);
     S.D = Math.max(S.W, S.H) * 1.3;
-    const { W, H } = S, L = markLayout(W, H);
+    const { W, H } = S, b = area(), L = lockupLayout(W, H, b.top, b.bottom);
     const sc = L.h / LOGO_H;
     S.cx = L.cx;
     S.cy = L.cy;
+    if (plane) {
+      plane.style.setProperty("--wx", L.wx.toFixed(1) + "px");
+      plane.style.setProperty("--wy", L.wy.toFixed(1) + "px");
+      plane.style.setProperty("--wfs", L.fs.toFixed(1) + "px");
+      plane.classList.toggle("is-stacked", L.narrow);
+      plane.dispatchEvent(new Event("s-layout"));
+    }
     const mc = document.createElement("canvas");
     mc.width = W;
     mc.height = H;
@@ -314,7 +347,8 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
       tries++;
       const x = (Math.random() - 0.5) * W, y = (Math.random() - 0.5) * H;
       if (Math.random() < maskAt(x, y)) {
-        HX.push(x); HY.push(y); Z.push((Math.random() - 0.5) * 50); K.push(1);
+        // three layers, so they visibly part when the plane tilts
+        HX.push(x); HY.push(y); Z.push((Math.floor(Math.random() * 3) - 1) * 90 + (Math.random() - 0.5) * 16); K.push(1);
       }
     }
     for (let i = 0; i < amb; i++) {
@@ -337,17 +371,19 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     awake = 60;
   }
 
-  // screen -> plane, the inverse of the shader's projection at z = 0
+  // screen -> plane, the inverse of the shader's projection at z = 0: cast the eye ray through
+  // the screen point and meet the rotated plane, then rotate the hit back into plane coords
   const toPlane = (sx: number, sy: number) => {
-    const c = Math.cos(S.theta), s = Math.sin(S.theta);
+    const c = Math.cos(S.theta), s = Math.sin(S.theta), cp = Math.cos(S.phi), sp = Math.sin(S.phi), D = S.D;
     const X1 = (sx - S.W / 2) / S.scale, Y1 = (sy - S.H / 2 - S.rise) / S.scale;
-    const Y = (Y1 * S.D) / (S.D * c + Y1 * s);
-    const k = S.D / (S.D - Y * s);
-    return [X1 / k, Y];
+    const nz = cp * c, t = (nz * D) / (nz * D - sp * X1 + cp * s * Y1);
+    const wx = X1 * t, wy = Y1 * t, wz = D * (1 - t);
+    return [wx * cp - (-wy * s + wz * c) * sp, wy * c + wz * s];
   };
   const toScreen = (x: number, y: number) => {
-    const c = Math.cos(S.theta), s = Math.sin(S.theta), k = S.D / (S.D - y * s);
-    return [S.W / 2 + x * k * S.scale, S.H / 2 + y * c * k * S.scale + S.rise, k * S.scale];
+    const c = Math.cos(S.theta), s = Math.sin(S.theta), cp = Math.cos(S.phi), sp = Math.sin(S.phi);
+    const Z = y * s - x * sp * c, k = S.D / (S.D - Z);
+    return [S.W / 2 + x * cp * k * S.scale, S.H / 2 + (y * c + x * sp * s) * k * S.scale + S.rise, k * S.scale];
   };
 
   const onMove = (e: PointerEvent) => {
@@ -430,6 +466,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     gl.uniform2f(uni(p, "uHalf"), S.W / 2, S.H / 2);
     gl.uniform1f(uni(p, "uDpr"), S.DPR);
     gl.uniform1f(uni(p, "uTheta"), S.theta);
+    gl.uniform1f(uni(p, "uPhi"), S.phi);
     gl.uniform1f(uni(p, "uRise"), S.rise);
     gl.uniform1f(uni(p, "uScale"), S.scale);
     gl.uniform1f(uni(p, "uD"), S.D);
@@ -474,6 +511,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, dSpd as BufferSource);
     attr(dustP, DB.kind, "aKind", 1);
     setCommon(dustP);
+    gl.uniform1f(uni(dustP, "uSpread"), S.spread);
     gl.drawArrays(gl.POINTS, 0, DN);
     unbind();
 
@@ -491,15 +529,45 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     unbind();
   }
 
+  // Intro: the plane stands up from lying back while its layers close in. Scroll: it leans
+  // back, shrinks a little and lifts away from the panel sliding over it. Pointer: it turns
+  // to face the cursor by a few degrees. The DOM plane (the word) copies the same transform.
+  function setPose(now: number) {
+    const it = pose.born ? clamp01((now - pose.born) / (reduce ? 900 : INTRO)) : 0;
+    const ei = 1 - Math.pow(1 - it, 4);
+    let tx = 0, ty = 0;
+    if (fine && ptr.inside) {
+      tx = (ptr.sx / S.W - 0.5) * 2;
+      ty = (ptr.sy / S.H - 0.5) * 2;
+    } else if (!fine && !reduce) {
+      const a = (now / 8000) * Math.PI * 2;
+      tx = Math.sin(a) * 0.6;
+      ty = Math.cos(a * 0.5) * 0.4;
+    }
+    pose.tx += (tx - pose.tx) * 0.08;
+    pose.ty += (ty - pose.ty) * 0.08;
+    const e = ease(prog);
+    S.theta = (1 - ei) * (reduce ? 0.35 : 0.9) + 0.55 * e - 0.1 * pose.ty;
+    S.phi = 0.17 * pose.tx;
+    S.spread = 1 + (1 - ei) * 1.6;
+    S.scale = (0.92 + 0.08 * ei) * (1 - 0.16 * e);
+    S.rise = -0.06 * S.H * e;
+    const key = [S.theta, S.phi, S.spread, S.scale, S.rise].map((v) => v.toFixed(4)).join();
+    if (key === pose.key) return false;
+    pose.key = key;
+    if (plane) {
+      const css = `translate3d(0, ${S.rise.toFixed(2)}px, 0) scale(${S.scale.toFixed(4)}) perspective(${S.D.toFixed(0)}px) rotateX(${S.theta.toFixed(4)}rad) rotateY(${S.phi.toFixed(4)}rad)`;
+      if (css !== pose.css) plane.style.transform = pose.css = css;
+    }
+    return true;
+  }
+
   function frame(now: number) {
     const sc = getScroll();
-    prog += (sc.reveal - prog) * 0.12;
-    if (Math.abs(sc.reveal - prog) < 1e-4) prog = sc.reveal;
+    prog += (sc.cover - prog) * 0.12;
+    if (Math.abs(sc.cover - prog) < 1e-4) prog = sc.cover;
     if (!visible || sc.cover >= 0.999) return;
-    const e = ease(prog);
-    S.theta = (1 - e) * 0.8;
-    S.rise = (1 - e) * S.H * 0.24;
-    S.scale = 0.86 + 0.14 * e;
+    const posed = setPose(now);
 
     for (let p = pulses.length - 1; p >= 0; p--) if (now - pulses[p].t > LIFE) pulses.splice(p, 1);
     const pr: Live[] = pulses.map((p) => {
@@ -532,18 +600,31 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
       awake = mv > 0.03 || act || pr.length ? 30 : awake - 1;
       dustMoving = true;
     }
-    if (needDraw || dustMoving || ptrMoving || pr.length || prog !== drawnProg || audio.level > 0.003) {
+    if (needDraw || dustMoving || ptrMoving || posed || pr.length || audio.level > 0.003) {
       draw(pr);
-      drawnProg = prog;
       needDraw = false;
     }
   }
 
-  measure();
+  // only rebuild when the stage or the room for the lockup really changed, since a rebuild
+  // reshuffles the dust
+  let fit = "";
+  const refit = () => {
+    const r = stage.getBoundingClientRect(), b = area();
+    const key = [Math.round(r.width), Math.round(r.height), Math.round(b.top), Math.round(b.bottom)].join();
+    if (key !== fit) {
+      fit = key;
+      measure();
+    }
+  };
+  refit();
+  // fonts change the hero text's height, and so the room left for the lockup
+  document.fonts?.ready.then(refit);
+  const offReady = whenReady(() => (pose.born = performance.now()));
   let rt = 0;
   const ro = new ResizeObserver(() => {
     clearTimeout(rt);
-    rt = window.setTimeout(measure, 150);
+    rt = window.setTimeout(refit, 150);
   });
   ro.observe(stage);
   const io = new IntersectionObserver((es) => {
@@ -556,6 +637,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   return () => {
     offFrame();
     offKick();
+    offReady();
     ro.disconnect();
     io.disconnect();
     clearTimeout(rt);

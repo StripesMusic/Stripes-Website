@@ -2,8 +2,9 @@ import { Link, useLocation } from "react-router";
 import { useState, useEffect } from "react";
 import { PageTransition } from "./PageTransition";
 import { StripesMark } from "./StripesMark";
-import { ImageSlot } from "./ImageSlot";
-import { images } from "../data/images";
+import { Preloader } from "./Preloader";
+import { useScenes } from "../lib/scenes";
+import { showPreloader } from "../lib/intro";
 
 const navLinks = [
   { name: "Music", path: "/music" },
@@ -31,6 +32,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [preloading, setPreloading] = useState(showPreloader);
+  useScenes(location.pathname);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -62,6 +65,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="s-site">
+      {preloading && <Preloader onDone={() => setPreloading(false)} />}
       {!isLinkPage && (
         <header className={"s-nav s-pad" + (scrolled ? " is-scrolled" : "")}>
           <Link to="/" className="s-brand" aria-label="Stripes, home">
@@ -124,7 +128,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {!isLinkPage && (
-        <footer className="s-footer">
+        <footer className="s-footer" data-scene="footer">
           <div className="s-panel s-pad s-footer-inner">
             <div className="s-footer-top">
               <div className="s-footer-cta">
@@ -133,14 +137,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   Commission art
                 </Link>
               </div>
-              <ImageSlot
-                src={images.footerPack}
-                ratio="16 / 9"
-                className="s-footer-pack"
-                label="Release pack mockup"
-                hint="16:9 · 1600×900"
-                alt={images.footerPack ? "A full release pack: cover, canvas and flyers" : ""}
-              />
             </div>
             <div className="s-footer-cols">
               <div>

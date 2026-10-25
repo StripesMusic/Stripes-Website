@@ -60,8 +60,9 @@ export function Packs() {
 
   const w = featuredWork[idx];
   const pack = packImages[w.title] ?? {};
+  const have = pieces.filter((pc) => pack[pc.key]);
   return (
-    <section className="s-panel s-packs" ref={secRef} style={{ height: `calc(var(--vh, 100vh) + ${(n - 1) * SLOT_VH}vh)` }} aria-label="Designs">
+    <section className="s-panel s-packs" data-scene="designs" id="designs" ref={secRef} style={{ height: `calc(var(--vh, 100vh) + ${(n - 1) * SLOT_VH}vh)` }} aria-label="Designs">
       <div className="s-packs-pin">
         <div className="s-sec-head">
           <span className="s-mono">Designs</span>
@@ -106,14 +107,16 @@ export function Packs() {
             </dl>
             <div className="s-packs-side">
               <p>{w.details}</p>
-              <div className="s-packs-pieces">
-                {pieces.map((pc) => (
-                  <span className="s-piece" key={pc.key}>
-                    <ImageSlot src={pack[pc.key]} ratio={pc.ratio} label={pc.name} alt={pack[pc.key] ? `${w.title} ${pc.name}` : ""} />
-                    <span className="s-mono">{pc.name}</span>
-                  </span>
-                ))}
-              </div>
+              {have.length > 0 && (
+                <div className="s-packs-pieces">
+                  {have.map((pc) => (
+                    <span className="s-piece" key={pc.key}>
+                      <ImageSlot src={pack[pc.key]} ratio={pc.ratio} label={pc.name} alt={`${w.title} ${pc.name}`} />
+                      <span className="s-mono">{pc.name}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className="s-packs-foot">
