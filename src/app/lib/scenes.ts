@@ -2,9 +2,20 @@
 // whose top has passed the middle of the screen; the colours themselves crossfade in CSS
 // (stripes.css registers them so they can transition). "hero" is the default palette.
 import { useEffect } from "react";
+import { getTheme, onTheme } from "./theme";
 
 // the page background of each scene, for the phone's browser bar
-const BAR: Record<string, string> = {
+const LIGHT: Record<string, string> = {
+  hero: "#cdcec8",
+  ep: "#131313",
+  releases: "#b7ccc8",
+  olive: "#c4c7b7",
+  designs: "#24281c",
+  drums: "#181f36",
+  about: "#c3cbde",
+  footer: "#9dbf3f",
+};
+const DARK: Record<string, string> = {
   hero: "#151613",
   ep: "#131313",
   releases: "#102729",
@@ -20,6 +31,10 @@ export function useScenes(key: string) {
     const root = document.documentElement;
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
     let raf = 0, current = "";
+    const bar = () => {
+      const m = getTheme() === "light" ? LIGHT : DARK;
+      meta?.setAttribute("content", m[current] ?? m.hero);
+    };
     const pick = () => {
       raf = 0;
       const mid = innerHeight / 2;
@@ -31,7 +46,7 @@ export function useScenes(key: string) {
       current = scene;
       if (scene === "hero") delete root.dataset.scene;
       else root.dataset.scene = scene;
-      meta?.setAttribute("content", BAR[scene] ?? BAR.hero);
+      bar();
     };
     const queue = () => {
       if (!raf) raf = requestAnimationFrame(pick);
@@ -41,7 +56,9 @@ export function useScenes(key: string) {
     const late = setTimeout(pick, 450);
     addEventListener("scroll", queue, { passive: true });
     addEventListener("resize", queue);
+    const offTheme = onTheme(bar);
     return () => {
+      offTheme();
       cancelAnimationFrame(raf);
       clearTimeout(late);
       removeEventListener("scroll", queue);

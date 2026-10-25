@@ -2,8 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#151613" />
+    <script>
+      // the saved theme, before anything paints
+      try {
+        if (localStorage.getItem("s-theme") === "light") {
+          document.documentElement.dataset.theme = "light";
+          document.querySelector('meta[name="theme-color"]').content = "#cdcec8";
+        }
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500&family=Archivo:wdth,wght@62..125,100..900&family=Doto:wght@400..900&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&display=swap" />
@@ -14,7 +23,11 @@
       body {
         height: 100%;
         margin: 0;
-        background: #22231f;
+        background: #151613;
+      }
+      html[data-theme="light"],
+      html[data-theme="light"] body {
+        background: #cdcec8;
       }
       #root {
         height: 100%;

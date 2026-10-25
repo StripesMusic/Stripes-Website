@@ -5,6 +5,7 @@ import { StripesMark } from "./StripesMark";
 import { Preloader } from "./Preloader";
 import { useScenes } from "../lib/scenes";
 import { showPreloader } from "../lib/intro";
+import { setTheme, useTheme } from "../lib/theme";
 
 const navLinks = [
   { name: "Music", path: "/music" },
@@ -33,6 +34,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [toolsOpen, setToolsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [preloading, setPreloading] = useState(showPreloader);
+  const theme = useTheme();
+  const flipTheme = () => setTheme(theme === "light" ? "dark" : "light");
   useScenes(location.pathname);
 
   // Scroll to top on route change
@@ -96,12 +99,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </nav>
-          <Link to="/contact" className="s-btn s-nav-cta" aria-current={isActive("/contact") ? "page" : undefined}>
-            Contact
-          </Link>
-          <button type="button" className="s-btn s-nav-menu" aria-expanded={menuOpen} aria-controls="s-menu" onClick={() => setMenuOpen((v) => !v)}>
-            {menuOpen ? "Close" : "Menu"}
-          </button>
+          <div className="s-nav-end">
+            <Link to="/contact" className="s-btn s-nav-cta" aria-current={isActive("/contact") ? "page" : undefined}>
+              Contact
+            </Link>
+            <button
+              type="button"
+              className="s-btn s-theme-btn"
+              aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              title={theme === "light" ? "Dark mode" : "Light mode"}
+              onClick={flipTheme}
+            >
+              <span className="s-theme-ico" aria-hidden="true" />
+            </button>
+            <button type="button" className="s-btn s-nav-menu" aria-expanded={menuOpen} aria-controls="s-menu" onClick={() => setMenuOpen((v) => !v)}>
+              {menuOpen ? "Close" : "Menu"}
+            </button>
+          </div>
         </header>
       )}
 

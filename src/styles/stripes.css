@@ -25,7 +25,9 @@
   --s-nav-h: 56px;
   --s-ease: cubic-bezier(0.22, 1, 0.36, 1);
   color-scheme: dark;
-  transition: --s-bg 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-panel 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-fg 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-muted 0.9s cubic-bezier(0.45, 0, 0.2, 1),
+  /* text swaps faster than the background, so going between a dark and a light scene spends
+     as little time as possible with both near the same grey */
+  transition: --s-bg 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-panel 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-fg 0.6s cubic-bezier(0.8, 0, 0.2, 1), --s-muted 0.6s cubic-bezier(0.8, 0, 0.2, 1),
     --s-accent 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-accent-ink 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-hi 0.9s cubic-bezier(0.45, 0, 0.2, 1);
 }
 @property --s-bg { syntax: "<color>"; inherits: true; initial-value: #151613; }
@@ -101,6 +103,85 @@
   --s-accent-ink: #b9e14d;
   --s-hi: #22231f;
   color-scheme: light;
+}
+/* Light mode (the theme button in the nav). The dark scenes get light partners; the EP keeps
+   its charcoal like the artwork, the drum photo stays blue, and Designs turns dark so the page
+   still alternates. */
+:root[data-theme="light"] {
+  --s-bg: #cdcec8;
+  --s-panel: #e4e5e0;
+  --s-fg: #2c3023;
+  --s-muted: #5c6052;
+  --s-accent: #b9e14d;
+  --s-accent-ink: #22231f;
+  --s-hi: #4f6b0e;
+  color-scheme: light;
+}
+:root[data-theme="light"][data-scene="ep"] {
+  --s-bg: #131313;
+  --s-panel: #1f1f1f;
+  --s-fg: #d8dccd;
+  --s-muted: #9b9f91;
+  --s-accent: #aedd66;
+  --s-accent-ink: #1f1f1f;
+  --s-hi: #aedd66;
+  color-scheme: dark;
+}
+:root[data-theme="light"][data-scene="releases"] {
+  --s-bg: #b7ccc8;
+  --s-panel: #d3e3e0;
+  --s-fg: #163033;
+  --s-muted: #44605f;
+  --s-accent: #b9e14d;
+  --s-accent-ink: #163033;
+  --s-hi: #1f5458;
+}
+:root[data-theme="light"][data-scene="olive"] {
+  --s-bg: #c4c7b7;
+  --s-panel: #dcdfd0;
+  --s-fg: #2c3023;
+  --s-muted: #565b49;
+  --s-accent: #b9e14d;
+  --s-accent-ink: #22231f;
+  --s-hi: #4f6b0e;
+}
+:root[data-theme="light"][data-scene="designs"] {
+  --s-bg: #24281c;
+  --s-panel: #363b2b;
+  --s-fg: #dfe0dc;
+  --s-muted: #b2b5a8;
+  --s-accent: #b9e14d;
+  --s-accent-ink: #363b2b;
+  --s-hi: #b9e14d;
+  color-scheme: dark;
+}
+:root[data-theme="light"][data-scene="drums"] {
+  --s-bg: #181f36;
+  --s-panel: #26304f;
+  --s-fg: #d6dbea;
+  --s-muted: #9ea4b8;
+  --s-accent: #78cfd3;
+  --s-accent-ink: #26304f;
+  --s-hi: #78cfd3;
+  color-scheme: dark;
+}
+:root[data-theme="light"][data-scene="footer"] {
+  --s-bg: #9dbf3f;
+  --s-panel: #b9e14d;
+  --s-fg: #22231f;
+  --s-muted: #404928;
+  --s-accent: #22231f;
+  --s-accent-ink: #b9e14d;
+  --s-hi: #22231f;
+}
+:root[data-theme="light"][data-scene="about"] {
+  --s-bg: #c3cbde;
+  --s-panel: #dde3f0;
+  --s-fg: #1f2b4d;
+  --s-muted: #4a5573;
+  --s-accent: #2f4a8f;
+  --s-accent-ink: #dde3f0;
+  --s-hi: #2f4a8f;
 }
 @media (prefers-reduced-motion: reduce) {
   :root {
@@ -313,7 +394,7 @@ html.s-locked {
 }
 .s-brand-mark {
   width: auto;
-  height: 16px;
+  height: 18px;
   color: var(--s-hi);
 }
 .s-nav-links {
@@ -398,14 +479,38 @@ html.s-locked {
   color: var(--s-fg);
   background: color-mix(in srgb, var(--s-fg) 7%, transparent);
 }
+.s-nav-end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .s-nav-menu {
   display: none;
-  margin-left: auto;
+}
+/* light/dark: a half-filled circle that turns over */
+.s-theme-btn {
+  width: 30px;
+  padding: 0;
+  justify-content: center;
+}
+.s-theme-ico {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  transition: transform 0.5s var(--s-ease);
+}
+:root[data-theme="light"] .s-theme-ico {
+  transform: rotate(180deg);
 }
 @media (max-width: 760px) {
   .s-nav-links,
   .s-nav-cta {
     display: none;
+  }
+  .s-nav-end {
+    margin-left: auto;
   }
   .s-nav-menu {
     display: inline-flex;
@@ -736,7 +841,7 @@ html.s-locked {
   .s-lip-listen {
     display: none;
   }
-  .s-lip-play {
+  .s-btn.s-lip-play {
     width: 40px;
     padding: 0;
     justify-content: center;
@@ -1826,6 +1931,10 @@ html.s-locked {
   .s-btn {
     height: 40px;
     padding: 0 16px;
+  }
+  .s-btn.s-theme-btn {
+    width: 40px;
+    padding: 0;
   }
   .s-icon-btn {
     width: 40px;
