@@ -24,5 +24,6 @@ export const photos = {
 
 // Pack pieces for the covers on the homepage, keyed by the cover's title in featuredWork.
 // canvas 9:16 (a still from the Spotify Canvas), flyer 4:5, thumbnail 16:9 (YouTube).
-// Only the pieces listed here are shown.
-export const packImages: Record<string, { canvas?: string; flyer?: string; thumbnail?: string }> = {};
+// Only the pieces listed here are shown. process and mockups (any ratio) go on the Artwork page;
+// upload them to packs/<catalogue number>/ in the assets bucket and list the URLs here.
+export const packImages: Record<string, { canvas?: string; flyer?: string; thumbnail?: string; process?: string[]; mockups?: string[] }> = {};
