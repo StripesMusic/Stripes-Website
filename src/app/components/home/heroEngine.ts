@@ -7,6 +7,7 @@ import { LOGO_H, LOGO_THIN, LOGO_W } from "./logoPaths";
 import { audio } from "../../lib/audio";
 import { onFrame } from "../../lib/ticker";
 import { whenReady } from "../../lib/intro";
+import { getTheme, onTheme } from "../../lib/theme";
 
 // cover: 0 with the hero in full view, 1 once the first panel has slid over it
 export type HeroScroll = { cover: number };
@@ -181,12 +182,19 @@ void main(){
 type Pulse = { x: number; y: number; t: number; a: number; glass: number };
 type V3 = [number, number, number];
 
-// one palette in both themes, since the spectrum behind the S is the same in both: dark ink
-// like the type, and white for motion and the glass rims
-const PAL = {
-  ink: [0.063, 0.067, 0.055] as V3, amb: [0.12, 0.14, 0.15] as V3, ambA: 0.22,
-  lineA: [0.1, 0.11, 0.12] as V3, lineB: [0.063, 0.067, 0.055] as V3, lineGain: 1.6, fast: [0.97, 0.99, 0.92] as V3,
-  rim: [0.98, 1, 0.94] as V3,
+// light: dark ink like the type over the spectrum, white for motion and the glass rims.
+// dark: the lime S on the olive panel.
+const PALETTES = {
+  light: {
+    ink: [0.063, 0.067, 0.055] as V3, amb: [0.12, 0.14, 0.15] as V3, ambA: 0.22,
+    lineA: [0.1, 0.11, 0.12] as V3, lineB: [0.063, 0.067, 0.055] as V3, lineGain: 1.6, fast: [0.97, 0.99, 0.92] as V3,
+    rim: [0.98, 1, 0.94] as V3,
+  },
+  dark: {
+    ink: [0.85, 0.95, 0.55] as V3, amb: [0.45, 0.48, 0.43] as V3, ambA: 0.16,
+    lineA: [0.42, 0.46, 0.41] as V3, lineB: [0.7, 0.84, 0.3] as V3, lineGain: 1, fast: [0.47, 0.81, 0.83] as V3,
+    rim: [0.62, 0.66, 0.58] as V3,
+  },
 };
 
 export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll: () => HeroScroll, { plane, area }: HeroOpts) {
@@ -246,7 +254,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const ptr = { sx: 0, sy: 0, x: 0, y: 0, fx: 0, fy: 0, vx: 0, vy: 0, pvx: 0, pvy: 0, inside: false, last: 0, amt: 0, act: 0 };
   const pulses: Pulse[] = [];
-  const pal = PAL;
+  let pal = PALETTES[getTheme()];
   let lineCount = 0, lineBig = false;
   let DN = 0, hx: Float32Array, hy: Float32Array, px: Float32Array, py: Float32Array, dvx: Float32Array, dvy: Float32Array;
   let dkind: Float32Array, dPos: Float32Array, dSpd: Float32Array;
@@ -652,6 +660,10 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   // fonts change the hero text's height, and so the room left for the lockup
   document.fonts?.ready.then(refit);
   const offReady = whenReady(() => (pose.born = performance.now()));
+  const offTheme = onTheme(() => {
+    pal = PALETTES[getTheme()];
+    needDraw = true;
+  });
   let rt = 0;
   const ro = new ResizeObserver(() => {
     clearTimeout(rt);
@@ -669,6 +681,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     offFrame();
     offKick();
     offReady();
+    offTheme();
     ro.disconnect();
     io.disconnect();
     clearTimeout(rt);

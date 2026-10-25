@@ -24,7 +24,7 @@ const DARK: Record<string, string> = {
   designs: "#24281c",
   drums: "#181f36",
   about: "#c6c7c3",
-  spectrum: "#5d74b3",
+  spectrum: "#151613",
   footer: "#9dbf3f",
 };
 

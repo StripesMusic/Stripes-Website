@@ -182,7 +182,7 @@
   --s-accent-ink: #dde3f0;
   --s-hi: #2f4a8f;
 }
-:root[data-scene="spectrum"],
+/* the gradient hero is the light theme's; in dark the hero keeps the default dark colours */
 :root[data-theme="light"][data-scene="spectrum"] {
   --s-bg: #5d74b3;
   --s-panel: #8fb3cf;
@@ -632,7 +632,18 @@ html.s-locked {
   touch-action: pan-y;
 }
 .s-stage-inner {
-  /* the hero keeps its own colours in both themes: dark type on the bright spectrum */
+  --s-word-hi: var(--s-hi);
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 40%;
+  border-radius: var(--s-radius);
+  overflow: hidden;
+  color: var(--s-fg);
+  /* dark: the olive panel, with the S and the type's flash in lime */
+  background: #22231f;
+}
+/* light: dark type on the bright spectrum */
+:root[data-theme="light"] .s-stage-inner {
   --s-fg: #10110e;
   --s-muted: #1d2029;
   --s-accent: #10110e;
@@ -640,20 +651,17 @@ html.s-locked {
   --s-line: rgba(16, 17, 14, 0.2);
   --s-line-strong: rgba(16, 17, 14, 0.5);
   --s-word-hi: #f6f9ee;
-  position: absolute;
-  inset: 0;
-  transform-origin: 50% 40%;
-  border-radius: var(--s-radius);
-  overflow: hidden;
-  color: var(--s-fg);
   /* shows if WebGL is off */
   background: linear-gradient(100deg, #7087c7, #78cfd3 45%, #b9e14d 85%, #e8f5bd);
 }
-.s-stage-inner .s-grain {
+:root[data-theme="light"] .s-stage-inner .s-grain {
   opacity: 0.14;
 }
+:root:not([data-theme="light"]) .s-spec-gl {
+  display: none;
+}
 @media (hover: hover) and (pointer: fine) {
-  .s-stage-inner .s-btn:hover {
+  :root[data-theme="light"] .s-stage-inner .s-btn:hover {
     background: var(--s-fg);
     color: #d9f08a;
   }

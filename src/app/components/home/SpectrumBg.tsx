@@ -1,10 +1,11 @@
 // The hero's back layer: a full-bleed colour spectrum, after Ragged Edge, that follows the music.
 // It drifts on its own; when anything plays, the sub bass pumps it (zoom, flow and the bright
 // core, sidechain dips included), kicks shove it, the mids slide the colours towards lime and
-// the highs add shimmer. On scroll it rises slower than everything in front of it.
+// the highs add shimmer. On scroll it rises slower than everything in front of it. Light theme only.
 import { useEffect, useRef } from "react";
 import { audio } from "../../lib/audio";
 import { onFrame } from "../../lib/ticker";
+import { getTheme } from "../../lib/theme";
 import type { HeroScroll } from "./heroEngine";
 
 const VERT = `attribute vec2 p; varying vec2 v; void main() { v = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }`;
@@ -132,7 +133,8 @@ export function SpectrumBg({ getScroll }: { getScroll: () => HeroScroll }) {
     io.observe(host);
     const stop = onFrame((now) => {
       const cover = getScroll().cover;
-      if (!visible || cover >= 0.999) return;
+      // light mode only; the dark hero is the plain olive panel
+      if (!visible || cover >= 0.999 || getTheme() !== "light") return;
       // the deepest layer: it only drifts up a little as the first panel slides over
       const l = cover > 0 ? `translate3d(0, ${(-cover * 6).toFixed(2)}%, 0)` : "";
       if (l !== lift) cv.style.transform = lift = l;
