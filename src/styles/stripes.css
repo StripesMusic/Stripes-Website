@@ -692,12 +692,25 @@ html.s-locked {
   opacity: var(--fade, 0.14);
 }
 
-/* the Leidseplein panorama behind a whole panel, faded hard into its colour */
+/* Jake's Leidseplein panorama (2000x500) as a wide band through the middle of the panel, shown
+   whole rather than zoomed into one building, and faded hard into the panel colour */
 .s-artbg {
-  --fade: 0.12;
+  --fade: 0.14;
   z-index: -1;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 80%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 80%, transparent);
+  inset: auto 0;
+  top: 50%;
+  aspect-ratio: 4 / 1;
+  min-height: 220px;
+  transform: translateY(-50%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+}
+/* on phones the cover fills the middle, so the band sits up behind the title */
+@media (max-width: 700px) {
+  .s-artbg {
+    top: 24px;
+    transform: none;
+  }
 }
 
 /* hero montage: three feathered layers tinted olive and blended into the canvas, so the S sits

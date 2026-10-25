@@ -42,8 +42,9 @@ export const montage: Photo[][] = [
   [photos.portrait, adePhotos.houseboats, adePhotos.lido],
 ];
 
-// Behind the Cover art section and the top of the Designs page, very faded
-export const artworkBg = { src: `${W}artwork-bg-2400.webp`, small: `${W}artwork-bg-1200.webp`, fallback: "https://assets.musicbystripes.com/artwork_page_background.png" };
+// Behind the Cover art section and the top of the Designs page, very faded: Jake's file at the
+// bucket root, the same one the old Artwork page used
+export const artworkBg = "https://assets.musicbystripes.com/artwork_page_background.png";
 
 // Pack pieces for the covers on the homepage, keyed by the cover's title in featuredWork.
 // canvas 9:16 (a still from the Spotify Canvas), flyer 4:5, thumbnail 16:9 (YouTube).
