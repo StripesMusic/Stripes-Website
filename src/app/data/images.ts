@@ -34,14 +34,6 @@ export const adePhotos = {
   theatreTram: ade("theatre-tram", 1200, 800, "45% 35%"),
 };
 
-// The faded photos behind the S in the hero, one list per layer (left, top right, bottom).
-// Each layer crossfades through its list; photos that haven't been uploaded are skipped.
-export const montage: Photo[][] = [
-  [photos.amsterdamStreet, adePhotos.flagDuo],
-  [photos.amsterdamDoor, adePhotos.bridge],
-  [photos.portrait, adePhotos.houseboats, adePhotos.lido],
-];
-
 // Behind the Cover art section and the top of the Designs page, very faded: Jake's wall of covers
 // (artwork_collage.jpeg at the bucket root, 5092x3240). The web-sized copies are tried first and
 // the original is the fallback until they're uploaded.

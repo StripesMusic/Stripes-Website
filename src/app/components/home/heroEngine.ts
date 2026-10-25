@@ -7,30 +7,29 @@ import { LOGO_H, LOGO_THIN, LOGO_W } from "./logoPaths";
 import { audio } from "../../lib/audio";
 import { onFrame } from "../../lib/ticker";
 import { whenReady } from "../../lib/intro";
-import { getTheme, onTheme } from "../../lib/theme";
 
 // cover: 0 with the hero in full view, 1 once the first panel has slid over it
 export type HeroScroll = { cover: number };
 type HeroOpts = { plane?: HTMLElement | null; area: () => { top: number; bottom: number } };
 
-// The lockup: the S with STRIPES beside it (stacked under it on phones), sized to fit between
-// the nav and the hero text. cx/cy are the S centre from the stage centre; the word box is in
-// stage px (on phones wx is the word's centre). Bricolage at rest: the word is 1.7 font-sizes
-// wide, its caps 0.66 tall, the cap top 0.056 below the box top.
+// The layout: "Stripes" set big along the left, and the S oversized behind its end, cropped
+// off the right edge, as texture rather than a logo lockup. cx/cy are the S centre from the
+// stage centre; the word box is in stage px. Bricolage at rest (wght 200, wdth 80): the word is
+// WORD_W font-sizes wide, its caps 0.66 tall, the cap top 0.056 below the box top.
 const ASPECT = LOGO_W / LOGO_H;
+export const WORD_W = 1.55;
 export function lockupLayout(W: number, H: number, top: number, bottom: number) {
   const narrow = W < 700 || W < H * 0.9;
-  const room = Math.max(120, bottom - top);
+  const room = Math.max(120, bottom - top), pad = narrow ? 16 : 28;
   if (narrow) {
-    const h = Math.min(H * 0.27, W * 0.56, room * 0.62);
-    const fs = h * 0.42, gap = h * 0.1, total = h + gap + fs * 0.66;
-    const y0 = top + (room - total) / 2;
-    return { narrow, h, cx: 0, cy: y0 + h / 2 - H / 2, fs, wx: W / 2, wy: y0 + h + gap - fs * 0.056 };
+    const h = Math.min(room * 0.8, W * 1.2), sw = h * ASPECT;
+    const fs = Math.min((W - pad * 2) / WORD_W, room * 0.9);
+    return { narrow, h, cx: W / 2 - sw * 0.32, cy: top + room * 0.42 - H / 2, fs, wx: pad, wy: top + room * 0.62 - fs * 0.33 - fs * 0.056 };
   }
-  const h = Math.min(H * 0.42, room * 0.9, W * 0.26);
-  const fs = h * 0.66, gap = h * 0.15, sw = h * ASPECT, total = sw + gap + fs * 1.7;
-  const x0 = (W - total) / 2, mid = top + room / 2;
-  return { narrow, h, cx: x0 + sw / 2 - W / 2, cy: mid - H / 2, fs, wx: x0 + sw + gap, wy: mid - fs * 0.33 - fs * 0.056 };
+  // the S fills the room between the nav and the text, so it never runs under the links
+  const h = Math.min(room * 1.05, W * 0.7), sw = h * ASPECT;
+  const fs = Math.min((W * 0.62) / WORD_W, room * 0.95), mid = top + room / 2;
+  return { narrow, h, cx: W / 2 - sw * 0.34, cy: mid - H / 2, fs, wx: pad, wy: mid - fs * 0.33 - fs * 0.056 };
 }
 
 const ANG = (-24.2 * Math.PI) / 180;
@@ -125,8 +124,9 @@ void main(){
   gl_FragColor = vec4(col * a, a);
 }`;
 
-// Glass: each ripple is a raised ring. The scene refracts through its slope, each colour
-// channel bends a little differently (fringing), and the rim catches light from the upper left.
+// Glass: each ripple is a raised ring. The S refracts through its slope, each colour channel
+// bends a little differently (fringing), the rim catches light from the upper left and the far
+// side casts a shadow onto the spectrum behind.
 const POST_VS = `
 attribute vec2 aQuad;
 void main(){ gl_Position = vec4(aQuad, 0.0, 1.0); }`;
@@ -137,7 +137,7 @@ precision highp float;
 precision mediump float;
 #endif
 uniform sampler2D uTex; uniform vec2 uRes; uniform float uDpr; uniform vec4 uG[4];
-uniform vec3 uRim; uniform vec3 uFast; uniform float uVig;
+uniform vec3 uRim; uniform vec3 uFast;
 void main(){
   vec2 fc = gl_FragCoord.xy;
   vec2 off = vec2(0.0); vec3 rim = vec3(0.0); float shade = 0.0; float body = 0.0;
@@ -160,41 +160,37 @@ void main(){
     }
   }
   vec2 px = 1.0 / uRes;
-  vec3 col;
-  col.r = texture2D(uTex, (fc + off * 1.3) * px).r;
-  col.g = texture2D(uTex, (fc + off) * px).g;
-  col.b = texture2D(uTex, (fc + off * 0.7) * px).b;
-  // a deep shadow on the side facing away from the light and a bright rim on the lit side
-  col *= 1.0 - min(shade, 1.0) * 0.62;
+  // the scene is premultiplied over transparent, so the spectrum behind shows through
+  vec4 cr = texture2D(uTex, (fc + off * 1.3) * px);
+  vec4 cg = texture2D(uTex, (fc + off) * px);
+  vec4 cb = texture2D(uTex, (fc + off * 0.7) * px);
+  vec3 col = vec3(cr.r, cg.g, cb.b);
+  float a = max(cg.a, max(cr.a, cb.a));
+  // a deep shadow on the side facing away from the light, darkening whatever is behind
+  float sh = min(shade, 1.0) * 0.62;
+  col *= 1.0 - sh;
+  a += sh * (1.0 - a);
+  // and a bright rim on the lit side
   rim = min(rim, vec3(1.0));
-  col += rim * rim * uRim * 0.95 + rim * uRim * 0.16;
-  col += uFast * min(body, 1.0) * 0.012;
-  vec2 uv = fc * px - 0.5;
-  col *= 1.0 - dot(uv, uv) * uVig;
-  // dither so the dark vignette doesn't band
-  col += (fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
-  gl_FragColor = vec4(col, 1.0);
+  vec3 lit = rim * rim * uRim * 0.95 + rim * uRim * 0.16 + uFast * min(body, 1.0) * 0.012;
+  col += lit;
+  a = min(1.0, max(a, max(lit.r, max(lit.g, lit.b))));
+  gl_FragColor = vec4(min(col, vec3(a)), a);
 }`;
 
 type Pulse = { x: number; y: number; t: number; a: number; glass: number };
 type V3 = [number, number, number];
 
-// colours for each theme; bg matches the hero panel (--s-panel)
-const PALETTES = {
-  dark: {
-    bg: [0.133, 0.137, 0.122] as V3, ink: [0.85, 0.95, 0.55] as V3, amb: [0.45, 0.48, 0.43] as V3, ambA: 0.16,
-    lineA: [0.42, 0.46, 0.41] as V3, lineB: [0.7, 0.84, 0.3] as V3, lineGain: 1, fast: [0.47, 0.81, 0.83] as V3,
-    rim: [0.62, 0.66, 0.58] as V3, vig: 0.55,
-  },
-  light: {
-    bg: [0.894, 0.898, 0.878] as V3, ink: [0.29, 0.4, 0.05] as V3, amb: [0.38, 0.4, 0.36] as V3, ambA: 0.24,
-    lineA: [0.5, 0.52, 0.47] as V3, lineB: [0.33, 0.45, 0.07] as V3, lineGain: 1.5, fast: [0.16, 0.47, 0.5] as V3,
-    rim: [0.3, 0.3, 0.28] as V3, vig: 0.14,
-  },
+// one palette in both themes, since the spectrum behind the S is the same in both: dark ink
+// like the type, and white for motion and the glass rims
+const PAL = {
+  ink: [0.063, 0.067, 0.055] as V3, amb: [0.12, 0.14, 0.15] as V3, ambA: 0.22,
+  lineA: [0.1, 0.11, 0.12] as V3, lineB: [0.063, 0.067, 0.055] as V3, lineGain: 1.6, fast: [0.97, 0.99, 0.92] as V3,
+  rim: [0.98, 1, 0.94] as V3,
 };
 
 export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll: () => HeroScroll, { plane, area }: HeroOpts) {
-  const ctx = cv.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: true, powerPreference: "high-performance" });
+  const ctx = cv.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: "high-performance" });
   if (!ctx) return () => {};
   const gl: WebGLRenderingContext = ctx;
   const uintExt = gl.getExtension("OES_element_index_uint");
@@ -250,33 +246,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const ptr = { sx: 0, sy: 0, x: 0, y: 0, fx: 0, fy: 0, vx: 0, vy: 0, pvx: 0, pvy: 0, inside: false, last: 0, amt: 0, act: 0 };
   const pulses: Pulse[] = [];
-  // the canvas eases between themes over about the same time as the page's colours
-  type Pal = typeof PALETTES.dark;
-  const copy = (p: Pal): Pal => JSON.parse(JSON.stringify(p));
-  let goal = PALETTES[getTheme()];
-  const pal = copy(goal);
-  const stepPal = () => {
-    let moving = false;
-    for (const k of Object.keys(pal) as (keyof Pal)[]) {
-      const g = goal[k], c = pal[k];
-      if (Array.isArray(c)) {
-        (c as V3).forEach((v, i) => {
-          const d = (g as V3)[i] - v;
-          if (Math.abs(d) > 0.002) {
-            (c as V3)[i] = v + d * 0.07;
-            moving = true;
-          } else (c as V3)[i] = (g as V3)[i];
-        });
-      } else {
-        const d = (g as number) - (c as number);
-        if (Math.abs(d) > 0.002) {
-          (pal[k] as number) = (c as number) + d * 0.07;
-          moving = true;
-        } else (pal[k] as number) = g as number;
-      }
-    }
-    return moving;
-  };
+  const pal = PAL;
   let lineCount = 0, lineBig = false;
   let DN = 0, hx: Float32Array, hy: Float32Array, px: Float32Array, py: Float32Array, dvx: Float32Array, dvy: Float32Array;
   let dkind: Float32Array, dPos: Float32Array, dSpd: Float32Array;
@@ -303,8 +273,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
       plane.style.setProperty("--wx", L.wx.toFixed(1) + "px");
       plane.style.setProperty("--wy", L.wy.toFixed(1) + "px");
       plane.style.setProperty("--wfs", L.fs.toFixed(1) + "px");
-      plane.classList.toggle("is-stacked", L.narrow);
-      plane.dispatchEvent(new Event("s-layout"));
+            plane.dispatchEvent(new Event("s-layout"));
     }
     const mc = document.createElement("canvas");
     mc.width = W;
@@ -537,7 +506,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
     gl.viewport(0, 0, cv.width, cv.height);
-    gl.clearColor(pal.bg[0], pal.bg[1], pal.bg[2], 1);
+    gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -587,7 +556,6 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     gl.uniform4fv(uni(postP, "uG"), ripGlass);
     gl.uniform3fv(uni(postP, "uRim"), pal.rim);
     gl.uniform3fv(uni(postP, "uFast"), pal.fast);
-    gl.uniform1f(uni(postP, "uVig"), pal.vig);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     unbind();
   }
@@ -614,7 +582,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     S.phi = 0.17 * pose.tx;
     S.spread = 1 + (1 - ei) * 1.6;
     S.scale = (0.92 + 0.08 * ei) * (1 - 0.16 * e);
-    S.rise = -0.06 * S.H * e;
+    S.rise = -0.14 * S.H * e;
     const key = [S.theta, S.phi, S.spread, S.scale, S.rise].map((v) => v.toFixed(4)).join();
     if (key === pose.key) return false;
     pose.key = key;
@@ -631,7 +599,6 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     if (Math.abs(sc.cover - prog) < 1e-4) prog = sc.cover;
     if (!visible || sc.cover >= 0.999) return;
     const posed = setPose(now);
-    const recolour = stepPal();
 
     for (let p = pulses.length - 1; p >= 0; p--) if (now - pulses[p].t > LIFE) pulses.splice(p, 1);
     const pr: Live[] = pulses.map((p) => {
@@ -664,7 +631,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
       awake = mv > 0.03 || act || pr.length ? 30 : awake - 1;
       dustMoving = true;
     }
-    if (needDraw || dustMoving || ptrMoving || posed || recolour || pr.length || audio.level > 0.003) {
+    if (needDraw || dustMoving || ptrMoving || posed || pr.length || audio.level > 0.003) {
       draw(pr);
       needDraw = false;
     }
@@ -685,10 +652,6 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   // fonts change the hero text's height, and so the room left for the lockup
   document.fonts?.ready.then(refit);
   const offReady = whenReady(() => (pose.born = performance.now()));
-  const offTheme = onTheme(() => {
-    goal = PALETTES[getTheme()];
-    needDraw = true;
-  });
   let rt = 0;
   const ro = new ResizeObserver(() => {
     clearTimeout(rt);
@@ -706,7 +669,6 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     offFrame();
     offKick();
     offReady();
-    offTheme();
     ro.disconnect();
     io.disconnect();
     clearTimeout(rt);

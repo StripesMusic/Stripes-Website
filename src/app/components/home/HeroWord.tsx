@@ -1,4 +1,4 @@
-// STRIPES beside the S, on the same tilting plane (the engine places it and turns the plane).
+// "Stripes" set big over the S, on the same tilting plane (the engine places it and turns the plane).
 // Letters near the cursor get heavier, a fast swipe slices them, kicks bounce and slice them, they rise
 // in once the page is revealed, and the whole word gets bolder as you scroll on.
 import { useEffect, useRef, type RefObject } from "react";
@@ -7,9 +7,9 @@ import { onFrame } from "../../lib/ticker";
 import { whenReady } from "../../lib/intro";
 import type { HeroScroll } from "./heroEngine";
 
-const WORD = "STRIPES".split("");
+const WORD = "Stripes".split("");
 const SLICES = 9;
-const REST = 300;
+const REST = 200;
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
 
@@ -22,7 +22,7 @@ export function HeroWord({ area, getScroll }: { area: RefObject<HTMLElement | nu
     const L = Array.from(word.querySelectorAll<HTMLSpanElement>(".s-ltr")).map((el) => ({
       el,
       sl: Array.from(el.querySelectorAll<HTMLSpanElement>(".s-sl")),
-      w: REST, wd: 75, cx: 0, y: 0, vy: 0, kick: 0, delay: 0, t: "", fv: "", hi: false, cut: false,
+      w: REST, wd: 80, cx: 0, y: 0, vy: 0, kick: 0, delay: 0, t: "", fv: "", hi: false, cut: false,
       off: new Float32Array(SLICES),
       burst: new Float32Array(SLICES),
     }));
@@ -113,11 +113,11 @@ export function HeroWord({ area, getScroll }: { area: RefObject<HTMLElement | nu
         const dx = act ? (p.x - l.cx) / Math.max(innerWidth * 0.07, 50) : 99;
         const k = Math.max(Math.exp(-dx * dx) * near, snap, beat * 0.75);
         l.w += (base + (800 - base) * k - l.w) * 0.16;
-        l.wd += (75 + 12 * k - l.wd) * 0.16;
+        l.wd += (80 + 12 * k - l.wd) * 0.16;
         const fv = `'wght' ${l.w.toFixed(0)}, 'wdth' ${l.wd.toFixed(1)}, 'opsz' 96`;
         if (fv !== l.fv) l.el.style.fontVariationSettings = l.fv = fv;
         const hi = beat > 0.35 && k > 0.6;
-        if (hi !== l.hi) l.el.style.color = (l.hi = hi) ? "var(--s-hi)" : "";
+        if (hi !== l.hi) l.el.style.color = (l.hi = hi) ? "var(--s-word-hi)" : "";
         if (l.delay > 0) l.delay--;
         else if (l.kick) {
           l.vy -= l.kick;

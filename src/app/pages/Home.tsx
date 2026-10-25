@@ -1,11 +1,12 @@
-// Homepage. The hero is the S and STRIPES on one tilting 3D plane; the panels below slide up
-// over it like cards, and the page's colours change as each one reaches the middle of the screen.
+// Homepage. The hero is a depth stack: the music-reactive spectrum at the back, the S and
+// "Stripes" on one tilting 3D plane in front of it, and the text and links on top. As the first
+// panel slides over, each layer rises at its own speed, and the page's colours change as each
+// panel reaches the middle of the screen.
 import { useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { createHero, type HeroScroll } from "../components/home/heroEngine";
 import { HeroWord } from "../components/home/HeroWord";
-import { HeroMontage } from "../components/home/HeroMontage";
-import { Spectrum } from "../components/home/Spectrum";
+import { SpectrumBg } from "../components/home/SpectrumBg";
 import { ReleaseList } from "../components/home/ReleaseList";
 import { Packs } from "../components/home/Packs";
 import { NowPlaying } from "../components/home/NowPlaying";
@@ -15,6 +16,7 @@ import { Photo } from "../components/Photo";
 import { ep, clipUrl } from "../data/releases";
 import { drumCovers, thumbUrl } from "../data/drums";
 import { photos } from "../data/images";
+import { socials } from "../data/socials";
 import { audio, type Track } from "../lib/audio";
 import { useAudio } from "../lib/useAudio";
 import { onFrame } from "../lib/ticker";
@@ -22,13 +24,6 @@ import { onFrame } from "../lib/ticker";
 const epTracks: Track[] = ep.tracks.map((t) => ({ id: `${ep.link}#${t.n}`, title: t.title, sub: t.artists, url: clipUrl(t.preview), href: ep.link }));
 const HERO = epTracks[0];
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-
-const index = [
-  { n: "01", name: "Music", id: "music" },
-  { n: "02", name: "Designs", id: "designs" },
-  { n: "03", name: "Drums", id: "drums" },
-  { n: "04", name: "About", id: "about" },
-];
 
 const tools = [
   { name: "GD Auto Export", path: "/tools/gd-auto-export", text: "Turn Google Drive links into direct downloads" },
@@ -45,6 +40,7 @@ export function Home() {
   const planeRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);
   const uiRef = useRef<HTMLDivElement>(null);
+  const plxRef = useRef<HTMLElement>(null);
   const scroll = useRef<HeroScroll>({ cover: 0 });
   const dims = useRef({ vh: 800, peek: 96 });
   const getScroll = useCallback(() => scroll.current, []);
@@ -88,6 +84,23 @@ export function Home() {
     });
   }, []);
 
+  // The About photo is a window: the frame scrolls with the page while the picture inside drifts
+  // the other way, about 11% of the frame either side of centre as it crosses the screen.
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const fig = plxRef.current!;
+    let last = "";
+    return onFrame(() => {
+      const img = fig.querySelector("img");
+      if (!img) return;
+      const r = fig.getBoundingClientRect(), ih = innerHeight;
+      if (r.bottom < -100 || r.top > ih + 100) return;
+      const n = Math.max(-1, Math.min(1, (r.top + r.height / 2 - ih / 2) / (ih / 2 + r.height / 2)));
+      const t = `translate3d(0, ${(n * 11).toFixed(2)}%, 0)`;
+      if (t !== last) img.style.transform = last = t;
+    });
+  }, []);
+
   useEffect(() => {
     const ui = uiRef.current!;
     const area = () => {
@@ -103,12 +116,12 @@ export function Home() {
 
   return (
     <div className="s-home" ref={rootRef}>
-      <section className="s-intro" ref={introRef} data-scene="hero">
+      <section className="s-intro" ref={introRef} data-scene="spectrum">
         <div className="s-stage" ref={stageRef}>
           <div className="s-stage-inner" ref={innerRef}>
-            <canvas ref={canvasRef} className="s-gl" aria-hidden="true" />
-            <HeroMontage getScroll={getScroll} />
+            <SpectrumBg getScroll={getScroll} />
             <div className="s-grain" aria-hidden="true" />
+            <canvas ref={canvasRef} className="s-gl" aria-hidden="true" />
             <div className="s-plane" ref={planeRef} aria-hidden="true">
               <HeroWord area={stageRef} getScroll={getScroll} />
             </div>
@@ -126,14 +139,15 @@ export function Home() {
                   </Link>
                 </div>
               </div>
-              <nav className="s-hero-index" aria-label="On this page">
-                {index.map((x) => (
-                  <a key={x.id} href={`#${x.id}`}>
-                    <span className="s-num">{x.n}</span>
-                    {x.name}
-                  </a>
+              <ul className="s-hero-links" aria-label="Listen and follow">
+                {socials.map((l) => (
+                  <li key={l.name}>
+                    <a className="s-btn" href={l.href} target="_blank" rel="noopener noreferrer">
+                      {l.name} ↗
+                    </a>
+                  </li>
                 ))}
-              </nav>
+              </ul>
             </div>
             <div className="s-dim" ref={dimRef} aria-hidden="true" />
           </div>
@@ -247,8 +261,6 @@ export function Home() {
           </div>
         </section>
 
-        <Spectrum track={HERO} />
-
         <section className="s-panel s-pad s-toolsp" data-scene="hero" aria-label="Tools">
           <div className="s-sec-head">
             <span className="s-mono">Tools</span>
@@ -303,7 +315,7 @@ export function Home() {
               </Link>
             </div>
           </div>
-          <figure className="s-about-photo">
+          <figure className="s-about-photo s-plx" ref={plxRef}>
             <Photo p={photos.portrait} ratio="4 / 5" sizes="(max-width: 860px) 92vw, 46vw" label="Portrait" />
           </figure>
         </section>

@@ -632,11 +632,31 @@ html.s-locked {
   touch-action: pan-y;
 }
 .s-stage-inner {
+  /* the hero keeps its own colours in both themes: dark type on the bright spectrum */
+  --s-fg: #10110e;
+  --s-muted: #1d2029;
+  --s-accent: #10110e;
+  --s-accent-ink: #d9f08a;
+  --s-line: rgba(16, 17, 14, 0.2);
+  --s-line-strong: rgba(16, 17, 14, 0.5);
+  --s-word-hi: #f6f9ee;
   position: absolute;
   inset: 0;
   transform-origin: 50% 40%;
   border-radius: var(--s-radius);
   overflow: hidden;
+  color: var(--s-fg);
+  /* shows if WebGL is off */
+  background: linear-gradient(100deg, #7087c7, #78cfd3 45%, #b9e14d 85%, #e8f5bd);
+}
+.s-stage-inner .s-grain {
+  opacity: 0.14;
+}
+@media (hover: hover) and (pointer: fine) {
+  .s-stage-inner .s-btn:hover {
+    background: var(--s-fg);
+    color: #d9f08a;
+  }
 }
 .s-gl {
   position: absolute;
@@ -701,77 +721,7 @@ html.s-locked {
   mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
 }
 
-/* hero montage: three feathered layers tinted olive and blended into the canvas, so the S sits
-   in them. On dark they only add light (screen); on light they only add shade (multiply). */
-.s-montage {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.s-montage .s-fade {
-  filter: grayscale(1) sepia(0.4) hue-rotate(28deg) saturate(1.5) contrast(1.1);
-}
-.s-mt {
-  --fade: 0.16;
-  position: absolute;
-  opacity: 0;
-  mix-blend-mode: screen;
-  -webkit-mask-image: radial-gradient(closest-side, #000 25%, transparent);
-  mask-image: radial-gradient(closest-side, #000 25%, transparent);
-  transition: opacity 2.6s cubic-bezier(0.45, 0, 0.2, 1);
-  will-change: transform;
-}
-:root[data-theme="light"] .s-mt {
-  --fade: 0.2;
-  mix-blend-mode: multiply;
-}
-.s-montage.is-in .s-mt {
-  opacity: var(--fade);
-}
-.s-mt-1 {
-  left: -6%;
-  top: 2%;
-  width: 42%;
-  height: 96%;
-  transition-delay: 0.5s;
-}
-.s-mt-2 {
-  right: -6%;
-  top: -6%;
-  width: 40%;
-  height: 80%;
-  transition-delay: 0.8s;
-}
-.s-mt-3 {
-  left: 30%;
-  bottom: -14%;
-  width: 46%;
-  height: 58%;
-  transition-delay: 1.1s;
-}
-@media (max-width: 700px) {
-  .s-mt-1 {
-    left: -18%;
-    top: 4%;
-    width: 86%;
-    height: 54%;
-  }
-  .s-mt-2 {
-    left: auto;
-    right: -22%;
-    top: 30%;
-    width: 84%;
-    height: 50%;
-  }
-  .s-mt-3 {
-    left: -10%;
-    bottom: -6%;
-    width: 90%;
-    height: 40%;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .s-mt,
   .s-fade {
     transition-duration: 0.4s;
     transition-delay: 0s;
@@ -817,53 +767,33 @@ html.s-locked {
   color: var(--s-fg);
   text-wrap: balance;
 }
-.s-hero-index {
+.s-hero-links {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-.s-hero-index a {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 2px 0;
-  font: 500 condensed 12.5px/1.4 var(--s-label);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--s-muted);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-.s-hero-index .s-num {
-  font-size: 12px;
-  color: var(--s-hi);
-}
-@media (hover: hover) and (pointer: fine) {
-  .s-hero-index a:hover {
-    color: var(--s-fg);
-  }
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  max-width: 560px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-/* STRIPES beside the S. The engine sets where (--wx, --wy) and how big (--wfs). */
+/* "Stripes" over the S. The engine sets where (--wx, --wy) and how big (--wfs). */
 .s-word {
   position: absolute;
   left: var(--wx, 50%);
   top: var(--wy, 40%);
   font-size: var(--wfs, 120px);
 }
-.is-stacked .s-word {
-  transform: translateX(-50%);
-}
 .s-word p {
   margin: 0;
   display: flex;
   white-space: nowrap;
   font-family: var(--s-display);
-  font-weight: 300;
+  font-weight: 200;
   font-size: 1em;
   line-height: 0.78;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.05em;
   color: var(--s-fg);
   user-select: none;
 }
@@ -871,7 +801,7 @@ html.s-locked {
   position: relative;
   display: inline-block;
   transform-origin: 50% 100%;
-  font-variation-settings: "wght" 300, "wdth" 75, "opsz" 96;
+  font-variation-settings: "wght" 200, "wdth" 80, "opsz" 96;
   will-change: transform;
 }
 /* the whole letter shows at rest; the slices only take over while they're cut apart,
@@ -894,10 +824,8 @@ html.s-locked {
     align-items: stretch;
     gap: 18px;
   }
-  .s-hero-index {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 2px 14px;
+  .s-hero-links {
+    justify-content: flex-start;
   }
   .s-lede {
     font-size: 17px;
@@ -1099,89 +1027,17 @@ html.s-locked {
   padding-bottom: 40px;
 }
 
-/* spectrum: big type over a colour field that follows the music */
-.s-spec {
-  /* its own colours, so the type stays dark on the bright field while the page's scene changes */
-  --s-fg: #10110e;
-  --s-muted: #1d2029;
-  --s-accent: #10110e;
-  --s-accent-ink: #d9f08a;
-  --s-line: rgba(16, 17, 14, 0.2);
-  --s-line-strong: rgba(16, 17, 14, 0.5);
-  isolation: isolate;
-  min-height: min(100svh, 980px);
-  display: flex;
-  background: linear-gradient(100deg, #7087c7, #78cfd3 45%, #b9e14d 85%, #e8f5bd);
-}
+/* the hero's spectrum: rendered a little taller than the stage so it can rise on scroll */
 .s-spec-gl {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  inset: 0 0 -8% 0;
   width: 100%;
-  height: 100%;
+  height: 108%;
   display: block;
+  will-change: transform;
 }
-.s-spec.is-flat .s-spec-gl {
+.s-spec-gl.is-flat {
   display: none;
-}
-.s-spec .s-grain {
-  z-index: -1;
-  opacity: 0.14;
-}
-.s-spec-in {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding-top: 32px;
-  padding-bottom: 32px;
-}
-.s-spec-title {
-  margin: auto 0;
-  padding: 48px 0;
-  display: flex;
-  flex-direction: column;
-  font-family: var(--s-display);
-  font-size: clamp(88px, 21vw, 340px);
-  font-weight: 200;
-  font-variation-settings: "wdth" 80, "opsz" 96;
-  line-height: 0.82;
-  letter-spacing: -0.05em;
-  color: var(--s-fg);
-}
-.s-spec-title span:last-child {
-  padding-left: 0.62em;
-}
-.s-spec-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px 32px;
-}
-.s-spec-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-@media (hover: hover) and (pointer: fine) {
-  .s-spec .s-btn:hover {
-    background: var(--s-fg);
-    color: #d9f08a;
-  }
-}
-@media (max-width: 700px) {
-  .s-spec {
-    min-height: 88svh;
-  }
-  .s-spec-title {
-    font-size: 31vw;
-  }
-  .s-spec-title span:last-child {
-    padding-left: 0.3em;
-  }
 }
 
 /* releases */
@@ -1737,6 +1593,12 @@ html.s-locked {
 }
 .s-about-photo .s-slot {
   border-radius: 8px;
+}
+/* a parallax window: the picture is taller than its frame and drifts inside it */
+.s-plx .s-slot img {
+  inset: -14% 0;
+  height: 128%;
+  will-change: transform;
 }
 .s-facts {
   width: 100%;

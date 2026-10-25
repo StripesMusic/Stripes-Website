@@ -1,13 +1,11 @@
-// "Play it loud": a full-bleed colour spectrum, after Ragged Edge, that follows the music. It
-// drifts on its own; when anything plays, the sub bass pumps it (zoom, flow and the bright
+// The hero's back layer: a full-bleed colour spectrum, after Ragged Edge, that follows the music.
+// It drifts on its own; when anything plays, the sub bass pumps it (zoom, flow and the bright
 // core, sidechain dips included), kicks shove it, the mids slide the colours towards lime and
-// the highs add shimmer.
+// the highs add shimmer. On scroll it rises slower than everything in front of it.
 import { useEffect, useRef } from "react";
-import { audio, type Track } from "../../lib/audio";
-import { useAudio } from "../../lib/useAudio";
+import { audio } from "../../lib/audio";
 import { onFrame } from "../../lib/ticker";
-import { socials } from "../../data/socials";
-import { Eq } from "./Eq";
+import type { HeroScroll } from "./heroEngine";
 
 const VERT = `attribute vec2 p; varying vec2 v; void main() { v = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }`;
 const FRAG = `
@@ -94,99 +92,65 @@ function startGL(cv: HTMLCanvasElement) {
   };
 }
 
-export function Spectrum({ track }: { track: Track }) {
-  const secRef = useRef<HTMLElement>(null);
+export function SpectrumBg({ getScroll }: { getScroll: () => HeroScroll }) {
   const cvRef = useRef<HTMLCanvasElement>(null);
-  const s = useAudio();
-  const on = s.playing && s.track?.id === track.id;
 
   useEffect(() => {
-    const sec = secRef.current!, cv = cvRef.current!;
+    const cv = cvRef.current!, host = cv.parentElement!;
     let g: ReturnType<typeof startGL>;
     try {
       g = startGL(cv);
     } catch (err) {
       console.warn("Spectrum unavailable", err);
-      sec.classList.add("is-flat");
+      cv.classList.add("is-flat");
       return;
     }
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     // it's soft anyway, so it renders at half size or less and the browser scales it up
     const size = () => {
-      const r = sec.getBoundingClientRect(), k = Math.min(0.5, 900 / Math.max(1, r.width));
+      const r = cv.getBoundingClientRect(), k = Math.min(0.5, 900 / Math.max(1, r.width));
       g.size(Math.max(2, Math.round(r.width * k)), Math.max(2, Math.round(r.height * k)));
       if (reduce) g.draw(12, 0, 0, 0, 0);
     };
     size();
     const ro = new ResizeObserver(size);
-    ro.observe(sec);
+    ro.observe(host);
     if (reduce)
       return () => {
         ro.disconnect();
         g.dispose();
       };
 
-    let t = 12, last = 0, push = 0, visible = false, stop: (() => void) | null = null;
+    let t = 12, last = 0, push = 0, lift = "", visible = true;
     const offKick = audio.onKick((k) => {
       push = Math.min(1.4, push + k * 0.9);
     });
-    const frame = (now: number) => {
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      last = 0;
+    });
+    io.observe(host);
+    const stop = onFrame((now) => {
+      const cover = getScroll().cover;
+      if (!visible || cover >= 0.999) return;
+      // the deepest layer: it only drifts up a little as the first panel slides over
+      const l = cover > 0 ? `translate3d(0, ${(-cover * 6).toFixed(2)}%, 0)` : "";
+      if (l !== lift) cv.style.transform = lift = l;
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
       last = now;
       const b = audio.bands;
       t += dt * (0.5 + b.low * 1.2 + push * 1.6);
       push *= Math.pow(0.04, dt);
       g.draw(t, b.low, b.mid, b.high, push);
-    };
-    const io = new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting;
-      if (visible && !stop) {
-        last = 0;
-        stop = onFrame(frame);
-      } else if (!visible && stop) {
-        stop();
-        stop = null;
-      }
     });
-    io.observe(sec);
     return () => {
       io.disconnect();
       ro.disconnect();
       offKick();
-      stop?.();
+      stop();
       g.dispose();
     };
-  }, []);
+  }, [getScroll]);
 
-  return (
-    <section className="s-panel s-spec" data-scene="spectrum" ref={secRef} aria-labelledby="spec-title">
-      <canvas ref={cvRef} className="s-spec-gl" aria-hidden="true" />
-      <div className="s-grain" aria-hidden="true" />
-      <div className="s-spec-in s-pad">
-        <div className="s-sec-head">
-          <span className="s-mono">Listen</span>
-          <button type="button" className="s-btn" aria-pressed={on} onClick={() => audio.toggle(track, { loop: true, demoFallback: true })}>
-            {on ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
-            {on ? "Stop" : `Play "${track.title}"`}
-          </button>
-        </div>
-        <h2 className="s-spec-title" id="spec-title">
-          <span>Play it</span>
-          <span>loud</span>
-        </h2>
-        <div className="s-spec-foot">
-          <p className="s-big">Follow along wherever you listen. The colours here follow the music.</p>
-          <ul className="s-spec-links">
-            {socials.map((l) => (
-              <li key={l.name}>
-                <a className="s-btn" href={l.href} target="_blank" rel="noopener noreferrer">
-                  {l.name} ↗
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </section>
-  );
+  return <canvas ref={cvRef} className="s-spec-gl" aria-hidden="true" />;
 }
