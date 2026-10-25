@@ -84,7 +84,7 @@ export const releases: Release[] = [
   {
     title: "Back To Me Edit",
     type: "Unofficial Edit",
-    date: "9 Jan 2026",
+    date: "09 Jan 2026",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/Back_To_Me_Artwork.jpg",
     link: "/link/backtome",
@@ -138,7 +138,7 @@ export const releases: Release[] = [
   {
     title: "Don't Kill My Vibe Remix",
     type: "Official Remix",
-    date: "3 Oct 2025",
+    date: "03 Oct 2025",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/Dont_Kill_My_Vibe_Remix_Artwork.jpg",
     link: "/link/dontkillmyviberemix",
@@ -220,7 +220,7 @@ export const releases: Release[] = [
   {
     title: "You & I",
     type: "Single",
-    date: "8 Jan 2025",
+    date: "08 Jan 2025",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/You%26I_Artwork.jpg",
     link: "/link/youandi",
@@ -252,7 +252,7 @@ export const releases: Release[] = [
   {
     title: "Always",
     type: "Single",
-    date: "5 Jul 2024",
+    date: "05 Jul 2024",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/Always_Artwork.jpg",
     link: "/link/always",
@@ -274,7 +274,7 @@ export const releases: Release[] = [
   {
     title: "Back In Time",
     type: "Single",
-    date: "7 Jun 2024",
+    date: "07 Jun 2024",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/Back_In_Time_Artwork.jpg",
     link: "/link/backintime",
@@ -346,7 +346,7 @@ export const releases: Release[] = [
   {
     title: "Sike Flip",
     type: "Unofficial Flip",
-    date: "5 Mar 2024",
+    date: "05 Mar 2024",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/Sike_Artwork.jpg",
     link: "/link/sikeflip",
@@ -378,7 +378,7 @@ export const releases: Release[] = [
   {
     title: "Send Me An Angel",
     type: "Single",
-    date: "5 Jan 2024",
+    date: "05 Jan 2024",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/Send_Me_An_Angel_Artwork.jpg",
     link: "/link/sendmeanangel",
@@ -387,7 +387,7 @@ export const releases: Release[] = [
   {
     title: "Boom",
     type: "Single",
-    date: "4 Aug 2023",
+    date: "04 Aug 2023",
     image:
       "https://assets.musicbystripes.com/releases%20cover%20arts/Boom_Artwork.jpg",
     link: "/link/boom",

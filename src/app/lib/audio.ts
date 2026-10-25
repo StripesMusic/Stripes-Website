@@ -2,22 +2,26 @@
 // that drives the S and the wordmark. One thing plays at a time.
 import { onFrame } from "./ticker";
 
-export type Track = { id: string; title: string; sub: string; url: string };
+export type Track = { id: string; title: string; sub: string; url: string; href?: string };
 export type AudioState = {
   track: Track | null;
   playing: boolean;
   demo: boolean; // true while the stand-in synth beat plays because a clip is missing
+  unavailable: boolean; // the last requested clip couldn't be loaded
   armed: boolean; // the visitor has clicked something, so browsers allow sound
 };
-type PlayOpts = { loop?: boolean; demoFallback?: boolean };
+type PlayOpts = { loop?: boolean; demoFallback?: boolean; quiet?: boolean }; // quiet: no "unavailable" notice (hover previews)
 type Current = { el: HTMLAudioElement; gain: GainNode | null; track: Track; opts: PlayOpts; plain: boolean };
 
 const SPB = 60 / 128;
 const CHORDS = [[57, 60, 64], [53, 57, 60], [60, 64, 67], [55, 59, 62]];
 const hz = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
+// The stand-in beat only plays on preview builds, never on the live site.
+const demoAllowed = () => /(^|\.)pages\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 
 class AudioBus {
-  state: AudioState = { track: null, playing: false, demo: false, armed: false };
+  state: AudioState = { track: null, playing: false, demo: false, unavailable: false, armed: false };
+  private unavailableTimer = 0;
   level = 0;
   private subs = new Set<() => void>();
   private kickFns = new Set<(strength: number) => void>();
@@ -86,10 +90,7 @@ class AudioBus {
     this.arm();
     if (!this.ac) return;
     this.stop(120);
-    if (this.missing.has(track.url)) {
-      if (opts.demoFallback) this.startDemo(track);
-      return;
-    }
+    if (this.missing.has(track.url)) return this.fail(track, opts);
     this.load(track, opts, false);
   }
 
@@ -116,8 +117,7 @@ class AudioBus {
       this.cur = null;
       if (!plain) return this.load(track, opts, true);
       this.missing.add(track.url);
-      if (opts.demoFallback) this.startDemo(track);
-      else this.set({ playing: false, track: null });
+      this.fail(track, opts);
     });
     el.addEventListener("ended", () => {
       if (this.cur === cur) this.stop(0);
@@ -129,8 +129,16 @@ class AudioBus {
       .catch((err: DOMException) => {
         if (this.cur === cur && err.name === "NotAllowedError") this.stop(0);
       });
-    this.set({ track, playing: true, demo: false });
+    this.set({ track, playing: true, demo: false, unavailable: false });
     this.watch();
+  }
+
+  private fail(track: Track, opts: PlayOpts) {
+    if (opts.demoFallback && demoAllowed()) return this.startDemo(track);
+    if (opts.quiet) return this.set({ playing: false, track: null });
+    clearTimeout(this.unavailableTimer);
+    this.set({ track, playing: false, demo: false, unavailable: true });
+    this.unavailableTimer = window.setTimeout(() => this.set({ unavailable: false }), 4000);
   }
 
   stop(fadeMs = 160) {
@@ -178,7 +186,7 @@ class AudioBus {
     schedule();
     syn.timer = window.setInterval(schedule, 25);
     this.synth = syn;
-    this.set({ track, playing: true, demo: true });
+    this.set({ track, playing: true, demo: true, unavailable: false });
     this.watch();
   }
   private kick(t: number, out: AudioNode) {

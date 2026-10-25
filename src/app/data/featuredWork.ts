@@ -32,6 +32,15 @@ export const featuredWork: Work[] = [
     tools: ["Photoshop"],
   },
   {
+    title: "TMLS046",
+    release: "CHRSTN, Auryn - Tonight",
+    client: "Timeless",
+    date: "Sep 2026",
+    image: base + "TMLS046.jpg",
+    details: "Dark and sparkly, with an aurora-lights theme.",
+    tools: ["Photoshop"],
+  },
+  {
     title: "Through Hell",
     release: "M1CK3Y, Illusionz, M4R1US BP - Through Hell",
     client: "Stardust Records",
@@ -60,18 +69,5 @@ export const featuredWork: Work[] = [
   },
 ];
 
-// What a full single pack includes, from the deliverables list Stripes sends clients.
-export const packContents = [
-  "Cover art 3000²",
-  "Blank square BG",
-  "SoundCloud banner",
-  "YouTube thumbnail",
-  "Coming soon flyer",
-  "Out now flyer",
-  "Landscape + portrait BGs",
-  "Looping BG animation",
-  "Spotify Canvas",
-  "Coming soon reel",
-  "Out now reel",
-  "Lyric video",
-];
+// The headline items of a full single pack, from the deliverables list Stripes sends clients.
+export const packContents = ["Cover 3000²", "Spotify Canvas", "YouTube thumbnail", "Flyers", "Reels", "Lyric video"];

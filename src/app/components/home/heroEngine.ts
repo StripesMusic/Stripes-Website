@@ -188,7 +188,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   const tex = gl.createTexture()!;
   const fbo = gl.createFramebuffer()!;
 
-  const S = { W: 0, H: 0, DPR: 1, cx: 0, cy: 0, theta: 0.9, rise: 0, scale: 0.86, D: 1400, mask: new Uint8ClampedArray(0) };
+  const S = { W: 0, H: 0, DPR: 1, cx: 0, cy: 0, theta: 0.8, rise: 0, scale: 0.86, D: 1400, mask: new Uint8ClampedArray(0) };
   const ptr = { sx: 0, sy: 0, x: 0, y: 0, fx: 0, fy: 0, vx: 0, vy: 0, pvx: 0, pvy: 0, inside: false, last: 0, amt: 0, act: 0 };
   const pulses: Pulse[] = [];
   let lineCount = 0, lineBig = false;
@@ -437,7 +437,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
     gl.viewport(0, 0, cv.width, cv.height);
-    gl.clearColor(0.051, 0.059, 0.043, 1);
+    gl.clearColor(0.133, 0.137, 0.122, 1); // --s-bg #22231f
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -486,8 +486,8 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     if (Math.abs(sc.reveal - prog) < 1e-4) prog = sc.reveal;
     if (!visible || sc.cover >= 0.999) return;
     const e = ease(prog);
-    S.theta = (1 - e) * 0.9;
-    S.rise = (1 - e) * S.H * 0.32;
+    S.theta = (1 - e) * 0.8;
+    S.rise = (1 - e) * S.H * 0.24;
     S.scale = 0.86 + 0.14 * e;
 
     for (let p = pulses.length - 1; p >= 0; p--) if (now - pulses[p].t > LIFE) pulses.splice(p, 1);

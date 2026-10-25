@@ -102,8 +102,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {!isLinkPage && (
         <div id="s-menu" className={"s-menu" + (menuOpen ? " open" : "")} aria-hidden={!menuOpen}>
           <nav className="s-pad" aria-label="Mobile">
-            {[{ name: "Home", path: "/" }, ...navLinks, { name: "Contact", path: "/contact" }].map((l, i) => (
-              <Link key={l.path} to={l.path} tabIndex={menuOpen ? 0 : -1} style={{ transitionDelay: menuOpen ? `${60 + i * 35}ms` : "0ms" }}>
+            {[{ name: "Home", path: "/" }, ...navLinks, { name: "Contact", path: "/contact" }].map((l) => (
+              <Link key={l.path} to={l.path} tabIndex={menuOpen ? 0 : -1} aria-current={isActive(l.path) ? "page" : undefined}>
                 {l.name}
               </Link>
             ))}

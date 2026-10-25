@@ -8,7 +8,7 @@ import { useAudio } from "../../lib/useAudio";
 import { Eq } from "./Eq";
 
 const credits = (r: Release) => (r.collaborators.length ? "with " + r.collaborators.map((c) => c.name).join(", ") : "Stripes");
-export const trackFor = (r: Release): Track => ({ id: r.link, title: r.title, sub: credits(r), url: previewUrl(r) });
+export const trackFor = (r: Release): Track => ({ id: r.link, title: r.title, sub: credits(r), url: previewUrl(r), href: r.link });
 
 export function ReleaseList({ count = 8 }: { count?: number }) {
   const list = releases.slice(0, count);
@@ -20,6 +20,13 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
   const fine = typeof matchMedia !== "undefined" && matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   useEffect(() => () => cancelAnimationFrame(pos.current.raf), []);
+  // Rows slide under a still cursor while scrolling, so the floating cover hides until the pointer moves.
+  useEffect(() => {
+    if (!fine) return;
+    const onScroll = () => floatRef.current?.classList.add("off");
+    addEventListener("scroll", onScroll, { passive: true });
+    return () => removeEventListener("scroll", onScroll);
+  }, [fine]);
 
   const follow = () => {
     const p = pos.current;
@@ -28,15 +35,23 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
     if (floatRef.current) floatRef.current.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`;
     p.raf = Math.abs(p.tx - p.x) + Math.abs(p.ty - p.y) > 0.3 ? requestAnimationFrame(follow) : 0;
   };
-  const onMove = (e: React.PointerEvent<HTMLOListElement>) => {
-    const r = e.currentTarget.getBoundingClientRect(), p = pos.current;
-    p.tx = e.clientX - r.left + 28;
-    p.ty = e.clientY - r.top - 90;
+  const aim = (x: number, y: number, list: Element, snap: boolean) => {
+    const r = list.getBoundingClientRect(), p = pos.current;
+    p.tx = x - r.left + 28;
+    p.ty = y - r.top - 90;
+    if (snap) {
+      p.x = p.tx;
+      p.y = p.ty;
+    }
+    floatRef.current?.classList.remove("off");
     if (!p.raf) p.raf = requestAnimationFrame(follow);
   };
-  const enter = (i: number) => {
+  const onMove = (e: React.PointerEvent<HTMLOListElement>) => aim(e.clientX, e.clientY, e.currentTarget, false);
+  const enter = (i: number, e: React.PointerEvent<HTMLLIElement>) => {
+    const fresh = hover < 0;
     setHover(i);
-    if (previews && fine) audio.play(trackFor(list[i]));
+    if (fine) aim(e.clientX, e.clientY, e.currentTarget.parentElement!, fresh);
+    if (previews && fine) audio.play(trackFor(list[i]), { quiet: true });
   };
   const leaveList = () => {
     setHover(-1);
@@ -52,7 +67,7 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
   return (
     <div className="s-rel">
       <div className="s-sec-head">
-        <span className="s-mono">(03) Releases</span>
+        <span className="s-mono">Releases</span>
         <div className="s-sec-actions">
           {fine && (
             <button type="button" className="s-btn s-btn-ghost" aria-pressed={previews} onClick={togglePreviews}>
@@ -69,7 +84,7 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
         {list.map((r, i) => {
           const playing = state.playing && state.track?.id === r.link;
           return (
-            <li key={r.link} className={"s-rel-row" + (hover === i ? " is-hover" : "") + (playing ? " is-playing" : "")} onPointerEnter={() => enter(i)}>
+            <li key={r.link} className={"s-rel-row" + (hover === i ? " is-hover" : "") + (playing ? " is-playing" : "")} onPointerEnter={(e) => enter(i, e)}>
               <span className="s-mono s-rel-n">{String(i + 1).padStart(2, "0")}</span>
               <img className="s-rel-thumb" src={r.image} alt="" loading="lazy" />
               <Link className="s-rel-main" to={r.link}>

@@ -92,18 +92,15 @@ export function Home() {
                 <div className="s-ctas">
                   <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
                     {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
-                    {heroPlaying ? "Stop" : "Play preview"}
+                    {heroPlaying ? "Stop" : `Play "${latest.title}"`}
                   </button>
-                  <Link className="s-btn" to="/music">
-                    Listen ↗
-                  </Link>
                   <Link className="s-btn s-btn-solid" to="/contact">
                     Commission art
                   </Link>
                 </div>
               </div>
               <span className="s-mono s-hint" ref={hintRef}>
-                Move · click · scroll ↓
+                Scroll ↓
               </span>
             </div>
             <div className="s-dim" ref={dimRef} aria-hidden="true" />
@@ -114,7 +111,7 @@ export function Home() {
       <div className="s-sheet" ref={sheetRef}>
         <section className="s-panel s-first" aria-label="Latest">
           <div className="s-lip s-pad">
-            <span className="s-mono s-lip-label">(01) Out now</span>
+            <span className="s-mono s-lip-label">Out now</span>
             <Link to={latest.link} className="s-lip-release">
               <img src={latest.image} alt="" />
               <span>
@@ -129,7 +126,7 @@ export function Home() {
                 {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
                 {heroPlaying ? "Stop" : "Preview"}
               </button>
-              <Link className="s-btn s-btn-solid" to={latest.link}>
+              <Link className="s-btn" to={latest.link}>
                 Listen ↗
               </Link>
             </div>
@@ -145,7 +142,7 @@ export function Home() {
         <section className="s-panel s-pad s-duo" aria-label="Drums and tools">
           <div>
             <div className="s-sec-head">
-              <span className="s-mono">(05) Drums</span>
+              <span className="s-mono">Drums</span>
             </div>
             <p className="s-big">Drum covers of songs I enjoy, recorded for fun.</p>
             <Link className="s-btn" to="/drums">
@@ -154,7 +151,7 @@ export function Home() {
           </div>
           <div>
             <div className="s-sec-head">
-              <span className="s-mono">(06) Tools</span>
+              <span className="s-mono">Tools</span>
             </div>
             <ul className="s-tools">
               <li>
@@ -181,7 +178,7 @@ export function Home() {
 
         <section className="s-panel s-pad s-about" aria-label="About">
           <div className="s-sec-head">
-            <span className="s-mono">(07) About</span>
+            <span className="s-mono">About</span>
           </div>
           <p className="s-big">
             Stripes is a US-based electronic music producer and a drummer since the age of four. He also works with record labels on releases, A&amp;R and cover art.
@@ -190,7 +187,7 @@ export function Home() {
             <Link className="s-btn" to="/about">
               Read more ↗
             </Link>
-            <Link className="s-btn s-btn-solid" to="/contact">
+            <Link className="s-btn" to="/contact">
               Get in touch
             </Link>
           </div>

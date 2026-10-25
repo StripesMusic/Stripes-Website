@@ -117,8 +117,7 @@ export function Wordmark() {
   return (
     <div className="s-wm" ref={secRef}>
       <div className="s-wm-head">
-        <span className="s-mono">(02) Stripes</span>
-        <span className="s-mono">Hover the letters · press play</span>
+        <span className="s-mono">Stripes</span>
       </div>
       <div className="s-wm-stage">
         <h2 ref={h2Ref} aria-label="Stripes">
