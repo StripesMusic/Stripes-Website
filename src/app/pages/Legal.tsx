@@ -70,7 +70,7 @@ export function Privacy() {
           title: "Who runs this site",
           body: (
             <p>
-              musicbystripes.com is run by Stripes, an independent electronic music producer and cover artist based in the United States. For anything about your
+              musicbystripes.com is run by Stripes, an independent electronic music producer and cover artist based in Virginia, United States. For anything about your
               privacy, write to {contact}.
             </p>
           ),
@@ -273,6 +273,17 @@ export function Terms() {
             <p>
               The site is provided "as is". To the extent the law allows, Stripes isn't liable for indirect or consequential losses arising from your use of the site,
               its downloads or its tools. Nothing here limits rights you have under the law where you live.
+            </p>
+          ),
+        },
+        {
+          id: "law",
+          title: "Governing law",
+          body: (
+            <p>
+              These terms are governed by the laws of the Commonwealth of Virginia, United States, without regard to its conflict-of-law rules. Any dispute about
+              them or about the site will be handled by the state or federal courts in Virginia, unless the law where you live gives you the right to bring it
+              somewhere else.
             </p>
           ),
         },
