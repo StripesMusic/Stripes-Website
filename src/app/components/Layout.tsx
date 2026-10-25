@@ -15,6 +15,13 @@ const navLinks = [
   { name: "About", path: "/about" },
 ];
 
+const legalLinks = [
+  { name: "Privacy", path: "/privacy" },
+  { name: "Terms", path: "/terms" },
+  { name: "Accessibility", path: "/accessibility" },
+];
+const YEAR = new Date().getFullYear();
+
 const toolsLinks = [
   { name: "GD Auto Export", path: "/tools/gd-auto-export" },
   { name: "Audio Silence Padder", path: "/tools/audio-silence-padder" },
@@ -134,6 +141,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <PageTransition>{children}</PageTransition>
       </main>
 
+      {/* download pages stand alone, but still link to the policies that cover them */}
+      {isLinkPage && (
+        <footer className="s-legal-mini s-pad">
+          <span>© {YEAR} Stripes. All rights reserved.</span>
+          {legalLinks.slice(0, 2).map((l) => (
+            <Link key={l.path} to={l.path}>
+              {l.name}
+            </Link>
+          ))}
+        </footer>
+      )}
+
       {!isLinkPage && (
         <footer className="s-footer" data-scene="footer">
           <div className="s-panel s-pad s-footer-inner">
@@ -185,8 +204,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
               ))}
             </p>
             <div className="s-footer-base">
-              <span className="s-mono">© 2026 Stripes</span>
-              <span className="s-mono">Music + cover art</span>
+              <span className="s-mono">© {YEAR} Stripes. All rights reserved.</span>
+              <nav className="s-footer-legal" aria-label="Legal">
+                {legalLinks.map((l) => (
+                  <Link key={l.path} className="s-mono" to={l.path}>
+                    {l.name}
+                  </Link>
+                ))}
+              </nav>
             </div>
           </div>
         </footer>

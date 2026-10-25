@@ -244,6 +244,9 @@ export function AudioSilencePadder() {
             Add silence to the beginning or end of any audio
             file — instant, right in your browser
           </p>
+          <p className="text-sm text-gray-500 font-[Barlow] mt-3">
+            Your audio is processed on your device and is never uploaded.
+          </p>
         </div>
 
         {/* Card */}

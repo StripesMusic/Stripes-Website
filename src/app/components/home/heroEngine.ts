@@ -464,10 +464,13 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   stage.addEventListener("pointerleave", onLeave);
   stage.addEventListener("pointercancel", onLeave);
   stage.addEventListener("pointerdown", onDown);
+  // kicks ripple the S, push the dust out and flash it; the glow follows the sub bass in between
+  let flash = 0;
   const offKick = audio.onKick((s) => {
     pulses.push({ x: S.cx, y: S.cy, t: performance.now(), a: 0.35 + s * 0.35, glass: 0.18 + s * 0.2 });
     awake = 120;
-    dBeat = 1;
+    dBeat = s;
+    flash = s;
   });
 
   const DR = 190, DR2 = DR * DR;
@@ -475,7 +478,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   function stepDust(pr: Live[], act: boolean) {
     let maxV = 0;
     for (let i = 0; i < DN; i++) {
-      const grow = 1 + dBeat * 0.012 * dkind[i];
+      const grow = 1 + dBeat * 0.024 * dkind[i];
       let ax = (hx[i] * grow - px[i]) * 0.011, ay = (hy[i] * grow - py[i]) * 0.011;
       if (act) {
         const dx = px[i] - ptr.x, dy = py[i] - ptr.y, r2 = dx * dx + dy * dy;
@@ -504,6 +507,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
       if (sp > maxV) maxV = sp;
     }
     dBeat *= 0.88;
+    flash *= 0.85;
     return maxV;
   }
 
@@ -516,7 +520,7 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     gl.uniform1f(uni(p, "uRise"), S.rise);
     gl.uniform1f(uni(p, "uScale"), S.scale);
     gl.uniform1f(uni(p, "uD"), S.D);
-    gl.uniform1f(uni(p, "uGlow"), audio.level);
+    gl.uniform1f(uni(p, "uGlow"), Math.min(1.2, audio.level * 0.7 + flash * 0.5));
   };
   const ripPlane = new Float32Array(16), ripGlass = new Float32Array(16);
 

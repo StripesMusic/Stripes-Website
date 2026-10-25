@@ -15,11 +15,11 @@
   --s-line: color-mix(in srgb, var(--s-fg) 15%, transparent);
   --s-line-strong: color-mix(in srgb, var(--s-fg) 36%, transparent);
   --s-accent-hi: color-mix(in oklab, var(--s-accent), white 14%);
-  --s-sans: "Host Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  /* small labels: Archivo pulled in to its narrowest width; numbers in the Doto dot matrix */
-  --s-mono: "Archivo", "Arial Narrow", ui-sans-serif, sans-serif;
-  --s-num: "Doto", "Archivo", ui-monospace, monospace;
-  --s-display: "Bricolage Grotesque", "Host Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --s-sans: "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s-display: "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  /* small labels: Bricolage at its condensed width (set with font-stretch); numbers in Doto */
+  --s-label: "Bricolage Grotesque Variable", "Arial Narrow", ui-sans-serif, sans-serif;
+  --s-num: "Doto Variable", ui-monospace, monospace;
   --s-radius: 28px;
   --s-inset: 8px;
   --s-nav-h: 56px;
@@ -242,10 +242,10 @@ html.s-locked {
 /* type */
 .s-mono {
   margin: 0;
-  font-family: var(--s-mono);
+  font-family: var(--s-label);
   font-size: 11.5px;
   font-weight: 500;
-  font-stretch: 62%;
+  font-stretch: 75%;
   line-height: 1.5;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -273,8 +273,8 @@ html.s-locked {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font: 500 extra-condensed 11.5px/1 var(--s-mono);
-  letter-spacing: 0.06em;
+  font: 500 11px/1 var(--s-sans);
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
   text-decoration: none;
@@ -397,7 +397,7 @@ html.s-locked {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font: 500 extra-condensed 12px var(--s-mono);
+  font: 500 condensed 12px var(--s-label);
   letter-spacing: 0.16em;
   color: var(--s-fg);
   text-decoration: none;
@@ -417,7 +417,7 @@ html.s-locked {
 .s-tools-menu > button {
   position: relative;
   padding: 6px 0;
-  font: 500 extra-condensed 11.5px var(--s-mono);
+  font: 500 condensed 11.5px var(--s-label);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -478,7 +478,7 @@ html.s-locked {
 .s-tools-pop a {
   padding: 8px 10px;
   border-radius: 8px;
-  font: 500 extra-condensed 11.5px var(--s-mono);
+  font: 500 condensed 11.5px var(--s-label);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -585,7 +585,7 @@ html.s-locked {
 }
 .s-menu-small {
   padding: 6px 0;
-  font: 500 extra-condensed 13px var(--s-mono);
+  font: 500 condensed 13px var(--s-label);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -692,18 +692,12 @@ html.s-locked {
   opacity: var(--fade, 0.14);
 }
 
-/* the Leidseplein panorama as a band along the bottom of a panel, its top edge feathered */
+/* the Leidseplein panorama behind a whole panel, faded hard into its colour */
 .s-artbg {
-  top: auto;
-  height: max(46%, 26vw);
+  --fade: 0.12;
   z-index: -1;
-  -webkit-mask-image: linear-gradient(to top, #000 35%, transparent);
-  mask-image: linear-gradient(to top, #000 35%, transparent);
-}
-@media (max-width: 700px) {
-  .s-artbg {
-    height: 40%;
-  }
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 80%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 80%, transparent);
 }
 
 /* hero montage: three feathered layers tinted olive and blended into the canvas, so the S sits
@@ -833,7 +827,7 @@ html.s-locked {
   align-items: baseline;
   gap: 10px;
   padding: 2px 0;
-  font: 500 extra-condensed 12.5px/1.4 var(--s-mono);
+  font: 500 condensed 12.5px/1.4 var(--s-label);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -960,7 +954,7 @@ html.s-locked {
   text-overflow: ellipsis;
 }
 .s-lip-sub {
-  font: 500 extra-condensed 11.5px var(--s-mono);
+  font: 500 condensed 11.5px var(--s-label);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -1017,13 +1011,18 @@ html.s-locked {
 .s-ep-title {
   margin: 0;
   font-family: var(--s-display);
-  font-size: clamp(56px, 8.4vw, 148px);
+  font-size: clamp(72px, 11.5vw, 210px);
   font-weight: 200;
   font-variation-settings: "wdth" 80, "opsz" 96;
-  line-height: 0.88;
+  line-height: 0.86;
   letter-spacing: -0.045em;
   text-wrap: balance;
   color: var(--s-hi);
+}
+@media (max-width: 700px) {
+  .s-ep-title {
+    font-size: 24vw;
+  }
 }
 .s-ep-tracks {
   margin: 0;
@@ -1444,7 +1443,7 @@ html.s-locked {
   gap: 8px;
 }
 .s-packs-info dt {
-  font: 500 extra-condensed 11px var(--s-mono);
+  font: 500 condensed 11px var(--s-label);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -1503,7 +1502,7 @@ html.s-locked {
 }
 .s-packs-foot li {
   padding: 3px 8px;
-  font: 500 extra-condensed 11px var(--s-mono);
+  font: 500 condensed 11px var(--s-label);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -1752,7 +1751,7 @@ html.s-locked {
 }
 .s-facts dt {
   padding-top: 3px;
-  font: 500 extra-condensed 11px var(--s-mono);
+  font: 500 condensed 11px var(--s-label);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -1835,7 +1834,7 @@ html.s-locked {
   gap: 4px;
   padding: 8px;
   text-align: center;
-  font: 500 extra-condensed 11px/1.4 var(--s-mono);
+  font: 500 condensed 11px/1.4 var(--s-label);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -1912,7 +1911,7 @@ html.s-locked {
 }
 .s-pgrid-foot li {
   padding: 3px 8px;
-  font: 500 extra-condensed 11px var(--s-mono);
+  font: 500 condensed 11px var(--s-label);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--s-muted);
@@ -1959,7 +1958,7 @@ html.s-locked {
   display: flex;
   flex-direction: column;
   max-width: 220px;
-  font: 500 extra-condensed 11px/1.4 var(--s-mono);
+  font: 500 condensed 11px/1.4 var(--s-label);
   letter-spacing: 0.03em;
   color: var(--s-muted);
 }
@@ -2055,8 +2054,130 @@ html.s-locked {
 }
 .s-footer-base {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px 16px;
+}
+.s-footer-legal {
+  display: flex;
+  gap: 16px;
+}
+.s-footer-legal a {
+  color: var(--s-muted);
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .s-footer-legal a:hover {
+    color: var(--s-fg);
+  }
+}
+/* the one line of legal links under the download pages */
+.s-legal-mini {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+  padding-top: 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  font: 400 12px/1.4 var(--s-sans);
+  color: #9a9d92;
+  background: #0d0d0c;
+}
+.s-legal-mini a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+/* privacy, terms, accessibility */
+.s-legal-head {
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+.s-legal-title {
+  margin: 32px 0 28px;
+  font-family: var(--s-display);
+  font-size: clamp(64px, 14vw, 220px);
+  font-weight: 200;
+  font-variation-settings: "wdth" 80, "opsz" 96;
+  line-height: 0.84;
+  letter-spacing: -0.045em;
+  color: var(--s-fg);
+}
+.s-legal-intro .s-big {
+  max-width: 36ch;
+}
+.s-legal-body {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+  gap: 32px 48px;
+  padding-top: 40px;
+  padding-bottom: 72px;
+}
+.s-legal-toc {
+  position: sticky;
+  top: calc(var(--s-nav-h) + 24px);
+  align-self: start;
+}
+.s-legal-toc ol {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.s-legal-toc a {
+  display: block;
+  padding: 5px 0;
+  color: var(--s-muted);
+  text-decoration: none;
+}
+.s-legal-toc a:hover,
+.s-legal-toc a:focus-visible {
+  color: var(--s-fg);
+}
+.s-legal-text {
+  max-width: 68ch;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--s-fg);
+}
+.s-legal-text section {
+  scroll-margin-top: calc(var(--s-nav-h) + 24px);
+  padding-bottom: 36px;
+}
+.s-legal-text h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0 0 14px;
+  font-family: var(--s-display);
+  font-size: clamp(26px, 2.6vw, 38px);
+  font-weight: 300;
+  font-variation-settings: "wdth" 85, "opsz" 96;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.s-legal-text h2 .s-num {
+  color: var(--s-muted);
+}
+.s-legal-text p,
+.s-legal-text ul {
+  margin: 0 0 12px;
+}
+.s-legal-text ul {
+  padding-left: 1.2em;
+}
+.s-legal-text a {
+  color: inherit;
+  text-decoration-color: var(--s-hi);
+  text-underline-offset: 3px;
+}
+@media (max-width: 860px) {
+  .s-legal-body {
+    grid-template-columns: 1fr;
+  }
+  .s-legal-toc {
+    position: static;
+  }
 }
 @media (max-width: 600px) {
   .s-footer-cols {
@@ -2176,13 +2297,12 @@ html.s-preloading {
 .s-pre-title {
   position: relative;
   margin: 0;
-  font-family: var(--s-mono);
-  font-size: min(13vw, 21vh);
-  font-weight: 900;
-  font-stretch: 125%;
-  line-height: 0.84;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
+  font-family: var(--s-display);
+  font-size: min(16vw, 25vh);
+  font-weight: 200;
+  font-variation-settings: "wdth" 80, "opsz" 96;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
   text-align: center;
   opacity: 0;
   transform: translateY(14px);
@@ -2459,7 +2579,7 @@ html.s-preloading {
 }
 .s-art-dl dt {
   padding-top: 2px;
-  font: 500 extra-condensed 11px var(--s-mono);
+  font: 500 condensed 11px var(--s-label);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--s-muted);

@@ -123,6 +123,9 @@ export function GDAutoExport() {
             Convert Google Drive file links into automatic
             download URLs
           </p>
+          <p className="text-sm text-gray-500 font-[Barlow] mt-3">
+            Works in your browser; your links aren't sent anywhere. Not affiliated with or endorsed by Google.
+          </p>
         </div>
 
         {/* Card */}

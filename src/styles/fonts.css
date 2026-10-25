@@ -1,3 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@700;800;900&family=Figtree:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://db.onlinewebfonts.com/c/91bf51a8358ebe7c72e49ea84fd8db7f?family=Spotify+Mix+Extrabold');
-@import url('https://db.onlinewebfonts.com/c/424dca828dee407629efe273d0a28630?family=Spotify+Mix');
+/* Every font is served from the site itself, not from Google Fonts or another font CDN, so a
+   visit doesn't send anyone's IP address to a third party. All of them are under the SIL Open
+   Font License. Barlow and Figtree are for the older pages and the Spotify Art Tester. */
+@import "@fontsource-variable/host-grotesk/index.css";
+@import "@fontsource-variable/bricolage-grotesque/standard.css";
+@import "@fontsource-variable/doto/index.css";
+@import "@fontsource/barlow/700.css";
+@import "@fontsource/barlow/800.css";
+@import "@fontsource/barlow/900.css";
+@import "@fontsource/figtree/300.css";
+@import "@fontsource/figtree/400.css";
+@import "@fontsource/figtree/500.css";
+@import "@fontsource/figtree/600.css";
+@import "@fontsource/figtree/700.css";
+@import "@fontsource/figtree/800.css";
+@import "@fontsource/figtree/900.css";

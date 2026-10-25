@@ -18,7 +18,7 @@ export const photos = {
   amsterdamStreet: photo("amsterdam-street", 1452, 2029, "Stripes and two friends on a busy Amsterdam street during ADE 2025", "45% 18%"),
   // only 602×900 for now, so it stays the smaller of the pair
   amsterdamDoor: photo("amsterdam-laptop", 602, 900, "Two people with a laptop at a brick theatre doorway in Amsterdam", "50% 30%"),
-  drums: photo("drums-shop", 1477, 1969, "A blue drum kit in a drum shop, a wall of cymbals behind it", "50% 60%"),
+  drums: photo("drums-shop", 1477, 1969, "Stripes standing by a blue drum kit in a drum shop, a wall of cymbals behind", "44% 28%"),
   portrait: photo("about-sky", 2400, 2215, "Stripes smiling up at a clear blue sky", "40% 40%"),
   portraitAlt: photo("about-park", 2400, 1733, "Stripes in profile in a park", "50% 30%"),
 };

@@ -36,6 +36,7 @@ import { GDAutoExport } from "./pages/tools/GDAutoExport";
 import { AudioSilencePadder } from "./pages/tools/AudioSilencePadder";
 import { SpotifyArtTester } from "./pages/tools/SpotifyArtTester";
 import { NotFound } from "./pages/NotFound";
+import { Privacy, Terms, Accessibility } from "./pages/Legal";
 
 export const router = createBrowserRouter([
   {
@@ -319,6 +320,30 @@ export const router = createBrowserRouter([
     Component: () => (
       <Layout>
         <SpotifyArtTester />
+      </Layout>
+    ),
+  },
+  {
+    path: "/privacy",
+    Component: () => (
+      <Layout>
+        <Privacy />
+      </Layout>
+    ),
+  },
+  {
+    path: "/terms",
+    Component: () => (
+      <Layout>
+        <Terms />
+      </Layout>
+    ),
+  },
+  {
+    path: "/accessibility",
+    Component: () => (
+      <Layout>
+        <Accessibility />
       </Layout>
     ),
   },

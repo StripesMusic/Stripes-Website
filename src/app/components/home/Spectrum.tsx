@@ -1,6 +1,7 @@
 // "Play it loud": a full-bleed colour spectrum, after Ragged Edge, that follows the music. It
-// drifts on its own; when anything plays, the bass speeds up the flow and widens the bright
-// core, kicks shove it, the mids slide the colours towards lime and the highs add shimmer.
+// drifts on its own; when anything plays, the sub bass pumps it (zoom, flow and the bright
+// core, sidechain dips included), kicks shove it, the mids slide the colours towards lime and
+// the highs add shimmer.
 import { useEffect, useRef } from "react";
 import { audio, type Track } from "../../lib/audio";
 import { useAudio } from "../../lib/useAudio";
@@ -33,7 +34,8 @@ vec3 ramp(float t) {
   return mix(uC, uD, t - 2.0);
 }
 void main() {
-  vec2 p = (v - 0.5) * vec2(uRes.x / uRes.y, 1.0);
+  // the field breathes with the sub bass and jumps on kicks
+  vec2 p = (v - 0.5) * vec2(uRes.x / uRes.y, 1.0) * (1.0 - uLow * 0.07 - uPush * 0.05);
   float t = uT;
   float warp = 1.5 + uLow * 1.4 + uPush * 0.9;
   vec2 q = vec2(fbm(p * 1.1 + vec2(0.0, t * 0.06)), fbm(p * 1.1 + vec2(5.2, -t * 0.05)));
@@ -132,7 +134,7 @@ export function Spectrum({ track }: { track: Track }) {
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
       last = now;
       const b = audio.bands;
-      t += dt * (0.5 + b.low * 2.4 + push * 1.6);
+      t += dt * (0.5 + b.low * 1.2 + push * 1.6);
       push *= Math.pow(0.04, dt);
       g.draw(t, b.low, b.mid, b.high, push);
     };

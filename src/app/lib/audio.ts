@@ -1,5 +1,6 @@
-// Shared audio for the site: hover previews, the hero preview, and kick detection
-// that drives the S and the wordmark. One thing plays at a time.
+// Shared audio for the site: hover previews, the hero preview, and the analysis that drives the
+// visuals: a sub-bass envelope (the S's glow and the spectrum pump with it, sidechain dips and
+// all) and kick detection (the S ripples and the wordmark bounces). One thing plays at a time.
 import { onFrame } from "./ticker";
 
 export type Track = { id: string; title: string; sub: string; url: string; href?: string };
@@ -22,8 +23,9 @@ const demoAllowed = () => /(^|\.)pages\.dev$|^localhost$|^127\.0\.0\.1$/.test(lo
 class AudioBus {
   state: AudioState = { track: null, playing: false, demo: false, unavailable: false, armed: false };
   private unavailableTimer = 0;
+  // the sub-bass envelope, 0..1, scaled to the loudest recent bass so any mix reaches 1
   level = 0;
-  // bass, mids and highs, 0..1 and smoothed, for visuals that follow the whole spectrum
+  // sub bass, mids and highs, each 0..1 the same way, for visuals that follow the whole mix
   bands = { low: 0, mid: 0, high: 0 };
   private subs = new Set<() => void>();
   private kickFns = new Set<(strength: number) => void>();
@@ -31,11 +33,15 @@ class AudioBus {
   private bus!: GainNode;
   private analyser!: AnalyserNode;
   private freq!: Uint8Array<ArrayBuffer>;
+  private subTap!: AnalyserNode;
+  private kickTap!: AnalyserNode;
+  private wave!: Float32Array<ArrayBuffer>;
+  // envelopes: sub and its recent peak, kick fast/slow/peak, mid and high peaks
+  private env = { sub: 0, subPk: 0.01, kf: 0, ks: 0, kPk: 0.01, kPrev: 0, mid: 0.02, high: 0.02, t: 0 };
   private noise!: AudioBuffer;
   private cur: Current | null = null;
   private synth: { timer: number; next: number; n: number; out: GainNode } | null = null;
   private missing = new Set<string>();
-  private bassAvg = 0;
   private lastKick = 0;
   private stopTicker: (() => void) | null = null;
 
@@ -71,6 +77,31 @@ class AudioBus {
       this.freq = new Uint8Array(this.analyser.frequencyBinCount);
       this.bus.connect(this.analyser);
       this.analyser.connect(ac.destination);
+      // Two filtered taps for the low end, read as waveforms so their levels are linear (the
+      // byte spectrum is in dB, which flattens a kick sitting on a sustained sub to almost nothing).
+      // They feed a muted output, because some browsers skip nodes that reach no destination.
+      const mute = ac.createGain();
+      mute.gain.value = 0;
+      mute.connect(ac.destination);
+      const filt = (type: BiquadFilterType, f: number, q: number) => {
+        const b = ac.createBiquadFilter();
+        b.type = type;
+        b.frequency.value = f;
+        b.Q.value = q;
+        return b;
+      };
+      const tap = (a: BiquadFilterNode, b: BiquadFilterNode) => {
+        const an = ac.createAnalyser();
+        an.fftSize = 2048; // ~43 ms of audio, so a frame never falls between two reads at 30 fps
+        this.bus.connect(a);
+        a.connect(b);
+        b.connect(an);
+        an.connect(mute);
+        return an;
+      };
+      this.subTap = tap(filt("lowpass", 80, 0.5412), filt("lowpass", 80, 1.3066)); // below 80 Hz, 24 dB/oct
+      this.kickTap = tap(filt("highpass", 60, 0.7071), filt("lowpass", 150, 0.7071)); // the kick's body, 60-150 Hz
+      this.wave = new Float32Array(2048);
       this.noise = ac.createBuffer(1, ac.sampleRate * 0.5, ac.sampleRate);
       const ch = this.noise.getChannelData(0);
       for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
@@ -252,7 +283,7 @@ class AudioBus {
     o.stop(t + SPB * 0.5);
   }
 
-  // Kick detection on the low end. Works for the demo beat and for real songs.
+  // Reads the analysis every frame while something plays. Works for the demo beat and for songs.
   private watch() {
     if (this.stopTicker) return;
     this.stopTicker = onFrame((now) => {
@@ -269,29 +300,52 @@ class AudioBus {
         }
         return;
       }
-      const ac = this.ac!;
+      const ac = this.ac!, e = this.env;
+      // smoothing constants are per 60 Hz frame; this keeps them the same on faster screens
+      const dt = e.t ? Math.min(0.1, (now - e.t) / 1000) : 1 / 60;
+      e.t = now;
+      const k = (c: number) => 1 - Math.pow(1 - c, dt * 60), fall = Math.pow(0.997, dt * 60);
+      const rms = (an: AnalyserNode) => {
+        an.getFloatTimeDomainData(this.wave);
+        let sum = 0;
+        for (let i = 0; i < this.wave.length; i++) sum += this.wave[i] * this.wave[i];
+        return Math.sqrt(sum / this.wave.length);
+      };
+
+      // sub bass: quick to rise, a little slower to fall, so the sidechain pump comes through
+      const sub = rms(this.subTap);
+      e.sub += (sub - e.sub) * k(sub > e.sub ? 0.6 : 0.2);
+      e.subPk = Math.max(e.sub, e.subPk * fall, 0.01);
+      this.level = Math.min(1, e.sub / e.subPk);
+
+      // kicks: the 60-150 Hz level jumping well above its own recent average, near its peak
+      const kick = rms(this.kickTap);
+      e.kf += (kick - e.kf) * k(kick > e.kf ? 0.7 : 0.3);
+      e.ks += (kick - e.ks) * k(0.04);
+      e.kPk = Math.max(e.kf, e.kPk * fall, 0.01);
+      if (e.kf > e.ks * 1.5 && e.kf > e.kPk * 0.6 && e.kf > e.kPrev && now - this.lastKick > 200) {
+        this.lastKick = now;
+        const strength = Math.min(1, e.kf / e.kPk);
+        this.kickFns.forEach((f) => f(strength));
+      }
+      e.kPrev = e.kf;
+
+      // mids and highs from the spectrum, back to linear and scaled to their recent peaks
       this.analyser.getByteFrequencyData(this.freq);
-      const binHz = ac.sampleRate / this.analyser.fftSize, hi = Math.max(2, Math.round(140 / binHz));
-      let s = 0;
-      for (let i = 1; i <= hi; i++) s += this.freq[i];
-      s /= hi * 255;
-      this.level += (s - this.level) * 0.3;
+      const binHz = ac.sampleRate / this.analyser.fftSize;
       const band = (lo: number, hi: number) => {
         const a = Math.round(lo / binHz), b = Math.min(this.freq.length - 1, Math.round(hi / binHz));
         let sum = 0;
-        for (let i = a; i <= b; i++) sum += this.freq[i];
-        return sum / ((b - a + 1) * 255);
+        for (let i = a; i <= b; i++) sum += Math.pow(10, (-100 + (this.freq[i] / 255) * 70) / 20);
+        return sum / (b - a + 1);
       };
+      const mid = band(300, 2000), high = band(4000, 12000);
+      e.mid = Math.max(mid, e.mid * fall, 1e-4);
+      e.high = Math.max(high, e.high * fall, 1e-4);
       const bd = this.bands;
-      bd.low += (s - bd.low) * 0.2;
-      bd.mid += (band(300, 2000) - bd.mid) * 0.15;
-      bd.high += (band(4000, 12000) - bd.high) * 0.25;
-      if (s > this.bassAvg * 1.28 && s > 0.32 && now - this.lastKick > 210) {
-        this.lastKick = now;
-        const k = Math.min(1, s * 1.2);
-        this.kickFns.forEach((f) => f(k));
-      }
-      this.bassAvg = this.bassAvg * 0.94 + s * 0.06;
+      bd.low = this.level;
+      bd.mid += (mid / e.mid - bd.mid) * k(0.15);
+      bd.high += (high / e.high - bd.high) * k(0.25);
     });
   }
 }
