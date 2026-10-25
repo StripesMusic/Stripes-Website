@@ -2,6 +2,8 @@ import { Link, useLocation } from "react-router";
 import { useState, useEffect } from "react";
 import { PageTransition } from "./PageTransition";
 import { StripesMark } from "./StripesMark";
+import { ImageSlot } from "./ImageSlot";
+import { images } from "../data/images";
 
 const navLinks = [
   { name: "Music", path: "/music" },
@@ -125,10 +127,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <footer className="s-footer">
           <div className="s-panel s-pad s-footer-inner">
             <div className="s-footer-top">
-              <p className="s-big">Have a release coming up? Let's make its pack.</p>
-              <Link className="s-btn s-btn-solid" to="/contact">
-                Commission art
-              </Link>
+              <div className="s-footer-cta">
+                <p className="s-big">Have a release coming up? Let's make its pack.</p>
+                <Link className="s-btn s-btn-solid" to="/contact">
+                  Commission art
+                </Link>
+              </div>
+              <ImageSlot
+                src={images.footerPack}
+                ratio="16 / 9"
+                className="s-footer-pack"
+                label="Release pack mockup"
+                hint="16:9 · 1600×900"
+                alt={images.footerPack ? "A full release pack: cover, canvas and flyers" : ""}
+              />
             </div>
             <div className="s-footer-cols">
               <div>

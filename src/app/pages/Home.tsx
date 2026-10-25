@@ -1,21 +1,33 @@
-// Homepage. The hero is pinned while the S rises out from behind the first rounded panel,
-// then the panels slide up over it like cards.
-import { useEffect, useRef } from "react";
+// Homepage. STRIPES stands on the edge of the first rounded panel; as you scroll, its letters
+// sink behind the panel while the S rises out from behind it, then the panels slide up like cards.
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { createHero, type HeroScroll } from "../components/home/heroEngine";
-import { Wordmark } from "../components/home/Wordmark";
+import { HeroWord } from "../components/home/HeroWord";
 import { ReleaseList, trackFor } from "../components/home/ReleaseList";
 import { Packs } from "../components/home/Packs";
 import { NowPlaying } from "../components/home/NowPlaying";
 import { Eq } from "../components/home/Eq";
+import { ImageSlot } from "../components/ImageSlot";
 import { releases } from "../data/releases";
+import { featuredWork } from "../data/featuredWork";
+import { drumCovers, thumbUrl } from "../data/drums";
+import { images } from "../data/images";
 import { audio } from "../lib/audio";
 import { useAudio } from "../lib/useAudio";
 import { onFrame } from "../lib/ticker";
 
 const latest = releases[0];
 const HERO = trackFor(latest);
+const recent = featuredWork.slice(0, 4);
+const clients = [...new Set(featuredWork.map((w) => w.client).filter((c) => c !== "Self-released"))];
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
+const tools = [
+  { name: "GD Auto Export", path: "/tools/gd-auto-export", text: "Turn Google Drive links into direct downloads", shot: images.tools.gdAutoExport },
+  { name: "Audio Silence Padder", path: "/tools/audio-silence-padder", text: "Add silence to the start or end of a track", shot: images.tools.audioSilencePadder },
+  { name: "Spotify Art Tester", path: "/tools/spotify-art-tester", text: "Preview your cover across Spotify views", shot: images.tools.spotifyArtTester },
+];
 
 export function Home() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -25,10 +37,11 @@ export function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);
   const uiRef = useRef<HTMLDivElement>(null);
-  const hintRef = useRef<HTMLSpanElement>(null);
-  const sheetRef = useRef<HTMLDivElement>(null);
+  const coversRef = useRef<HTMLDivElement>(null);
   const scroll = useRef<HeroScroll>({ reveal: 0, cover: 0 });
   const dims = useRef({ vh: 800, peek: 190, reveal: 720 });
+  const getScroll = useCallback(() => scroll.current, []);
+  const [hoverCover, setHoverCover] = useState<number | null>(null);
   const s = useAudio();
   const heroPlaying = s.playing && s.track?.id === HERO.id;
   const playHero = () => audio.toggle(HERO, { loop: true, demoFallback: true });
@@ -54,30 +67,39 @@ export function Home() {
     return () => removeEventListener("resize", size);
   }, []);
 
+  // Scroll only drives the canvas and things inside the pinned stage. The panels themselves
+  // are held by CSS sticky, so they move with native scrolling and never lag behind it.
   useEffect(() => {
+    let lastC = -1;
     return onFrame(() => {
       const { vh, peek, reveal: R } = dims.current;
       const y = -introRef.current!.getBoundingClientRect().top;
       const rv = clamp01(y / R), cv = clamp01((y - R) / (vh - peek));
       scroll.current = { reveal: rv, cover: cv };
-      // the first panel holds its place while the S rises, then scrolls on normally
-      const T = Math.min(Math.max(y, 0), R) - R;
-      sheetRef.current!.style.transform = T < -0.5 ? `translate3d(0, ${T.toFixed(1)}px, 0)` : "";
       innerRef.current!.style.transform = cv > 0 ? `scale(${(1 - 0.06 * cv).toFixed(4)})` : "";
       dimRef.current!.style.opacity = (cv * 0.75).toFixed(3);
-      uiRef.current!.style.transform = `translate3d(0, ${(-rv * 48).toFixed(1)}px, 0)`;
-      hintRef.current!.style.opacity = String(1 - Math.min(1, rv * 3));
+      uiRef.current!.style.transform = `translate3d(0, ${(-rv * 24).toFixed(1)}px, 0)`;
+      // the covers step aside for the rising S
+      const c = 1 - clamp01(rv * 2.2);
+      if (c !== lastC) {
+        lastC = c;
+        const el = coversRef.current!;
+        el.style.opacity = c.toFixed(3);
+        el.style.transform = c < 1 ? `translate3d(0, ${((1 - c) * -24).toFixed(1)}px, 0)` : "";
+        el.style.visibility = c < 0.01 ? "hidden" : "";
+      }
     });
   }, []);
 
   useEffect(() => {
     try {
-      return createHero(stageRef.current!, canvasRef.current!, () => scroll.current);
+      return createHero(stageRef.current!, canvasRef.current!, getScroll);
     } catch (err) {
       console.warn("Hero animation unavailable", err);
     }
-  }, []);
+  }, [getScroll]);
 
+  const hc = hoverCover === null ? null : recent[hoverCover];
   return (
     <div className="s-home" ref={rootRef}>
       <section className="s-intro" ref={introRef}>
@@ -85,6 +107,7 @@ export function Home() {
           <div className="s-stage-inner" ref={innerRef}>
             <canvas ref={canvasRef} className="s-gl" aria-hidden="true" />
             <div className="s-grain" aria-hidden="true" />
+            <HeroWord area={stageRef} getScroll={getScroll} />
             <div className="s-hero-ui s-pad" ref={uiRef}>
               <div className="s-hero-lede">
                 <p className="s-mono">Producer · Cover artist</p>
@@ -99,101 +122,162 @@ export function Home() {
                   </Link>
                 </div>
               </div>
-              <span className="s-mono s-hint" ref={hintRef}>
-                Scroll ↓
-              </span>
+              <div className="s-hero-covers" ref={coversRef}>
+                <div className="s-hero-covers-head">
+                  <span className="s-mono">Recent covers</span>
+                  <Link to="/designs" className="s-mono">
+                    All ↗
+                  </Link>
+                </div>
+                <ul onMouseLeave={() => setHoverCover(null)}>
+                  {recent.map((w, i) => (
+                    <li key={w.title}>
+                      <Link to="/designs" onMouseEnter={() => setHoverCover(i)} onFocus={() => setHoverCover(i)} onBlur={() => setHoverCover(null)}>
+                        <ImageSlot src={w.image} alt={`${w.release}, cover for ${w.client}`} label={w.title} eager />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <p className="s-mono s-hero-covers-cap" aria-live="polite">
+                  {hc ? `${hc.client} · ${hc.release}` : `Covers for ${clients.join(" · ")}`}
+                </p>
+              </div>
             </div>
             <div className="s-dim" ref={dimRef} aria-hidden="true" />
           </div>
         </div>
       </section>
 
-      <div className="s-sheet" ref={sheetRef}>
-        <section className="s-panel s-first" aria-label="Latest">
-          <div className="s-lip s-pad">
-            <span className="s-mono s-lip-label">Out now</span>
-            <Link to={latest.link} className="s-lip-release">
-              <img src={latest.image} alt="" />
-              <span>
-                <span className="s-lip-title">{latest.title}</span>
-                <span className="s-lip-sub">
-                  {HERO.sub} · {latest.type} · {latest.date}
+      <div className="s-sheet-wrap">
+        <div className="s-sheet">
+          <section className="s-panel s-first" aria-label="Latest">
+            <div className="s-lip s-pad">
+              <span className="s-mono s-lip-label">Out now</span>
+              <Link to={latest.link} className="s-lip-release">
+                <ImageSlot src={latest.image} alt="" label="Cover" eager />
+                <span>
+                  <span className="s-lip-title">{latest.title}</span>
+                  <span className="s-lip-sub">
+                    {HERO.sub} · {latest.type} · {latest.date}
+                  </span>
                 </span>
-              </span>
-            </Link>
-            <div className="s-ctas">
-              <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
-                {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
-                {heroPlaying ? "Stop" : "Preview"}
-              </button>
-              <Link className="s-btn" to={latest.link}>
-                Listen ↗
+              </Link>
+              <div className="s-ctas">
+                <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
+                  {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
+                  {heroPlaying ? "Stop" : "Preview"}
+                </button>
+                <Link className="s-btn" to={latest.link}>
+                  Listen ↗
+                </Link>
+              </div>
+            </div>
+            <div className="s-pad s-first-body">
+              <ReleaseList />
+            </div>
+          </section>
+
+          <Packs />
+
+          <section className="s-panel s-pad s-drums" aria-label="Drums">
+            <div className="s-drums-text">
+              <div className="s-sec-head">
+                <span className="s-mono">Drums</span>
+                <span className="s-mono">{drumCovers.length} covers on YouTube</span>
+              </div>
+              <p className="s-big">Drum covers of songs I enjoy, recorded for fun.</p>
+              <Link className="s-btn" to="/drums">
+                Watch covers ↗
               </Link>
             </div>
-          </div>
-          <div className="s-pad">
-            <Wordmark />
-            <ReleaseList />
-          </div>
-        </section>
+            <ul className="s-drums-list">
+              {drumCovers.map((c) => (
+                <li key={c.youtubeId}>
+                  <Link to="/drums">
+                    <span className="s-drums-thumb">
+                      <ImageSlot src={thumbUrl(c)} ratio="16 / 9" alt={`${c.title} drum cover`} label="Video thumbnail" hint="16:9 · 1280×720" />
+                      <span className="s-drums-play" aria-hidden="true">
+                        <span className="s-tri" />
+                      </span>
+                    </span>
+                    <span className="s-drums-meta">
+                      <span>{c.title}</span>
+                      <span className="s-mono">
+                        {c.artist} · {c.date}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
 
-        <Packs />
-
-        <section className="s-panel s-pad s-duo" aria-label="Drums and tools">
-          <div>
-            <div className="s-sec-head">
-              <span className="s-mono">Drums</span>
-            </div>
-            <p className="s-big">Drum covers of songs I enjoy, recorded for fun.</p>
-            <Link className="s-btn" to="/drums">
-              Watch covers ↗
-            </Link>
-          </div>
-          <div>
+          <section className="s-panel s-pad s-toolsp" aria-label="Tools">
             <div className="s-sec-head">
               <span className="s-mono">Tools</span>
+              <span className="s-mono">For getting a release out the door</span>
             </div>
-            <ul className="s-tools">
-              <li>
-                <Link to="/tools/gd-auto-export">
-                  <span>GD Auto Export</span>
-                  <span className="s-muted">Turn Google Drive links into direct downloads</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/tools/audio-silence-padder">
-                  <span>Audio Silence Padder</span>
-                  <span className="s-muted">Add silence to the start or end of a track</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/tools/spotify-art-tester">
-                  <span>Spotify Art Tester</span>
-                  <span className="s-muted">Preview your cover across Spotify views</span>
-                </Link>
-              </li>
+            <ul className="s-tools-grid">
+              {tools.map((t) => (
+                <li key={t.path}>
+                  <Link to={t.path}>
+                    <ImageSlot src={t.shot} ratio="16 / 10" label={t.name} hint="Screenshot · 1600×1000" alt={t.shot ? `${t.name} screenshot` : ""} />
+                    <span className="s-tools-name">
+                      {t.name} <span aria-hidden="true">↗</span>
+                    </span>
+                    <span className="s-muted">{t.text}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
-        </section>
+          </section>
 
-        <section className="s-panel s-pad s-about" aria-label="About">
-          <div className="s-sec-head">
-            <span className="s-mono">About</span>
-          </div>
-          <p className="s-big">
-            Stripes is a US-based electronic music producer and a drummer since the age of four. He also works with record labels on releases, A&amp;R and cover art.
-          </p>
-          <div className="s-ctas">
-            <Link className="s-btn" to="/about">
-              Read more ↗
-            </Link>
-            <Link className="s-btn" to="/contact">
-              Get in touch
-            </Link>
-          </div>
-        </section>
+          <section className="s-panel s-pad s-about" aria-label="About">
+            <div className="s-about-media">
+              <ImageSlot src={images.about.portrait} ratio="4 / 5" alt="Stripes with his dog" label="Portrait" hint="4:5 · 1200×1500" />
+              <div className="s-about-pair">
+                <ImageSlot src={images.about.studio} ratio="3 / 2" label="Studio" hint="3:2 · 1500×1000" />
+                <ImageSlot src={images.about.live} ratio="3 / 2" label="Live / drums" hint="3:2 · 1500×1000" />
+              </div>
+            </div>
+            <div className="s-about-text">
+              <div className="s-sec-head">
+                <span className="s-mono">About</span>
+              </div>
+              <p className="s-big">Stripes is a US-based electronic music producer and a drummer since the age of four.</p>
+              <dl className="s-facts">
+                <div>
+                  <dt>Labels</dt>
+                  <dd>Releases, A&amp;R and cover art for three record labels</dd>
+                </div>
+                <div>
+                  <dt>2025</dt>
+                  <dd>Won BUTTER and Andrew A's Ghost Of You remix contest with E2D2, with Tomorrowland support from Andrew A</dd>
+                </div>
+                <div>
+                  <dt>Studied</dt>
+                  <dd>Production classes at Berklee College of Music</dd>
+                </div>
+                <div>
+                  <dt>Inspired by</dt>
+                  <dd>Brooks, RudeLies</dd>
+                </div>
+              </dl>
+              <div className="s-ctas">
+                <Link className="s-btn" to="/about">
+                  Read more ↗
+                </Link>
+                <Link className="s-btn" to="/contact">
+                  Get in touch
+                </Link>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div className="s-sheet-hold" aria-hidden="true" />
       </div>
       <NowPlaying />
     </div>
   );
 }
+

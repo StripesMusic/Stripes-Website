@@ -1,27 +1,7 @@
 import { Play } from "lucide-react";
+import { drumCovers, embedUrl } from "../data/drums";
 
 export function Drums() {
-  const drumCovers = [
-    {
-      title: "Misery Business",
-      artist: "Paramore",
-      date: "May 2026",
-      embedUrl: "https://www.youtube.com/embed/Ob_QOy7iFeQ",
-    },
-    {
-      title: "Ruin",
-      artist: "Lamb of God",
-      date: "May 2026",
-      embedUrl: "https://www.youtube.com/embed/ISmoJL4XWQw",
-    },
-    {
-      title: "Struck Dead",
-      artist: "Trivium",
-      date: "Apr 2026",
-      embedUrl: "https://www.youtube.com/embed/tvb6E6NfFW8",
-    },
-  ];
-
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen">
       {/* Geometric Background Pattern */}
@@ -74,7 +54,7 @@ export function Drums() {
                 <div className="aspect-video overflow-hidden bg-black">
                   <iframe
                     className="w-full h-full"
-                    src={cover.embedUrl}
+                    src={embedUrl(cover)}
                     title={cover.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

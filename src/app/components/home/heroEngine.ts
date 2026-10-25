@@ -7,6 +7,18 @@ import { onFrame } from "../../lib/ticker";
 
 export type HeroScroll = { reveal: number; cover: number };
 
+// Where the S stands, in px from the stage centre. Shared with the hero wordmark, whose
+// letters sink in order of distance from the S. Phones and portrait tablets centre it below the lede.
+export function markLayout(W: number, H: number) {
+  const narrow = W < 700 || W < H * 0.9;
+  return {
+    narrow,
+    h: narrow ? Math.min(H * 0.4, (W * 0.8 * LOGO_H) / LOGO_W) : H * 0.6,
+    cx: narrow ? 0 : W * 0.16,
+    cy: narrow ? H * 0.03 : -H * 0.11,
+  };
+}
+
 const ANG = (-24.2 * Math.PI) / 180;
 const U = [Math.cos(ANG), Math.sin(ANG)];
 const N = [-U[1], U[0]];
@@ -209,11 +221,10 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     cv.width = Math.round(S.W * S.DPR);
     cv.height = Math.round(S.H * S.DPR);
     S.D = Math.max(S.W, S.H) * 1.3;
-    const { W, H } = S, mobile = W < 700;
-    const hS = mobile ? Math.min(H * 0.4, (W * 0.8 * LOGO_H) / LOGO_W) : H * 0.6;
-    const sc = hS / LOGO_H;
-    S.cx = mobile ? 0 : W * 0.16;
-    S.cy = mobile ? H * 0.03 : -H * 0.11; // on phones the lede sits above the S instead of beside it
+    const { W, H } = S, L = markLayout(W, H);
+    const sc = L.h / LOGO_H;
+    S.cx = L.cx;
+    S.cy = L.cy;
     const mc = document.createElement("canvas");
     mc.width = W;
     mc.height = H;

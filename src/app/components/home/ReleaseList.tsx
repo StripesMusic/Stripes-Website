@@ -6,6 +6,7 @@ import { releases, previewUrl, type Release } from "../../data/releases";
 import { audio, type Track } from "../../lib/audio";
 import { useAudio } from "../../lib/useAudio";
 import { Eq } from "./Eq";
+import { ImageSlot } from "../ImageSlot";
 
 const credits = (r: Release) => (r.collaborators.length ? "with " + r.collaborators.map((c) => c.name).join(", ") : "Stripes");
 export const trackFor = (r: Release): Track => ({ id: r.link, title: r.title, sub: credits(r), url: previewUrl(r), href: r.link });
@@ -86,7 +87,7 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
           return (
             <li key={r.link} className={"s-rel-row" + (hover === i ? " is-hover" : "") + (playing ? " is-playing" : "")} onPointerEnter={(e) => enter(i, e)}>
               <span className="s-mono s-rel-n">{String(i + 1).padStart(2, "0")}</span>
-              <img className="s-rel-thumb" src={r.image} alt="" loading="lazy" />
+              <ImageSlot className="s-rel-thumb" src={r.image} label="Cover" />
               <Link className="s-rel-main" to={r.link}>
                 <span className="s-rel-title">{r.title}</span>
                 <span className="s-rel-credit">{credits(r)}</span>
