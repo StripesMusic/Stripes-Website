@@ -692,25 +692,13 @@ html.s-locked {
   opacity: var(--fade, 0.14);
 }
 
-/* Jake's Leidseplein panorama (2000x500) as a wide band through the middle of the panel, shown
-   whole rather than zoomed into one building, and faded hard into the panel colour */
+/* Jake's wall of covers behind a whole panel, faded hard into its colour and feathered at the
+   top and bottom so the panel edges stay clean */
 .s-artbg {
-  --fade: 0.14;
+  --fade: 0.11;
   z-index: -1;
-  inset: auto 0;
-  top: 50%;
-  aspect-ratio: 4 / 1;
-  min-height: 220px;
-  transform: translateY(-50%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
-}
-/* on phones the cover fills the middle, so the band sits up behind the title */
-@media (max-width: 700px) {
-  .s-artbg {
-    top: 24px;
-    transform: none;
-  }
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
 }
 
 /* hero montage: three feathered layers tinted olive and blended into the canvas, so the S sits
@@ -1986,6 +1974,41 @@ html.s-locked {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* volume: a thin track filled in lime up to the handle */
+.s-np-vol {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+.s-np-vol input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 72px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--s-hi) var(--v, 60%), var(--s-line) var(--v, 60%));
+  cursor: pointer;
+}
+.s-np-vol input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--s-fg);
+  border: 0;
+}
+.s-np-vol input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--s-fg);
+  border: 0;
+}
+.s-np-vol input:focus-visible {
+  outline: 2px solid var(--s-hi);
+  outline-offset: 6px;
 }
 
 /* footer */

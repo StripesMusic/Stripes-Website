@@ -145,7 +145,7 @@ void main(){
     vec4 r = uG[i];
     if (r.w > 0.0005) {
       vec2 d = fc - r.xy; float dist = length(d) + 0.001; vec2 n = d / dist;
-      float wd = 16.0 * uDpr + r.z * 0.07;
+      float wd = 9.0 * uDpr + r.z * 0.035;
       float w = (dist - r.z) / wd;
       float h = exp(-w * w);
       float dh = -2.0 * w * h;

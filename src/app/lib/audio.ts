@@ -10,6 +10,7 @@ export type AudioState = {
   demo: boolean; // true while the stand-in synth beat plays because a clip is missing
   unavailable: boolean; // the last requested clip couldn't be loaded
   armed: boolean; // the visitor has clicked something, so browsers allow sound
+  volume: number; // 0..1 slider position
 };
 type PlayOpts = { loop?: boolean; demoFallback?: boolean; quiet?: boolean }; // quiet: no "unavailable" notice (hover previews)
 type Current = { el: HTMLAudioElement; gain: GainNode | null; track: Track; opts: PlayOpts; plain: boolean };
@@ -20,8 +21,21 @@ const hz = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 // The stand-in beat only plays on preview builds, never on the live site.
 const demoAllowed = () => /(^|\.)pages\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 
+// Listening volume, 0..1 on the slider, remembered on this device. It starts at a medium level
+// so a preview never comes in at full blast.
+const VOL_KEY = "s-volume";
+function savedVolume() {
+  try {
+    const v = parseFloat(localStorage.getItem(VOL_KEY) ?? "");
+    if (v >= 0 && v <= 1) return v;
+  } catch {}
+  return 0.6;
+}
+// the slider is perceptual, so its middle sounds like half as loud rather than barely quieter
+const volGain = (v: number) => v * v;
+
 class AudioBus {
-  state: AudioState = { track: null, playing: false, demo: false, unavailable: false, armed: false };
+  state: AudioState = { track: null, playing: false, demo: false, unavailable: false, armed: false, volume: savedVolume() };
   private unavailableTimer = 0;
   // the sub-bass envelope, 0..1, scaled to the loudest recent bass so any mix reaches 1
   level = 0;
@@ -31,6 +45,7 @@ class AudioBus {
   private kickFns = new Set<(strength: number) => void>();
   private ac: AudioContext | null = null;
   private bus!: GainNode;
+  private out!: GainNode;
   private analyser!: AnalyserNode;
   private freq!: Uint8Array<ArrayBuffer>;
   private subTap!: AnalyserNode;
@@ -75,8 +90,12 @@ class AudioBus {
       this.analyser.fftSize = 1024;
       this.analyser.smoothingTimeConstant = 0.45;
       this.freq = new Uint8Array(this.analyser.frequencyBinCount);
+      // the analysers listen before the volume, so the visuals react the same at any volume
+      this.out = ac.createGain();
+      this.out.gain.value = volGain(this.state.volume);
       this.bus.connect(this.analyser);
-      this.analyser.connect(ac.destination);
+      this.analyser.connect(this.out);
+      this.out.connect(ac.destination);
       // Two filtered taps for the low end, read as waveforms so their levels are linear (the
       // byte spectrum is in dB, which flattens a kick sitting on a sustained sub to almost nothing).
       // They feed a muted output, because some browsers skip nodes that reach no destination.
@@ -108,6 +127,16 @@ class AudioBus {
     }
     this.ac.resume();
     if (!this.state.armed) this.set({ armed: true });
+  }
+
+  setVolume(v: number) {
+    v = Math.min(1, Math.max(0, v));
+    try {
+      localStorage.setItem(VOL_KEY, String(v));
+    } catch {}
+    if (this.ac) this.out.gain.setTargetAtTime(volGain(v), this.ac.currentTime, 0.02);
+    if (this.cur?.plain) this.cur.el.volume = volGain(v);
+    this.set({ volume: v });
   }
 
   isCurrent(id: string) {
@@ -142,6 +171,8 @@ class AudioBus {
       ac.createMediaElementSource(el).connect(gain);
       gain.connect(this.bus);
     }
+    // without WebAudio the element sets its own volume
+    if (plain) el.volume = volGain(this.state.volume);
     el.src = track.url;
     const cur: Current = { el, gain, track, opts, plain };
     this.cur = cur;
