@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ImageSlot } from "../components/ImageSlot";
+import { ArtworkBg } from "../components/ArtworkBg";
 import { packs, piecesIn, otherWork, LABELS, ytId, type Kind, type Pack } from "../data/packs";
 
 const KINDS: Kind[] = ["2D", "3D", "Motion", "Lyric video"];
@@ -147,6 +148,7 @@ export function Artwork() {
   return (
     <div className="s-art">
       <section className="s-panel s-pad s-art-head" data-scene="designs" aria-labelledby="art-title">
+        <ArtworkBg />
         <div className="s-sec-head">
           <span className="s-mono">Artwork</span>
           <span className="s-mono">
@@ -167,7 +169,7 @@ export function Artwork() {
         </div>
       </section>
 
-      <section className="s-panel s-pad s-art-featured" data-scene="hero" aria-label="Case studies">
+      <section className="s-panel s-pad s-art-featured" data-scene="releases" aria-label="Case studies">
         <div className="s-sec-head">
           <span className="s-mono">Case studies</span>
           <span className="s-mono">The fullest packs</span>
@@ -223,7 +225,7 @@ export function Artwork() {
         {shown.length === 0 && <p className="s-muted">Nothing matches both filters yet.</p>}
       </section>
 
-      <section className="s-panel s-pad s-art-other" data-scene="releases" aria-label="Other work">
+      <section className="s-panel s-pad s-art-other" data-scene="about" aria-label="Other work">
         <div className="s-sec-head">
           <span className="s-mono">Also</span>
           <span className="s-mono">Websites, set visuals and more</span>

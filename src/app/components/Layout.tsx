@@ -6,6 +6,7 @@ import { Preloader } from "./Preloader";
 import { useScenes } from "../lib/scenes";
 import { showPreloader } from "../lib/intro";
 import { setTheme, useTheme } from "../lib/theme";
+import { socials } from "../data/socials";
 
 const navLinks = [
   { name: "Music", path: "/music" },
@@ -18,14 +19,6 @@ const toolsLinks = [
   { name: "GD Auto Export", path: "/tools/gd-auto-export" },
   { name: "Audio Silence Padder", path: "/tools/audio-silence-padder" },
   { name: "Spotify Art Tester", path: "/tools/spotify-art-tester" },
-];
-
-const socials = [
-  { name: "Spotify", href: "https://open.spotify.com/artist/02OMUOGNd6EwfnSEWgtwEf" },
-  { name: "Apple Music", href: "https://music.apple.com/us/artist/stripes/1380328226" },
-  { name: "SoundCloud", href: "https://soundcloud.com/musicbystripes" },
-  { name: "YouTube", href: "https://www.youtube.com/@musicbystripes" },
-  { name: "Instagram", href: "https://instagram.com/musicbystripes" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

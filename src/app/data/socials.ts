@@ -1,0 +1,8 @@
+// Where to listen and follow, used by the footer and the homepage
+export const socials = [
+  { name: "Spotify", href: "https://open.spotify.com/artist/02OMUOGNd6EwfnSEWgtwEf" },
+  { name: "Apple Music", href: "https://music.apple.com/us/artist/stripes/1380328226" },
+  { name: "SoundCloud", href: "https://soundcloud.com/musicbystripes" },
+  { name: "YouTube", href: "https://www.youtube.com/@musicbystripes" },
+  { name: "Instagram", href: "https://instagram.com/musicbystripes" },
+];

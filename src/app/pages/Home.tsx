@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { createHero, type HeroScroll } from "../components/home/heroEngine";
 import { HeroWord } from "../components/home/HeroWord";
+import { HeroMontage } from "../components/home/HeroMontage";
+import { Spectrum } from "../components/home/Spectrum";
 import { ReleaseList } from "../components/home/ReleaseList";
 import { Packs } from "../components/home/Packs";
 import { NowPlaying } from "../components/home/NowPlaying";
@@ -105,6 +107,7 @@ export function Home() {
         <div className="s-stage" ref={stageRef}>
           <div className="s-stage-inner" ref={innerRef}>
             <canvas ref={canvasRef} className="s-gl" aria-hidden="true" />
+            <HeroMontage getScroll={getScroll} />
             <div className="s-grain" aria-hidden="true" />
             <div className="s-plane" ref={planeRef} aria-hidden="true">
               <HeroWord area={stageRef} getScroll={getScroll} />
@@ -206,17 +209,6 @@ export function Home() {
           <ReleaseList />
         </section>
 
-        <section className="s-panel s-pad s-ams" data-scene="olive" aria-label="Amsterdam">
-          <p className="s-mono s-ams-cap">Amsterdam · ADE 2025</p>
-          <figure className="s-ams-a">
-            <Photo p={photos.amsterdamStreet} ratio="3 / 4" sizes="(max-width: 700px) 78vw, 44vw" label="Amsterdam" />
-          </figure>
-          <figure className="s-ams-b">
-            <Photo p={photos.amsterdamDoor} ratio="2 / 3" sizes="(max-width: 700px) 52vw, 26vw" label="Amsterdam" />
-            <figcaption className="s-mono">Oct 2025</figcaption>
-          </figure>
-        </section>
-
         <Packs />
 
         <section className="s-panel s-drums" data-scene="drums" id="drums" aria-label="Drums">
@@ -254,6 +246,8 @@ export function Home() {
             </ul>
           </div>
         </section>
+
+        <Spectrum track={HERO} />
 
         <section className="s-panel s-pad s-toolsp" data-scene="hero" aria-label="Tools">
           <div className="s-sec-head">

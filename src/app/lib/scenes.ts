@@ -8,21 +8,23 @@ import { getTheme, onTheme } from "./theme";
 const LIGHT: Record<string, string> = {
   hero: "#cdcec8",
   ep: "#131313",
-  releases: "#b7ccc8",
+  releases: "#102729",
   olive: "#c4c7b7",
-  designs: "#24281c",
+  designs: "#c6c7c3",
   drums: "#181f36",
   about: "#c3cbde",
+  spectrum: "#5d74b3",
   footer: "#9dbf3f",
 };
 const DARK: Record<string, string> = {
   hero: "#151613",
   ep: "#131313",
-  releases: "#102729",
+  releases: "#b7ccc8",
   olive: "#24281c",
-  designs: "#c6c7c3",
+  designs: "#24281c",
   drums: "#181f36",
   about: "#c6c7c3",
+  spectrum: "#5d74b3",
   footer: "#9dbf3f",
 };
 

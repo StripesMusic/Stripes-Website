@@ -23,6 +23,8 @@ class AudioBus {
   state: AudioState = { track: null, playing: false, demo: false, unavailable: false, armed: false };
   private unavailableTimer = 0;
   level = 0;
+  // bass, mids and highs, 0..1 and smoothed, for visuals that follow the whole spectrum
+  bands = { low: 0, mid: 0, high: 0 };
   private subs = new Set<() => void>();
   private kickFns = new Set<(strength: number) => void>();
   private ac: AudioContext | null = null;
@@ -256,8 +258,12 @@ class AudioBus {
     this.stopTicker = onFrame((now) => {
       if (!this.state.playing) {
         this.level *= 0.9;
+        this.bands.low *= 0.92;
+        this.bands.mid *= 0.92;
+        this.bands.high *= 0.92;
         if (this.level < 0.002 && this.stopTicker) {
           this.level = 0;
+          this.bands.low = this.bands.mid = this.bands.high = 0;
           this.stopTicker();
           this.stopTicker = null;
         }
@@ -270,6 +276,16 @@ class AudioBus {
       for (let i = 1; i <= hi; i++) s += this.freq[i];
       s /= hi * 255;
       this.level += (s - this.level) * 0.3;
+      const band = (lo: number, hi: number) => {
+        const a = Math.round(lo / binHz), b = Math.min(this.freq.length - 1, Math.round(hi / binHz));
+        let sum = 0;
+        for (let i = a; i <= b; i++) sum += this.freq[i];
+        return sum / ((b - a + 1) * 255);
+      };
+      const bd = this.bands;
+      bd.low += (s - bd.low) * 0.2;
+      bd.mid += (band(300, 2000) - bd.mid) * 0.15;
+      bd.high += (band(4000, 12000) - bd.high) * 0.25;
       if (s > this.bassAvg * 1.28 && s > 0.32 && now - this.lastKick > 210) {
         this.lastKick = now;
         const k = Math.min(1, s * 1.2);

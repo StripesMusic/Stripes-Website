@@ -6,6 +6,7 @@ import { featuredWork, packContents } from "../../data/featuredWork";
 import { packImages } from "../../data/images";
 import { onFrame } from "../../lib/ticker";
 import { ImageSlot } from "../ImageSlot";
+import { ArtworkBg } from "../ArtworkBg";
 
 const SLOT_VH = 70; // scroll distance per cover
 const WIPE = 0.4; // share of a slot the wipe takes, centred on the slot boundary
@@ -64,6 +65,7 @@ export function Packs() {
   return (
     <section className="s-panel s-packs" data-scene="designs" id="designs" ref={secRef} style={{ height: `calc(var(--vh, 100vh) + ${(n - 1) * SLOT_VH}vh)` }} aria-label="Designs">
       <div className="s-packs-pin">
+        <ArtworkBg />
         <div className="s-sec-head">
           <span className="s-mono">Designs</span>
           <span className="s-mono s-packs-clients">Covers for {clients.join(" · ")}</span>
