@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { ToolPage } from "../../components/ToolPage";
 import {
   Play,
   Shuffle,
@@ -7,8 +8,6 @@ import {
   MoreHorizontal,
   Clock,
   Check,
-  Upload,
-  X,
   Share2,
 } from "lucide-react";
 
@@ -251,176 +250,93 @@ export function SpotifyArtTester() {
     { id: "playlist", label: "Playlist" },
   ];
 
+  const field = (label: string, value: string, set: (v: string) => void, placeholder: string) => (
+    <label className="s-field">
+      <span className="s-mono">{label}</span>
+      <input className="s-input" type="text" value={value} onChange={(e) => set(e.target.value)} placeholder={placeholder} />
+    </label>
+  );
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Halftone background */}
-      <div
-        className="absolute inset-0 opacity-[0.04] pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle, ${GREEN} 2px, transparent 2px)`,
-          backgroundSize: "28px 28px",
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1DB954]/6 via-transparent to-[#1DB954]/3 pointer-events-none" />
-
-      <div className="max-w-5xl mx-auto relative z-10">
-        {/* Page header */}
-        <div className="mb-8 flex items-center gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-black font-[Barlow] text-[#1DB954] leading-none">
-              SPOTIFY ART TESTER
-            </h1>
-            <p className="text-gray-400 font-[Barlow] mt-1">
-              Upload your artwork and preview it across Spotify
-              views
-            </p>
-            <p className="text-gray-500 text-sm font-[Barlow] mt-2">
-              Your image stays in your browser and is never uploaded. Not affiliated with or endorsed by Spotify.
-            </p>
-          </div>
-        </div>
-
-        {/* Controls */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* Upload zone */}
-          <div
-            className={`rounded-2xl border-2 border-dashed transition-all flex flex-col items-center justify-center min-h-[220px] ${
-              isDragging
-                ? "border-[#1DB954] bg-[#1DB954]/10"
-                : "border-white/20 bg-white/5 hover:border-white/35 hover:bg-white/8"
-            } ${!uploadedImage ? "cursor-pointer" : ""}`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setIsDragging(true);
-            }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setIsDragging(false);
-              const f = e.dataTransfer.files[0];
+    <ToolPage
+      path="/tools/spotify-art-tester"
+      title="Spotify Art Tester"
+      lede="See your cover in Spotify's views before you send it to your distributor."
+      note="Your image stays in your browser and is never uploaded. Not affiliated with or endorsed by Spotify."
+      wide
+    >
+      <div className="s-art-tester">
+        <div
+          className={"s-drop s-drop-art" + (isDragging ? " is-over" : "") + (uploadedImage ? " has-file" : "")}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+            const f = e.dataTransfer.files[0];
+            if (f) handleFile(f);
+          }}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            aria-label={uploadedImage ? "Replace cover art" : "Upload cover art"}
+            className="s-drop-input"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
               if (f) handleFile(f);
             }}
-            onClick={() => {
-              if (!uploadedImage) fileInputRef.current?.click();
-            }}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              aria-label="Upload cover art"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handleFile(f);
-              }}
-            />
-            {uploadedImage ? (
-              <div className="p-5 flex flex-col items-center gap-3">
-                <div className="relative">
-                  <img
-                    src={uploadedImage}
-                    alt="Artwork preview"
-                    className="w-36 h-36 object-cover rounded-xl shadow-lg"
-                  />
-                  <button
-                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-700 hover:bg-red-500 flex items-center justify-center transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setUploadedImage(null);
-                      setDominantColor("#1d0f4a");
-                    }}
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                <button
-                  className="text-xs text-gray-400 hover:text-[#1DB954] transition-colors font-[Barlow]"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    fileInputRef.current?.click();
-                  }}
-                >
-                  Click to replace
-                </button>
-              </div>
-            ) : (
-              <div className="text-center p-8">
-                <Upload className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                <p className="text-white font-[Barlow] font-semibold mb-1">
-                  Drop your artwork here
-                </p>
-                <p className="text-gray-500 text-sm font-[Barlow]">
-                  or click to browse • PNG, JPG, WEBP
-                </p>
-              </div>
-            )}
-          </div>
+          />
+          {uploadedImage ? (
+            <>
+              <img src={uploadedImage} alt="Your cover" className="s-drop-thumb" />
+              <span className="s-mono">Drop or choose another to replace</span>
+              <button
+                type="button"
+                className="s-btn s-drop-clear"
+                onClick={() => {
+                  setUploadedImage(null);
+                  setDominantColor("#1d0f4a");
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+              >
+                Remove
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="s-drop-name">Drop your cover here, or choose it</span>
+              <span className="s-mono">PNG, JPG, WEBP · square, 3000px is best</span>
+            </>
+          )}
+        </div>
 
-          {/* Inputs + view selector */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.15em] text-gray-500 font-[Barlow] mb-1.5">
-                Song Name
-              </label>
-              <input
-                type="text"
-                value={songName}
-                onChange={(e) => setSongName(e.target.value)}
-                placeholder="Your Song"
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white font-[Barlow] focus:outline-none focus:border-[#1DB954] transition-colors placeholder-white/20"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.15em] text-gray-500 font-[Barlow] mb-1.5">
-                Artist Name
-              </label>
-              <input
-                type="text"
-                value={artistName}
-                onChange={(e) => setArtistName(e.target.value)}
-                placeholder="Your Artist"
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white font-[Barlow] focus:outline-none focus:border-[#1DB954] transition-colors placeholder-white/20"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.15em] text-gray-500 font-[Barlow] mb-1.5">
-                Year
-              </label>
-              <input
-                type="text"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                placeholder="2026"
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white font-[Barlow] focus:outline-none focus:border-[#1DB954] transition-colors placeholder-white/20"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.15em] text-gray-500 font-[Barlow] mb-2">
-                Preview View
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                {views.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => setView(v.id)}
-                    className={`py-2 px-1 rounded-lg font-[Barlow] text-xs font-semibold transition-all ${
-                      view === v.id
-                        ? "bg-[#1DB954] text-black"
-                        : "bg-white/10 text-gray-400 hover:bg-white/18 hover:text-white"
-                    }`}
-                  >
-                    {v.label}
-                  </button>
-                ))}
-              </div>
+        <div className="s-form">
+          {field("Song name", songName, setSongName, "Your Song")}
+          {field("Artist name", artistName, setArtistName, "Your Artist")}
+          {field("Year", year, setYear, "2026")}
+          <div className="s-field">
+            <span className="s-mono" id="sat-view">
+              View
+            </span>
+            <div className="s-seg" role="group" aria-labelledby="sat-view">
+              {views.map((v) => (
+                <button key={v.id} type="button" aria-pressed={view === v.id} onClick={() => setView(v.id)}>
+                  {v.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
+      </div>
 
         {/* ─── SPOTIFY MOCK ─────────────────────────────────────── */}
         <div
-          className="rounded-xl overflow-hidden shadow-2xl shadow-black/60"
+          className="s-sat-mock rounded-xl overflow-hidden shadow-2xl shadow-black/60"
           style={{
             fontFamily: '"Figtree", sans-serif',
           }}
@@ -1621,7 +1537,6 @@ export function SpotifyArtTester() {
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </ToolPage>
   );
 }

@@ -9,8 +9,8 @@ type Section = { id: string; title: string; body: ReactNode };
 
 function LegalPage({ label, title, intro, sections }: { label: string; title: string; intro: ReactNode; sections: Section[] }) {
   return (
-    <div className="s-legal">
-      <section className="s-panel s-pad s-legal-head" data-scene="hero" aria-labelledby="legal-title">
+    <div className="s-legal s-page">
+      <section className="s-panel s-pad s-phead s-legal-head" data-scene="hero" aria-labelledby="legal-title">
         <div className="s-sec-head">
           <span className="s-mono">{label}</span>
           <span className="s-mono">Last updated {UPDATED}</span>

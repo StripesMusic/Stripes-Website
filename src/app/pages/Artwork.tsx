@@ -1,7 +1,10 @@
-// Artwork: every release as a pack (cover, animated cover, lyric video, process shots and
-// mockups when there are any). The richest packs open as case studies at the top; the rest
-// are a contact sheet of covers that opens each pack on click.
+// Designs: cover art, motion and web work. Every release is a pack (cover, animated cover, lyric
+// video, process shots and mockups when there are any): the fullest packs are shown open at the
+// top, the rest are a contact sheet of covers that opens each pack on click, and everything that
+// isn't a release (lyric videos, visuals, websites) comes last, playable in place.
 import { useEffect, useMemo, useRef, useState } from "react";
+import { LoopVideo } from "../components/LoopVideo";
+import { YouTube } from "../components/YouTube";
 import { Link } from "react-router";
 import { ImageSlot } from "../components/ImageSlot";
 import { ArtworkBg } from "../components/ArtworkBg";
@@ -13,43 +16,20 @@ const years = packs.map((p) => p.sort).filter(Boolean);
 const span = `${Math.floor(Math.min(...years) / 12)}–${Math.floor(Math.max(...years) / 12)}`;
 const pad = (n: number) => String(n).padStart(2, "0");
 
-// a Spotify Canvas loop that only plays while it's on screen
+// an animated cover: the Spotify Canvas loop, playing while it's on screen
 function Canvas({ video, poster, label }: { video: string; poster: string; label: string }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const v = ref.current!;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()), { threshold: 0.25 });
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
   return (
     <figure className="s-art-piece s-art-canvas">
-      <span className="s-slot" style={{ aspectRatio: "9 / 16" }}>
-        <video ref={ref} src={video} poster={poster} muted loop playsInline preload="none" aria-label={label} />
-      </span>
+      <LoopVideo srcs={[video]} poster={poster} label={label} ratio="9 / 16" />
       <figcaption className="s-mono">Animated cover · Spotify Canvas</figcaption>
     </figure>
   );
 }
 
-// a lyric video: its thumbnail until you press play, then the YouTube player in place
 function Lyric({ id, title }: { id: string; title: string }) {
-  const [on, setOn] = useState(false);
   return (
     <figure className="s-art-piece s-art-lyric">
-      <span className="s-slot" style={{ aspectRatio: "16 / 9" }}>
-        {on ? (
-          <iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
-        ) : (
-          <button type="button" className="s-art-play" onClick={() => setOn(true)} aria-label={`Play ${title}`}>
-            <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" className="on" />
-            <span className="s-drums-play" aria-hidden="true">
-              <span className="s-tri" />
-            </span>
-          </button>
-        )}
-      </span>
+      <YouTube id={id} title={title} label="Play lyric video" />
       <figcaption className="s-mono">Lyric video</figcaption>
     </figure>
   );
@@ -127,11 +107,120 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
   );
 }
 
+type Clip = { title: string; srcs: string[]; ratio: string };
+
+// a clip that isn't part of a release (visuals, an animation): it plays silently while hovered
+// (on a phone, while it's on screen) and opens in a full player on click
+function ClipTile({ w, clip, onOpen }: { w: (typeof otherWork)[number]; clip: Clip; onOpen: () => void }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [moving, setMoving] = useState(false);
+  useEffect(() => {
+    const v = ref.current!;
+    v.muted = true;
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()), { threshold: 0.4 });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  const play = () => ref.current?.play().catch(() => {});
+  const stop = () => ref.current?.pause();
+  return (
+    <button type="button" className="s-art-clip" onClick={onOpen} onPointerEnter={play} onPointerLeave={stop} onFocus={play} onBlur={stop} aria-label={`Play ${w.title}`}>
+      <span className={"s-slot s-yt s-yt-sm" + (moving ? " is-moving" : "")} style={{ aspectRatio: clip.ratio }}>
+        <img src={w.image} alt="" loading="lazy" decoding="async" className="on" />
+        <video ref={ref} src={clip.srcs[0]} muted loop playsInline preload="none" onPlaying={() => setMoving(true)} onPause={() => setMoving(false)} />
+        <span className="s-yt-play" aria-hidden="true">
+          <span className="s-yt-tri" />
+        </span>
+        <span className="s-yt-tag" aria-hidden="true">
+          {clip.srcs.length > 1 ? `${clip.srcs.length} clips` : "Video"}
+        </span>
+      </span>
+      <Cap w={w} />
+    </button>
+  );
+}
+
+function Cap({ w }: { w: (typeof otherWork)[number] }) {
+  return (
+    <span className="s-art-cap">
+      <span>{w.title}</span>
+      <span className="s-mono">
+        {w.type} · {w.date}
+      </span>
+    </span>
+  );
+}
+
+const clipOf = (w: (typeof otherWork)[number]): Clip | null => {
+  const srcs = [w.videoUrl, ...(w.images ?? [])].filter((u, i, all): u is string => !!u && /\.mp4$/i.test(u) && all.indexOf(u) === i);
+  return srcs.length ? { title: w.title, srcs, ratio: w.category === "set-visuals" ? "16 / 9" : "1 / 1" } : null;
+};
+
+// one piece that isn't part of a release: played in place when it moves, a link when it's a site
+function Other({ w, onClip }: { w: (typeof otherWork)[number]; onClip: (c: Clip) => void }) {
+  const yt = ytId(w.youtubeUrl);
+  const clip = clipOf(w);
+  if (yt) {
+    return (
+      <div>
+        <YouTube id={yt} title={w.title} label="Play lyric video" className="s-yt-sm" />
+        <Cap w={w} />
+      </div>
+    );
+  }
+  if (clip) return <ClipTile w={w} clip={clip} onOpen={() => onClip(clip)} />;
+  if (w.category === "websites" && w.youtubeUrl) {
+    return (
+      <a href={w.youtubeUrl} target="_blank" rel="noopener noreferrer" className="s-art-site">
+        <ImageSlot src={w.image} ratio="16 / 9" alt="" label={w.title} />
+        <span className="s-art-site-go s-mono" aria-hidden="true">
+          Visit site ↗
+        </span>
+        <Cap w={w} />
+      </a>
+    );
+  }
+  return (
+    <div>
+      <ImageSlot src={w.image} ratio="1 / 1" alt={w.title} label={w.title} />
+      <Cap w={w} />
+    </div>
+  );
+}
+
+// the full player for a clip, with its other clips as a strip below
+function ClipPlayer({ clip }: { clip: Clip }) {
+  const [i, setI] = useState(0);
+  return (
+    <div className="s-clip">
+      <h2 className="s-art-name" id="clip-title">
+        {clip.title}
+      </h2>
+      <video key={clip.srcs[i]} src={clip.srcs[i]} controls autoPlay playsInline loop={clip.srcs.length === 1} onEnded={() => setI((n) => (n + 1) % clip.srcs.length)} style={{ aspectRatio: clip.ratio }} />
+      {clip.srcs.length > 1 && (
+        <ol className="s-clip-strip" aria-label="Clips">
+          {clip.srcs.map((u, n) => (
+            <li key={u}>
+              <button type="button" aria-pressed={n === i} aria-label={`Clip ${n + 1}`} onClick={() => setI(n)}>
+                <video src={`${u}#t=0.5`} muted playsInline preload="metadata" aria-hidden="true" tabIndex={-1} />
+                <span className="s-mono">{String(n + 1).padStart(2, "0")}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
 export function Artwork() {
   const [label, setLabel] = useState("All");
   const [kind, setKind] = useState<Kind | "All">("All");
   const [open, setOpen] = useState<Pack | null>(null);
+  const [clip, setClip] = useState<Clip | null>(null);
   const dlg = useRef<HTMLDialogElement>(null);
+  const clipDlg = useRef<HTMLDialogElement>(null);
 
   const shown = useMemo(
     () => packs.filter((p) => (label === "All" || p.label === label) && (kind === "All" || p.kinds.includes(kind))),
@@ -144,44 +233,55 @@ export function Artwork() {
     if (open && !d.open) d.showModal();
     if (!open && d.open) d.close();
   }, [open]);
+  useEffect(() => {
+    const d = clipDlg.current!;
+    if (clip && !d.open) d.showModal();
+    if (!clip && d.open) d.close();
+  }, [clip]);
 
   return (
     <div className="s-art">
       <section className="s-panel s-pad s-art-head" data-scene="designs" aria-labelledby="art-title">
         <ArtworkBg />
         <div className="s-sec-head">
-          <span className="s-mono">Artwork</span>
+          <span className="s-mono">Cover art · Motion · Web</span>
           <span className="s-mono">
             <span className="s-num">{packs.length}</span> releases · {span}
           </span>
         </div>
         <h1 className="s-art-title" id="art-title">
-          <span>Release</span>
-          <span>packs</span>
+          Designs
         </h1>
         <div className="s-art-intro">
-          <p className="s-big">Cover art, animated covers and lyric videos for labels and artists, grouped by release.</p>
+          <p className="s-big">Cover art, animated covers, lyric videos, set visuals and websites for labels and artists.</p>
           <div className="s-ctas">
+            <a className="s-btn" href="#packs">
+              Release packs ↓
+            </a>
             <Link className="s-btn s-btn-solid" to="/contact">
-              Commission a pack
+              Commission art
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="s-panel s-pad s-art-featured" data-scene="releases" aria-label="Case studies">
+      <section className="s-panel s-pad s-art-featured" data-scene="releases" id="packs" aria-labelledby="packs-h">
         <div className="s-sec-head">
-          <span className="s-mono">Case studies</span>
-          <span className="s-mono">The fullest packs</span>
+          <h2 className="s-mono" id="packs-h">
+            Release packs
+          </h2>
+          <span className="s-mono">Everything made for one release, together</span>
         </div>
         {featured.map((p, i) => (
           <CaseStudy p={p} n={i + 1} key={p.key} />
         ))}
       </section>
 
-      <section className="s-panel s-pad s-art-index" data-scene="olive" aria-label="Every release">
+      <section className="s-panel s-pad s-art-index" data-scene="olive" aria-labelledby="index-h">
         <div className="s-sec-head">
-          <span className="s-mono">Every release</span>
+          <h2 className="s-mono" id="index-h">
+            Every release
+          </h2>
           <span className="s-mono" aria-live="polite">
             <span className="s-num">{shown.length}</span> shown
           </span>
@@ -225,38 +325,19 @@ export function Artwork() {
         {shown.length === 0 && <p className="s-muted">Nothing matches both filters yet.</p>}
       </section>
 
-      <section className="s-panel s-pad s-art-other" data-scene="about" aria-label="Other work">
+      <section className="s-panel s-pad s-art-other" data-scene="about" aria-labelledby="other-h">
         <div className="s-sec-head">
-          <span className="s-mono">Also</span>
-          <span className="s-mono">Websites, set visuals and more</span>
+          <h2 className="s-mono" id="other-h">
+            Motion and web
+          </h2>
+          <span className="s-mono">Lyric videos, visuals, websites and more</span>
         </div>
         <ul className="s-art-others">
-          {otherWork.map((w) => {
-            const yt = ytId(w.youtubeUrl);
-            const href = yt ? w.youtubeUrl : w.category === "websites" ? w.youtubeUrl : undefined;
-            const body = (
-              <>
-                <ImageSlot src={w.image} ratio={w.category === "misc" || w.category === "animations" ? "1 / 1" : "16 / 9"} alt="" label={w.title} />
-                <span className="s-art-cap">
-                  <span>{w.title}</span>
-                  <span className="s-mono">
-                    {w.type} · {w.date}
-                  </span>
-                </span>
-              </>
-            );
-            return (
-              <li key={w.id + w.title}>
-                {href ? (
-                  <a href={href} target="_blank" rel="noopener noreferrer">
-                    {body}
-                  </a>
-                ) : (
-                  <div>{body}</div>
-                )}
-              </li>
-            );
-          })}
+          {otherWork.map((w) => (
+            <li key={w.id + w.title} className={"s-art-other-" + w.category}>
+              <Other w={w} onClip={setClip} />
+            </li>
+          ))}
         </ul>
       </section>
 
@@ -267,6 +348,17 @@ export function Artwork() {
               Close
             </button>
             <CaseStudy p={open} n={packs.indexOf(open) + 1} headingId="pack-title" />
+          </div>
+        )}
+      </dialog>
+
+      <dialog ref={clipDlg} className="s-art-dialog s-clip-dialog" aria-labelledby="clip-title" onClose={() => setClip(null)} onClick={(e) => e.target === clipDlg.current && setClip(null)}>
+        {clip && (
+          <div className="s-art-dialog-in">
+            <button type="button" className="s-btn s-art-close" onClick={() => setClip(null)}>
+              Close
+            </button>
+            <ClipPlayer clip={clip} />
           </div>
         )}
       </dialog>

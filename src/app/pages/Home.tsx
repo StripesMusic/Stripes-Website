@@ -11,10 +11,11 @@ import { SpectrumBg } from "../components/home/SpectrumBg";
 import { ReleaseList } from "../components/home/ReleaseList";
 import { Packs } from "../components/home/Packs";
 import { NowPlaying } from "../components/home/NowPlaying";
+import { EpBody, epTracks } from "../components/home/EpBody";
 import { Eq } from "../components/home/Eq";
 import { ImageSlot } from "../components/ImageSlot";
 import { Photo } from "../components/Photo";
-import { ep, clipUrl } from "../data/releases";
+import { ep } from "../data/releases";
 import { drumCovers, thumbUrl } from "../data/drums";
 import { photos } from "../data/images";
 import { socials } from "../data/socials";
@@ -22,7 +23,6 @@ import { audio, type Track } from "../lib/audio";
 import { useAudio } from "../lib/useAudio";
 import { onFrame } from "../lib/ticker";
 
-const epTracks: Track[] = ep.tracks.map((t) => ({ id: `${ep.link}#${t.n}`, title: t.title, sub: t.artists, url: clipUrl(t.preview), href: ep.link }));
 const HERO = epTracks[0];
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
@@ -185,44 +185,7 @@ export function Home() {
               </Link>
             </div>
           </div>
-          <div className="s-ep-body s-pad">
-            <Link to={ep.link} className="s-ep-cover">
-              <ImageSlot src={ep.image} alt={`${ep.title} ${ep.type} cover`} label="Cover" />
-            </Link>
-            <div className="s-ep-info">
-              <p className="s-mono">
-                New {ep.type} · {ep.date}
-              </p>
-              <h2 className="s-ep-title">{ep.title}</h2>
-              <ol className="s-ep-tracks">
-                {ep.tracks.map((t, i) => {
-                  const tr = epTracks[i], on = playing(tr);
-                  return (
-                    <li key={t.n} className={on ? "is-playing" : ""}>
-                      <button type="button" aria-pressed={on} aria-label={on ? `Stop ${t.title}` : `Preview ${t.title}`} onClick={() => audio.toggle(tr)}>
-                        <span className="s-num">{t.n}</span>
-                        <span className="s-ep-track">
-                          <span>{t.title}</span>
-                          <span className="s-muted">{t.artists}</span>
-                        </span>
-                        <span className="s-ep-tplay" aria-hidden="true">
-                          {on ? <Eq on /> : <span className="s-tri s-tri-sm" />}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-              <div className="s-ctas">
-                <Link className="s-btn s-btn-solid" to={ep.link}>
-                  Listen to the {ep.type} ↗
-                </Link>
-                <Link className="s-btn" to="/music">
-                  All music
-                </Link>
-              </div>
-            </div>
-          </div>
+          <EpBody />
         </section>
 
         <section className="s-panel s-pad s-rels" data-scene="releases" aria-label="Releases">

@@ -113,19 +113,19 @@ export function SoundCloudCallback() {
   }, [searchParams, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6">
-      <div className="text-center">
-        <div className="w-16 h-16 border-4 border-[var(--lime-green)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-xl font-[Barlow]">{msg}</p>
-
-        <div className="mt-4">
-          <a
-            href={backUrl}
-            className="inline-block px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors font-bold"
-          >
-            Back to download
-          </a>
-        </div>
+    <div className="s-site s-callback" data-scene="ep">
+      <div className="s-callback-in s-pad">
+        <span className="s-eq on" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
+        <p className="s-big" role="status">
+          {msg}
+        </p>
+        <a href={backUrl} className="s-btn">
+          Back to the download
+        </a>
       </div>
     </div>
   );

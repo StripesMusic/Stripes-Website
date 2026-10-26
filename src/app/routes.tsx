@@ -6,35 +6,13 @@ import { Music } from "./pages/Music";
 import { Artwork } from "./pages/Artwork";
 import { Drums } from "./pages/Drums";
 import { Contact } from "./pages/Contact";
-import { FangateForgetYou } from "./pages/FangateForgetYou";
-import { FangateOutOfControlEP } from "./pages/FangateOutOfControlEP";
-import { FangateCatharina } from "./pages/FangateCatharina";
-import { FangateTellMe } from "./pages/FangateTellMe";
 import { Fangate } from "./pages/Fangate";
-import { FangateBackToMe } from "./pages/FangateBackToMe";
-import { FangateLostInYou } from "./pages/FangateLostInYou";
-import { FangateRunWithYou } from "./pages/FangateRunWithYou";
-import { FangateDontKillMyVibe } from "./pages/FangateDontKillMyVibe";
-import { FangateGhostOfYou } from "./pages/FangateGhostOfYou";
-import { FangateNeverLookingBack } from "./pages/FangateNeverLookingBack";
-import { FangateClarityRemix } from "./pages/FangateClarityRemix";
-import { FangateLoveMeToo } from "./pages/FangateLoveMeToo";
-import { FangateInfinityRemix } from "./pages/FangateInfinityRemix";
-import { FangateYouAndI } from "./pages/FangateYouAndI";
-import { FangateMoreThanYesterday } from "./pages/FangateMoreThanYesterday";
-import { FangateAlways } from "./pages/FangateAlways";
-import { FangateBackInTime } from "./pages/FangateBackInTime";
-import { FangateLucky } from "./pages/FangateLucky";
-import { FangateASkyFullOfStarsRemix } from "./pages/FangateASkyFullOfStarsRemix";
-import { FangateSikeFlip } from "./pages/FangateSikeFlip";
-import { FangateTheEndEdit } from "./pages/FangateTheEndEdit";
-import { FangateSendMeAnAngel } from "./pages/FangateSendMeAnAngel";
-import { FangateBoom } from "./pages/FangateBoom";
-import { FangateMashupPack } from "./pages/FangateMashupPack";
+import { gates } from "./data/fangates";
 import { SoundCloudCallback } from "./pages/SoundCloudCallback";
 import { GDAutoExport } from "./pages/tools/GDAutoExport";
 import { AudioSilencePadder } from "./pages/tools/AudioSilencePadder";
 import { SpotifyArtTester } from "./pages/tools/SpotifyArtTester";
+import { Tools } from "./pages/tools/Tools";
 import { NotFound } from "./pages/NotFound";
 import { Privacy, Terms, Accessibility } from "./pages/Legal";
 
@@ -76,105 +54,11 @@ export const router = createBrowserRouter([
         path: "/contact",
         Component: Contact,
       },
+      // one download page per release, all drawn by Fangate from data/fangates.ts
+      ...gates.map((g) => ({ path: `/link/${g.slug}`, element: <Fangate g={g} /> })),
       {
-        path: "/link/forgetyou",
-        Component: FangateForgetYou,
-      },
-      {
-        path: "/link/catharinaremix",
-        Component: FangateCatharina,
-      },
-      {
-        path: "/link/tellme",
-        Component: FangateTellMe,
-      },
-      {
-        path: "/link/ijustflow",
-        Component: Fangate,
-      },
-      {
-        path: "/link/backtome",
-        Component: FangateBackToMe,
-      },
-      {
-        path: "/link/lostinyou",
-        Component: FangateLostInYou,
-      },
-      {
-        path: "/link/runwithyou",
-        Component: FangateRunWithYou,
-      },
-      {
-        path: "/link/dontkillmyviberemix",
-        Component: FangateDontKillMyVibe,
-      },
-      {
-        path: "/link/ghostofyouremix",
-        Component: FangateGhostOfYou,
-      },
-      {
-        path: "/link/neverlookingback",
-        Component: FangateNeverLookingBack,
-      },
-      {
-        path: "/link/clarityremix",
-        Component: FangateClarityRemix,
-      },
-      {
-        path: "/link/lovemetoo",
-        Component: FangateLoveMeToo,
-      },
-      {
-        path: "/link/infinityremix",
-        Component: FangateInfinityRemix,
-      },
-      {
-        path: "/link/youandi",
-        Component: FangateYouAndI,
-      },
-      {
-        path: "/link/morethanyesterdayremix",
-        Component: FangateMoreThanYesterday,
-      },
-      {
-        path: "/link/always",
-        Component: FangateAlways,
-      },
-      {
-        path: "/link/backintime",
-        Component: FangateBackInTime,
-      },
-      {
-        path: "/link/lucky",
-        Component: FangateLucky,
-      },
-      {
-        path: "/link/askyfullofstarsremix",
-        Component: FangateASkyFullOfStarsRemix,
-      },
-      {
-        path: "/link/sikeflip",
-        Component: FangateSikeFlip,
-      },
-      {
-        path: "/link/theendedit",
-        Component: FangateTheEndEdit,
-      },
-      {
-        path: "/link/sendmeanangel",
-        Component: FangateSendMeAnAngel,
-      },
-      {
-        path: "/link/boom",
-        Component: FangateBoom,
-      },
-      {
-        path: "/link/mashuppackvol1",
-        Component: FangateMashupPack,
-      },
-      {
-        path: "/link/outofcontrolep",
-        Component: FangateOutOfControlEP,
+        path: "/tools",
+        Component: Tools,
       },
       {
         path: "/tools/gd-auto-export",

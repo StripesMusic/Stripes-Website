@@ -90,6 +90,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 Tools <span aria-hidden="true">{toolsOpen ? "−" : "+"}</span>
               </button>
               <div className={"s-tools-pop" + (toolsOpen ? " open" : "")}>
+                <Link to="/tools" aria-current={isActive("/tools") ? "page" : undefined} tabIndex={toolsOpen ? 0 : -1}>
+                  All tools
+                </Link>
                 {toolsLinks.map((l) => (
                   <Link key={l.path} to={l.path} aria-current={isActive(l.path) ? "page" : undefined} tabIndex={toolsOpen ? 0 : -1}>
                     {l.name}
@@ -126,7 +129,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 {l.name}
               </Link>
             ))}
-            <p className="s-mono">Tools</p>
+            <Link to="/tools" className="s-menu-small" tabIndex={menuOpen ? 0 : -1}>
+              <span className="s-mono">Tools</span>
+            </Link>
             {toolsLinks.map((l) => (
               <Link key={l.path} to={l.path} className="s-menu-small" tabIndex={menuOpen ? 0 : -1}>
                 {l.name}
