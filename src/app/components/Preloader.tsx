@@ -1,6 +1,6 @@
 // "Meter into the red", for the Out of Control EP: a stereo level meter climbs on each beat at
 // 128 BPM until it clips, the title shakes apart, then the screen lifts off the site.
-// Silent, about 2 seconds, once per session; any click, key or scroll skips it.
+// Silent, about 1.6 seconds, once per session; any click, key or scroll skips it.
 import { useEffect, useRef } from "react";
 import { ep } from "../data/releases";
 import { loopPreloader, markReady } from "../lib/intro";
@@ -10,10 +10,10 @@ const SEG = 30; // segments per channel
 const RED = 4; // the last few are the clip zone, 0 to +3 dB
 const DB_MIN = -48;
 const BEAT = 60000 / 128;
-const START = 160;
-const PEAKS = [-22, -10, -3.5, 3.4];
+const START = 120;
+const PEAKS = [-15, -4, 3.4];
 const CLIP = START + BEAT * (PEAKS.length - 1);
-const HOLD = 360; // how long it sits in the red before cutting
+const HOLD = 400; // how long it sits in the red before cutting
 const scale = ["-48", "-36", "-24", "-12", "-6", "0", "+3"];
 
 // dB -> lit segments: -48..0 across the lime ones, 0..+3 across the red
@@ -61,7 +61,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
       }
     };
     fontIn.then(go);
-    const late = window.setTimeout(go, 700);
+    const late = window.setTimeout(go, 400);
     // on repeat (?intro=loop) a click or space pauses it instead, and Esc leaves
     const pause = () => {
       if (pausedAt) {
@@ -143,26 +143,30 @@ export function Preloader({ onDone }: { onDone: () => void }) {
   }, []);
 
   const words = ep.title.split(" ");
-  const others = [...new Set(ep.tracks.flatMap((t) => t.artists.split(", ")).filter((a) => a !== "Stripes"))];
   return (
     <div className="s-pre" ref={rootRef} aria-hidden="true">
+      {/* the EP's cover, barely there */}
+      <img className="s-pre-cover" src={ep.image} alt="" decoding="async" onLoad={(e) => e.currentTarget.classList.add("on")} />
       <div className="s-pre-grain" />
       <div className="s-pre-row s-pad">
         <span className="s-mono">Stripes</span>
-        <span className="s-mono">
-          New {ep.type} · {ep.date}
-        </span>
       </div>
       <div className="s-pre-mid s-pad">
-        <p className="s-pre-title">
-          {/* the title plus two copies that tear off in lime and red when it clips */}
-          {["", " g1", " g2"].map((g) => (
-            <span className={"s-pre-tl" + g} key={g}>
-              <span>{words.slice(0, -1).join(" ")}</span>
-              <span>{words[words.length - 1]}</span>
-            </span>
-          ))}
-        </p>
+        <div className="s-pre-poster">
+          <p className="s-pre-title">
+            {/* the title plus two copies that tear off when it clips */}
+            {["", " g1", " g2"].map((g) => (
+              <span className={"s-pre-tl" + g} key={g}>
+                <span>{words.slice(0, -1).join(" ")}</span>
+                <span>{words[words.length - 1]}</span>
+              </span>
+            ))}
+          </p>
+          <p className="s-pre-promo">
+            <span>New {ep.type}</span>
+            <span>Out now</span>
+          </p>
+        </div>
         <div className="s-pre-meter">
           {["L", "R"].map((c) => (
             <div className="s-pre-ch" key={c}>
@@ -191,9 +195,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
         </p>
       </div>
       <div className="s-pre-row s-pad">
-        <span className="s-mono">
-          {ep.tracks.length} tracks · with {others.join(" and ")}
-        </span>
+        <span />
         <span className="s-mono s-pre-skip">{loopPreloader ? "Click or space to pause · Esc to leave" : "Click to skip"}</span>
       </div>
     </div>

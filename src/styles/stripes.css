@@ -990,7 +990,7 @@ html.s-locked {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.07;
+  opacity: 0.06;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -2244,9 +2244,6 @@ html.s-preloading {
   clip-path: inset(0 0 0 0);
   transition: clip-path 0.62s cubic-bezier(0.76, 0, 0.24, 1), background-color 0.08s;
 }
-.s-pre.is-clip {
-  background: #261c1a;
-}
 .s-pre.is-out {
   clip-path: inset(0 0 100% 0);
   pointer-events: none;
@@ -2258,6 +2255,20 @@ html.s-preloading {
   opacity: 0.14;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.s-pre-cover {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  object-fit: cover;
+  opacity: 0;
+  filter: saturate(0.6) blur(3px);
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.s-pre-cover.on {
+  opacity: 0.06;
 }
 .s-pre-row {
   position: relative;
@@ -2278,7 +2289,7 @@ html.s-preloading {
   position: relative;
   margin: 0;
   font-family: var(--s-display);
-  font-size: min(16vw, 25vh);
+  font-size: var(--t);
   font-weight: 200;
   font-variation-settings: "wdth" 80, "opsz" 96;
   line-height: 0.86;
@@ -2291,6 +2302,45 @@ html.s-preloading {
 .s-pre-tl,
 .s-pre-tl > span {
   display: block;
+}
+/* the title with "New EP / Out now" beside it, like a gig poster */
+.s-pre-poster {
+  --t: min(16vw, 25vh);
+  display: flex;
+  align-items: flex-end;
+  gap: calc(var(--t) * 0.16);
+}
+.s-pre-promo {
+  margin: 0 0 calc(var(--t) * 0.06);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--s-display);
+  font-size: calc(var(--t) * 0.27);
+  font-weight: 700;
+  font-variation-settings: "wdth" 75, "opsz" 96;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--s-hi);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease 0.08s, transform 0.8s var(--s-ease) 0.08s;
+}
+.s-pre.is-on .s-pre-promo {
+  opacity: 1;
+  transform: none;
+}
+@media (max-width: 700px) {
+  .s-pre-poster {
+    flex-direction: column;
+    align-items: center;
+  }
+  .s-pre-promo {
+    flex-direction: row;
+    gap: 0.3em;
+    margin: 0;
+    font-size: calc(var(--t) * 0.36);
+  }
 }
 .s-pre-tl.g1,
 .s-pre-tl.g2 {
@@ -2361,7 +2411,7 @@ html.s-preloading {
 }
 .s-pre-read {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   margin: 0;
 }
@@ -2373,7 +2423,10 @@ html.s-preloading {
 }
 .s-pre-clip {
   margin-left: 6px;
-  padding: 3px 8px;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 8px 4px;
+  line-height: 1;
   border: 1px solid color-mix(in srgb, var(--red) 45%, transparent);
   border-radius: 3px;
   color: color-mix(in srgb, var(--red) 60%, transparent);
@@ -2387,6 +2440,7 @@ html.s-preloading {
   color: var(--red);
 }
 .s-pre.is-clip .s-pre-title {
+  color: var(--red);
   animation: s-pre-shake 0.1s steps(2) infinite;
 }
 .s-pre.is-paused * {
@@ -2397,11 +2451,11 @@ html.s-preloading {
   visibility: visible;
 }
 .s-pre-tl.g1 {
-  color: var(--s-hi);
+  color: #ff9a8c;
   animation: s-pre-tear-a 0.36s steps(1) infinite;
 }
 .s-pre-tl.g2 {
-  color: var(--red);
+  color: var(--s-hi);
   mix-blend-mode: screen;
   animation: s-pre-tear-b 0.3s steps(1) infinite;
 }
@@ -2473,7 +2527,7 @@ html.s-preloading {
   }
   .s-pre.is-clip .s-pre-title {
     animation: none;
-    color: var(--s-hi);
+    color: var(--red);
   }
   .s-pre.is-clip .s-pre-tl.g1,
   .s-pre.is-clip .s-pre-tl.g2 {
