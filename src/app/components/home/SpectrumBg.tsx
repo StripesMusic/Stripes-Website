@@ -86,9 +86,10 @@ function startGL(cv: HTMLCanvasElement) {
       gl.uniform1f(U.push, push);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
-    // give the context back when the page changes, so they don't pile up
+    // give the context back when the page changes, so they don't pile up (only once the canvas
+    // is gone: the dev double mount keeps it and would get a dead context back)
     dispose() {
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      setTimeout(() => cv.isConnected || gl.getExtension("WEBGL_lose_context")?.loseContext());
     },
   };
 }

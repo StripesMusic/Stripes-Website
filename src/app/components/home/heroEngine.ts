@@ -689,6 +689,8 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     stage.removeEventListener("pointerleave", onLeave);
     stage.removeEventListener("pointercancel", onLeave);
     stage.removeEventListener("pointerdown", onDown);
-    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    // free the context once the canvas has left the page (not on the dev double mount, which
+    // keeps the canvas and would get a dead context back)
+    setTimeout(() => cv.isConnected || gl.getExtension("WEBGL_lose_context")?.loseContext());
   };
 }
