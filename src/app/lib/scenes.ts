@@ -17,11 +17,11 @@ const LIGHT: Record<string, string> = {
   footer: "#9dbf3f",
 };
 const DARK: Record<string, string> = {
-  hero: "#151613",
+  hero: "#343434",
   ep: "#131313",
   releases: "#b7ccc8",
-  olive: "#24281c",
-  designs: "#24281c",
+  olive: "#262626",
+  designs: "#262626",
   drums: "#181f36",
   about: "#c6c7c3",
   spectrum: "#343434",

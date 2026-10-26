@@ -4,12 +4,12 @@
 :root {
   /* Each section picks a scene from Jake's palettes; the page crossfades between them as you
      scroll (see lib/scenes.ts). These seven are the scene inputs; everything else derives from them. */
-  --s-bg: #151613;
-  --s-panel: #22231f;
+  --s-bg: #262626;
+  --s-panel: #343434;
   --s-fg: #cfd4c4;
-  --s-muted: #989b8f;
+  --s-muted: #a3a3a3;
   --s-accent: #b9e14d;
-  --s-accent-ink: #22231f;
+  --s-accent-ink: #343434;
   --s-hi: #b9e14d;
   --s-panel-2: color-mix(in oklab, var(--s-panel), var(--s-fg) 9%);
   --s-line: color-mix(in srgb, var(--s-fg) 15%, transparent);
@@ -30,12 +30,12 @@
   transition: --s-bg 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-panel 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-fg 0.6s cubic-bezier(0.8, 0, 0.2, 1), --s-muted 0.6s cubic-bezier(0.8, 0, 0.2, 1),
     --s-accent 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-accent-ink 0.9s cubic-bezier(0.45, 0, 0.2, 1), --s-hi 0.9s cubic-bezier(0.45, 0, 0.2, 1);
 }
-@property --s-bg { syntax: "<color>"; inherits: true; initial-value: #151613; }
-@property --s-panel { syntax: "<color>"; inherits: true; initial-value: #22231f; }
+@property --s-bg { syntax: "<color>"; inherits: true; initial-value: #262626; }
+@property --s-panel { syntax: "<color>"; inherits: true; initial-value: #343434; }
 @property --s-fg { syntax: "<color>"; inherits: true; initial-value: #cfd4c4; }
-@property --s-muted { syntax: "<color>"; inherits: true; initial-value: #989b8f; }
+@property --s-muted { syntax: "<color>"; inherits: true; initial-value: #a3a3a3; }
 @property --s-accent { syntax: "<color>"; inherits: true; initial-value: #b9e14d; }
-@property --s-accent-ink { syntax: "<color>"; inherits: true; initial-value: #22231f; }
+@property --s-accent-ink { syntax: "<color>"; inherits: true; initial-value: #343434; }
 @property --s-hi { syntax: "<color>"; inherits: true; initial-value: #b9e14d; }
 /* contrast-checked: text, muted and button text all pass 4.5:1 on their panel */
 :root[data-scene="ep"] {
@@ -58,21 +58,21 @@
   color-scheme: light;
 }
 :root[data-scene="olive"] {
-  --s-bg: #24281c;
-  --s-panel: #363b2b;
+  --s-bg: #262626;
+  --s-panel: #343434;
   --s-fg: #dfe0dc;
   --s-muted: #b2b5a8;
   --s-accent: #b9e14d;
-  --s-accent-ink: #363b2b;
+  --s-accent-ink: #343434;
   --s-hi: #b9e14d;
 }
 :root[data-scene="designs"] {
-  --s-bg: #24281c;
-  --s-panel: #363b2b;
+  --s-bg: #262626;
+  --s-panel: #343434;
   --s-fg: #dfe0dc;
   --s-muted: #b2b5a8;
   --s-accent: #b9e14d;
-  --s-accent-ink: #363b2b;
+  --s-accent-ink: #343434;
   --s-hi: #b9e14d;
 }
 :root[data-scene="drums"] {
@@ -2483,12 +2483,20 @@ html.s-preloading {
 
 /* Artwork: release packs */
 .s-art {
-  padding-top: var(--s-inset);
+  /* the header runs up under the nav, edge to edge, like the home hero */
+  margin-top: calc(-1 * var(--s-nav-h));
 }
 .s-art-head {
   isolation: isolate;
-  padding-top: 32px;
-  padding-bottom: 40px;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-top: calc(var(--s-nav-h) + 32px);
+  padding-bottom: calc(40px + var(--s-radius));
+}
+/* the first panel's rounded top sits over the header's bottom edge, as on the home page */
+.s-art-head + .s-panel {
+  margin-top: calc(-1 * var(--s-radius));
 }
 .s-art-title {
   margin: 24px 0 32px;
