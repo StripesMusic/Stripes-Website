@@ -132,7 +132,9 @@ export function Home() {
             <div className="s-hero-ui s-pad" ref={uiRef}>
               <div className="s-hero-lede">
                 <p className="s-mono">Producer · Cover artist · Metal drummer</p>
-                <h1 className="s-lede">Hey! Thanks for stopping by :)</h1>
+                {/* the page's real headline, for search engines and screen readers; the greeting is just shown */}
+                <h1 className="s-vh">Stripes: producer, cover artist and metal drummer</h1>
+                <p className="s-lede">Hey! Thanks for stopping by :)</p>
                 <div className="s-ctas">
                   <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
                     {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}

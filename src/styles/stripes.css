@@ -252,6 +252,19 @@ html.s-locked {
   }
 }
 
+/* read out and indexed, but not shown */
+.s-vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* type */
 .s-mono {
   margin: 0;
@@ -1177,12 +1190,15 @@ html.s-locked {
   color: var(--s-fg);
   text-decoration: none;
 }
-.s-rel-main::after {
+/* the title's link covers the whole row; the faces sit above it */
+.s-rel-title::after {
   content: "";
   position: absolute;
   inset: 0;
 }
 .s-rel-title {
+  color: inherit;
+  text-decoration: none;
   font-size: 17px;
   font-weight: 400;
   letter-spacing: -0.01em;
@@ -1197,6 +1213,100 @@ html.s-locked {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.s-collabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  align-self: center;
+}
+.s-collab-stack {
+  display: inline-flex;
+  padding-left: 8px;
+}
+.s-collab {
+  position: relative;
+  z-index: 1;
+  margin-left: -8px;
+  border-radius: 50%;
+  transition: margin 0.35s var(--s-ease), transform 0.25s var(--s-ease);
+}
+.s-rel-row.is-hover .s-collab {
+  margin-left: 4px;
+}
+/* a bigger tap area than the face itself, and a Spotify-green dot that says where it goes */
+.s-collab::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+.s-collab::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #1ed760;
+  box-shadow: 0 0 0 2px var(--s-panel);
+  transform: scale(0);
+  transition: transform 0.2s var(--s-ease);
+}
+.s-collab:hover::after,
+.s-collab:focus-visible::after {
+  transform: scale(1);
+}
+.s-collab-face {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--s-panel);
+  filter: grayscale(1);
+  transition: filter 0.3s, box-shadow 0.2s;
+}
+.s-collab-initial {
+  background: var(--s-panel-2);
+  color: var(--s-fg);
+  font-size: 11px;
+}
+.s-rel-row.is-hover .s-collab-face {
+  filter: none;
+}
+.s-collab-name {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--s-fg);
+  color: var(--s-panel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.15s, transform 0.2s var(--s-ease);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .s-collab:hover {
+    z-index: 2;
+    transform: translateY(-2px) scale(1.12);
+  }
+  .s-collab:hover .s-collab-face {
+    box-shadow: 0 0 0 2px var(--s-panel), 0 0 0 3px var(--s-hi);
+  }
+}
+.s-collab:hover .s-collab-name,
+.s-collab:focus-visible .s-collab-name {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 .s-rel-row.is-playing .s-rel-title {
   color: var(--s-hi);

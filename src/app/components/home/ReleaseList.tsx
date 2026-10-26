@@ -2,7 +2,7 @@
 // once previews are switched on, plays its clip.
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { releases, previewUrl, type Release } from "../../data/releases";
+import { releases, previewUrl, type Collaborator, type Release } from "../../data/releases";
 import { audio, type Track } from "../../lib/audio";
 import { useAudio } from "../../lib/useAudio";
 import { Eq } from "./Eq";
@@ -50,7 +50,11 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
     floatRef.current?.classList.remove("off");
     if (!p.raf) p.raf = requestAnimationFrame(follow);
   };
-  const onMove = (e: React.PointerEvent<HTMLOListElement>) => aim(e.clientX, e.clientY, e.currentTarget, false);
+  const onMove = (e: React.PointerEvent<HTMLOListElement>) => {
+    aim(e.clientX, e.clientY, e.currentTarget, false);
+    // the cover steps aside while a collaborator's face (and its name) is under the cursor
+    if ((e.target as Element).closest(".s-collab")) floatRef.current?.classList.add("off");
+  };
   const enter = (i: number, e: React.PointerEvent<HTMLLIElement>) => {
     const fresh = hover < 0;
     setHover(i);
@@ -93,10 +97,12 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
             <li key={r.link} className={"s-rel-row" + (hover === i ? " is-hover" : "") + (playing ? " is-playing" : "")} onPointerEnter={(e) => enter(i, e)}>
               <span className="s-mono s-rel-n">{String(i + 1).padStart(2, "0")}</span>
               <ImageSlot className="s-rel-thumb" src={r.image} label="Cover" />
-              <Link className="s-rel-main" to={r.link}>
-                <span className="s-rel-title">{r.title}</span>
-                <span className="s-rel-credit">{credits(r)}</span>
-              </Link>
+              <div className="s-rel-main">
+                <Link className="s-rel-title" to={r.link}>
+                  {r.title}
+                </Link>
+                {r.collaborators.length > 0 && <Collabs list={r.collaborators} />}
+              </div>
               <span className="s-mono s-rel-type">{r.type}</span>
               <span className="s-mono s-rel-date">{r.date}</span>
               {track ? (
@@ -125,4 +131,30 @@ export function ReleaseList({ count = 8 }: { count?: number }) {
       )}
     </div>
   );
+}
+
+// The collaborators as a stack of small faces, each linking to their Spotify. The stack fans out
+// when the row is hovered, and each face shows its name above it.
+function Collabs({ list }: { list: Collaborator[] }) {
+  return (
+    <span className="s-collabs">
+      <span className="s-rel-credit">with</span>
+      <span className="s-collab-stack">
+        {list.map((c) => (
+          <a key={c.name} className="s-collab" href={c.link} target="_blank" rel="noopener noreferrer" aria-label={`${c.name} on Spotify`}>
+            <Face c={c} />
+            <span className="s-collab-name" aria-hidden="true">
+              {c.name} ↗
+            </span>
+          </a>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function Face({ c }: { c: Collaborator }) {
+  const [failed, setFailed] = useState(false);
+  if (failed || !c.image) return <span className="s-collab-face s-collab-initial">{c.name.charAt(0)}</span>;
+  return <img className="s-collab-face" src={c.image} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />;
 }
