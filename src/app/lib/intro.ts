@@ -1,6 +1,7 @@
 // The preloader holds the page's entrance animations until it lifts. It plays on the first
 // visit to the homepage in a session (or with ?intro in the address); everywhere else the
-// entrances start right away.
+// entrances start right away. ?intro=loop plays it on repeat to watch, with click or space to
+// pause and Esc to leave.
 const KEY = "s-intro-seen";
 
 function wantsPreloader() {
@@ -15,6 +16,7 @@ function wantsPreloader() {
 }
 
 export const showPreloader = wantsPreloader();
+export const loopPreloader = typeof window !== "undefined" && new URLSearchParams(location.search).get("intro") === "loop";
 let ready = !showPreloader;
 const waiting = new Set<() => void>();
 

@@ -1,19 +1,19 @@
 // "Meter into the red", for the Out of Control EP: a stereo level meter climbs on each beat at
 // 128 BPM until it clips, the title shakes apart, then the screen lifts off the site.
-// Silent, about 2.5 seconds, once per session; any click, key or scroll skips it.
+// Silent, about 2 seconds, once per session; any click, key or scroll skips it.
 import { useEffect, useRef } from "react";
 import { ep } from "../data/releases";
-import { markReady } from "../lib/intro";
+import { loopPreloader, markReady } from "../lib/intro";
 import { onFrame } from "../lib/ticker";
 
 const SEG = 30; // segments per channel
 const RED = 4; // the last few are the clip zone, 0 to +3 dB
 const DB_MIN = -48;
 const BEAT = 60000 / 128;
-const START = 220;
-const PEAKS = [-27, -17, -9.5, -3.5, 3.4];
+const START = 160;
+const PEAKS = [-22, -10, -3.5, 3.4];
 const CLIP = START + BEAT * (PEAKS.length - 1);
-const HOLD = 420; // how long it sits in the red before cutting
+const HOLD = 360; // how long it sits in the red before cutting
 const scale = ["-48", "-36", "-24", "-12", "-6", "0", "+3"];
 
 // dB -> lit segments: -48..0 across the lime ones, 0..+3 across the red
@@ -41,7 +41,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
     html.classList.add("s-preloading");
     scrollTo(0, 0);
     let t0 = 0, phase: "wait" | "run" | "clip" | "out" = "wait", lastRead = "";
-    let doneT = 0;
+    let doneT = 0, pausedAt = 0;
 
     const out = () => {
       if (phase === "out") return;
@@ -62,14 +62,39 @@ export function Preloader({ onDone }: { onDone: () => void }) {
     };
     fontIn.then(go);
     const late = window.setTimeout(go, 700);
-    const skip = () => out();
+    // on repeat (?intro=loop) a click or space pauses it instead, and Esc leaves
+    const pause = () => {
+      if (pausedAt) {
+        t0 += performance.now() - pausedAt;
+        pausedAt = 0;
+      } else pausedAt = performance.now();
+      root.classList.toggle("is-paused", !!pausedAt);
+    };
+    const skip = (e: Event) => {
+      if (!loopPreloader) return out();
+      if (e.type === "pointerdown") pause();
+      else if (e instanceof KeyboardEvent) {
+        if (e.key === "Escape") out();
+        else if (e.key === " ") {
+          e.preventDefault();
+          pause();
+        }
+      }
+    };
     addEventListener("pointerdown", skip);
     addEventListener("keydown", skip);
     addEventListener("wheel", skip, { passive: true });
     addEventListener("touchmove", skip, { passive: true });
 
     const off = onFrame((now) => {
-      if (phase === "wait" || phase === "out") return;
+      if (phase === "wait" || phase === "out" || pausedAt) return;
+      if (loopPreloader && now - t0 >= CLIP + HOLD + 700) {
+        // go again from silence
+        t0 = now;
+        phase = "run";
+        root.classList.remove("is-clip");
+        chans.forEach((ch) => (ch.peak = 0));
+      }
       const t = now - t0;
       // the level jumps on each beat and falls away between them; after the last it stays pinned
       const b = Math.floor((t - START) / BEAT);
@@ -102,7 +127,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
       });
       const txt = !isFinite(db) ? "-∞" : (db > 0 ? "+" : "") + db.toFixed(1);
       if (txt !== lastRead) read.textContent = lastRead = txt;
-      if (t >= CLIP + HOLD) out();
+      if (t >= CLIP + HOLD && !loopPreloader) out();
     });
 
     return () => {
@@ -169,7 +194,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
         <span className="s-mono">
           {ep.tracks.length} tracks · with {others.join(" and ")}
         </span>
-        <span className="s-mono s-pre-skip">Click to skip</span>
+        <span className="s-mono s-pre-skip">{loopPreloader ? "Click or space to pause · Esc to leave" : "Click to skip"}</span>
       </div>
     </div>
   );

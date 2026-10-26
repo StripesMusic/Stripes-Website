@@ -97,7 +97,7 @@ export function Privacy() {
             <>
               <p>The site sets no cookies. It keeps a few small settings in your browser's storage, which never leave your device:</p>
               <ul>
-                <li>whether you picked light or dark mode</li>
+                <li>which colour scheme you picked</li>
                 <li>whether the intro has already played in this visit</li>
                 <li>which steps of a download page you've completed</li>
                 <li>a one-time code used while you connect SoundCloud, removed when you come back</li>
@@ -315,7 +315,7 @@ export function Accessibility() {
               <ul>
                 <li>keyboard navigation with a visible focus outline</li>
                 <li>text alternatives for images</li>
-                <li>text contrast checked in both light and dark mode</li>
+                <li>text contrast checked in both colour schemes</li>
                 <li>calmer or stopped animation when your device's reduce-motion setting is on</li>
                 <li>decorative animation hidden from screen readers</li>
               </ul>

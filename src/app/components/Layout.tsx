@@ -106,8 +106,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               className="s-btn s-theme-btn"
-              aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-              title={theme === "light" ? "Dark mode" : "Light mode"}
+              aria-label="Change colour scheme"
+              title="Change colour scheme"
               onClick={flipTheme}
             >
               <span className="s-theme-ico" aria-hidden="true" />

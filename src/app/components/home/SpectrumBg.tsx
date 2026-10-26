@@ -133,7 +133,7 @@ export function SpectrumBg({ getScroll }: { getScroll: () => HeroScroll }) {
     io.observe(host);
     const stop = onFrame((now) => {
       const cover = getScroll().cover;
-      // light mode only; the dark hero is the plain olive panel
+      // light mode only; the dark hero is the plain grey panel
       if (!visible || cover >= 0.999 || getTheme() !== "light") return;
       // the deepest layer: it only drifts up a little as the first panel slides over
       const l = cover > 0 ? `translate3d(0, ${(-cover * 6).toFixed(2)}%, 0)` : "";

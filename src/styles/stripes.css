@@ -497,7 +497,7 @@ html.s-locked {
 .s-nav-menu {
   display: none;
 }
-/* light/dark: a half-filled circle that turns over */
+/* colour scheme switch: a swatch of both schemes (lime on grey, the spectrum) that turns over */
 .s-theme-btn {
   width: 30px;
   padding: 0;
@@ -508,7 +508,7 @@ html.s-locked {
   height: 12px;
   border-radius: 50%;
   border: 1px solid currentColor;
-  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  background: linear-gradient(90deg, #b9e14d 50%, #78cfd3 50%, #7087c7);
   transition: transform 0.5s var(--s-ease);
 }
 :root[data-theme="light"] .s-theme-ico {
@@ -636,18 +636,18 @@ html.s-locked {
   position: absolute;
   inset: 0;
   transform-origin: 50% 40%;
-  border-radius: var(--s-radius);
+  /* square: the hero fills the top of the page edge to edge (the panels below stay rounded) */
   overflow: hidden;
   color: var(--s-fg);
-  /* dark: the olive panel, with the S and the type's flash in lime */
-  background: #22231f;
+  /* dark: jet grey, with the S and the type's flash in lime */
+  background: #343434;
 }
 /* light: dark type on the bright spectrum */
 :root[data-theme="light"] .s-stage-inner {
   --s-fg: #10110e;
   --s-muted: #1d2029;
   --s-accent: #10110e;
-  --s-accent-ink: #d9f08a;
+  --s-accent-ink: #e8f0ff;
   --s-line: rgba(16, 17, 14, 0.2);
   --s-line-strong: rgba(16, 17, 14, 0.5);
   --s-word-hi: #f6f9ee;
@@ -663,7 +663,77 @@ html.s-locked {
 @media (hover: hover) and (pointer: fine) {
   :root[data-theme="light"] .s-stage-inner .s-btn:hover {
     background: var(--s-fg);
-    color: #d9f08a;
+    color: #e8f0ff;
+  }
+}
+/* hero montage: three feathered grey layers blended into the hero, so the S sits in them, very
+   faded. On dark they only add light (screen); on light they only add shade (multiply), so they
+   take the gradient's colours. */
+.s-montage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.s-montage .s-fade {
+  filter: grayscale(1) contrast(1.1);
+}
+.s-mt {
+  --fade: 0.12;
+  position: absolute;
+  opacity: 0;
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(closest-side, #000 25%, transparent);
+  mask-image: radial-gradient(closest-side, #000 25%, transparent);
+  transition: opacity 2.6s cubic-bezier(0.45, 0, 0.2, 1);
+  will-change: transform;
+}
+:root[data-theme="light"] .s-mt {
+  --fade: 0.16;
+  mix-blend-mode: multiply;
+}
+.s-montage.is-in .s-mt {
+  opacity: var(--fade);
+}
+.s-mt-1 {
+  left: -6%;
+  top: 2%;
+  width: 42%;
+  height: 96%;
+  transition-delay: 0.5s;
+}
+.s-mt-2 {
+  right: -6%;
+  top: -6%;
+  width: 40%;
+  height: 80%;
+  transition-delay: 0.8s;
+}
+.s-mt-3 {
+  left: 30%;
+  bottom: -14%;
+  width: 46%;
+  height: 58%;
+  transition-delay: 1.1s;
+}
+@media (max-width: 700px) {
+  .s-mt-1 {
+    left: -18%;
+    top: 4%;
+    width: 86%;
+    height: 54%;
+  }
+  .s-mt-2 {
+    left: auto;
+    right: -22%;
+    top: 30%;
+    width: 84%;
+    height: 50%;
+  }
+  .s-mt-3 {
+    left: -10%;
+    bottom: -6%;
+    width: 90%;
+    height: 40%;
   }
 }
 .s-gl {
@@ -949,10 +1019,10 @@ html.s-locked {
   margin: 0;
   font-family: var(--s-display);
   font-size: clamp(72px, 11.5vw, 210px);
-  font-weight: 200;
+  font-weight: 600;
   font-variation-settings: "wdth" 80, "opsz" 96;
   line-height: 0.86;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.015em;
   text-wrap: balance;
   color: var(--s-hi);
 }
@@ -2267,11 +2337,9 @@ html.s-preloading {
 }
 .s-pre-segs i.on {
   background: var(--s-hi);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--s-hi) 45%, transparent);
 }
 .s-pre-segs i.red.on {
   background: var(--red);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--red) 65%, transparent);
 }
 .s-pre-segs i.pk {
   background: var(--s-fg);
@@ -2320,6 +2388,9 @@ html.s-preloading {
 }
 .s-pre.is-clip .s-pre-title {
   animation: s-pre-shake 0.1s steps(2) infinite;
+}
+.s-pre.is-paused * {
+  animation-play-state: paused !important;
 }
 .s-pre.is-clip .s-pre-tl.g1,
 .s-pre.is-clip .s-pre-tl.g2 {

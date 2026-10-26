@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { createHero, type HeroScroll } from "../components/home/heroEngine";
+import { HeroMontage } from "../components/home/HeroMontage";
 import { HeroWord } from "../components/home/HeroWord";
 import { SpectrumBg } from "../components/home/SpectrumBg";
 import { ReleaseList } from "../components/home/ReleaseList";
@@ -120,6 +121,7 @@ export function Home() {
         <div className="s-stage" ref={stageRef}>
           <div className="s-stage-inner" ref={innerRef}>
             <SpectrumBg getScroll={getScroll} />
+            <HeroMontage getScroll={getScroll} />
             <div className="s-grain" aria-hidden="true" />
             <canvas ref={canvasRef} className="s-gl" aria-hidden="true" />
             <div className="s-plane" ref={planeRef} aria-hidden="true">
