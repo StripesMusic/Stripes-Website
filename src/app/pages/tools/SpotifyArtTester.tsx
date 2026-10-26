@@ -308,6 +308,7 @@ export function SpotifyArtTester() {
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              aria-label="Upload cover art"
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0];
@@ -463,7 +464,7 @@ export function SpotifyArtTester() {
                     >
                       Single
                     </p>
-                    <h1
+                    <h2
                       style={{
                         fontSize: "clamp(32px, 6vw, 80px)",
                         fontWeight: 900,
@@ -475,7 +476,7 @@ export function SpotifyArtTester() {
                       }}
                     >
                       {songName}
-                    </h1>
+                    </h2>
                     <div
                       style={{
                         display: "flex",

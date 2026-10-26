@@ -13,7 +13,6 @@ function InstagramIcon({ className, style }: { className?: string; style?: React
     </svg>
   );
 }
-import { useState } from "react";
 
 // Custom Discord Icon Component
 const DiscordIcon = ({
@@ -70,30 +69,6 @@ const SoundcloudIcon = ({
 );
 
 export function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const contactInfo = [
     {
       icon: Mail,
