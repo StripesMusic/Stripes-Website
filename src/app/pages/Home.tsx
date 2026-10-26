@@ -131,8 +131,8 @@ export function Home() {
             </div>
             <div className="s-hero-ui s-pad" ref={uiRef}>
               <div className="s-hero-lede">
-                <p className="s-mono">Producer · Cover artist</p>
-                <h1 className="s-lede">High-energy, melodic dance music, and the artwork that ships with it.</h1>
+                <p className="s-mono">Producer · Cover artist · Metal drummer</p>
+                <h1 className="s-lede">Hey! Thanks for stopping by :)</h1>
                 <div className="s-ctas">
                   <button type="button" className="s-btn" aria-pressed={heroPlaying} onClick={playHero}>
                     {heroPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
