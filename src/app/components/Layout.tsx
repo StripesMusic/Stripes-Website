@@ -38,9 +38,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const flipTheme = () => setTheme(theme === "light" ? "dark" : "light");
   useScenes(location.pathname);
 
-  // Scroll to top on route change
+  // close the menus on a page change (the new page scrolls to the top itself, see PageTransition)
   useEffect(() => {
-    window.scrollTo(0, 0);
     setMenuOpen(false);
     setToolsOpen(false);
   }, [location.pathname]);

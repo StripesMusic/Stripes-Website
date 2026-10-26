@@ -215,6 +215,8 @@ html.s-locked {
 }
 .s-site {
   min-height: 100vh;
+  /* elements sliding in from the side must not widen the page (clip keeps sticky working) */
+  overflow-x: clip;
   background: var(--s-bg);
   font-family: var(--s-sans);
   font-size: 14px;
@@ -237,6 +239,17 @@ html.s-locked {
 }
 .s-main {
   padding-top: var(--s-nav-h);
+}
+
+/* elements sliding in on load and page changes (lib/slideIn.ts) */
+.s-slide {
+  animation: s-slide 1.15s cubic-bezier(0.25, 1, 0.5, 1) var(--slide-d, 0ms) backwards;
+}
+@keyframes s-slide {
+  from {
+    transform: var(--slide-from);
+    opacity: var(--slide-o, 0);
+  }
 }
 
 /* type */

@@ -5,8 +5,16 @@ const fns = new Set<Fn>();
 let raf = 0;
 
 function loop(now: number) {
-  fns.forEach((f) => f(now));
+  // the next frame is booked first, so one piece throwing can't stop all the others
   raf = fns.size ? requestAnimationFrame(loop) : 0;
+  fns.forEach((f) => {
+    try {
+      f(now);
+    } catch (err) {
+      fns.delete(f);
+      console.warn("Animation stopped", err);
+    }
+  });
 }
 
 export function onFrame(f: Fn) {

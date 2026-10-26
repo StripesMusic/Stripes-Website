@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, useOutlet } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
@@ -38,321 +38,176 @@ import { SpotifyArtTester } from "./pages/tools/SpotifyArtTester";
 import { NotFound } from "./pages/NotFound";
 import { Privacy, Terms, Accessibility } from "./pages/Legal";
 
+// One Layout for every page, so the nav, the preloader and the page transition persist across
+// page changes. useOutlet hands the page over as an element, so the old page can fade out as itself.
+function Root() {
+  return <Layout>{useOutlet()}</Layout>;
+}
+
 export const router = createBrowserRouter([
   {
-    path: "/",
-    Component: () => (
-      <Layout>
-        <Home />
-      </Layout>
-    ),
-  },
-  {
-    path: "/home",
-    Component: () => (
-      <Layout>
-        <Home />
-      </Layout>
-    ),
-  },
-  {
-    path: "/about",
-    Component: () => (
-      <Layout>
-        <About />
-      </Layout>
-    ),
-  },
-  {
-    path: "/music",
-    Component: () => (
-      <Layout>
-        <Music />
-      </Layout>
-    ),
-  },
-  {
-    path: "/designs",
-    Component: () => (
-      <Layout>
-        <Artwork />
-      </Layout>
-    ),
-  },
-  {
-    path: "/drums",
-    Component: () => (
-      <Layout>
-        <Drums />
-      </Layout>
-    ),
-  },
-  {
-    path: "/contact",
-    Component: () => (
-      <Layout>
-        <Contact />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/forgetyou",
-    Component: () => (
-      <Layout>
-        <FangateForgetYou />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/catharinaremix",
-    Component: () => (
-      <Layout>
-        <FangateCatharina />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/tellme",
-    Component: () => (
-      <Layout>
-        <FangateTellMe />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/ijustflow",
-    Component: () => (
-      <Layout>
-        <Fangate />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/backtome",
-    Component: () => (
-      <Layout>
-        <FangateBackToMe />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/lostinyou",
-    Component: () => (
-      <Layout>
-        <FangateLostInYou />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/runwithyou",
-    Component: () => (
-      <Layout>
-        <FangateRunWithYou />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/dontkillmyviberemix",
-    Component: () => (
-      <Layout>
-        <FangateDontKillMyVibe />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/ghostofyouremix",
-    Component: () => (
-      <Layout>
-        <FangateGhostOfYou />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/neverlookingback",
-    Component: () => (
-      <Layout>
-        <FangateNeverLookingBack />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/clarityremix",
-    Component: () => (
-      <Layout>
-        <FangateClarityRemix />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/lovemetoo",
-    Component: () => (
-      <Layout>
-        <FangateLoveMeToo />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/infinityremix",
-    Component: () => (
-      <Layout>
-        <FangateInfinityRemix />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/youandi",
-    Component: () => (
-      <Layout>
-        <FangateYouAndI />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/morethanyesterdayremix",
-    Component: () => (
-      <Layout>
-        <FangateMoreThanYesterday />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/always",
-    Component: () => (
-      <Layout>
-        <FangateAlways />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/backintime",
-    Component: () => (
-      <Layout>
-        <FangateBackInTime />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/lucky",
-    Component: () => (
-      <Layout>
-        <FangateLucky />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/askyfullofstarsremix",
-    Component: () => (
-      <Layout>
-        <FangateASkyFullOfStarsRemix />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/sikeflip",
-    Component: () => (
-      <Layout>
-        <FangateSikeFlip />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/theendedit",
-    Component: () => (
-      <Layout>
-        <FangateTheEndEdit />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/sendmeanangel",
-    Component: () => (
-      <Layout>
-        <FangateSendMeAnAngel />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/boom",
-    Component: () => (
-      <Layout>
-        <FangateBoom />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/mashuppackvol1",
-    Component: () => (
-      <Layout>
-        <FangateMashupPack />
-      </Layout>
-    ),
-  },
-  {
-    path: "/link/outofcontrolep",
-    Component: () => (
-      <Layout>
-        <FangateOutOfControlEP />
-      </Layout>
-    ),
+    Component: Root,
+    children: [
+      {
+        path: "/",
+        Component: Home,
+      },
+      {
+        path: "/home",
+        Component: Home,
+      },
+      {
+        path: "/about",
+        Component: About,
+      },
+      {
+        path: "/music",
+        Component: Music,
+      },
+      {
+        path: "/designs",
+        Component: Artwork,
+      },
+      {
+        path: "/drums",
+        Component: Drums,
+      },
+      {
+        path: "/contact",
+        Component: Contact,
+      },
+      {
+        path: "/link/forgetyou",
+        Component: FangateForgetYou,
+      },
+      {
+        path: "/link/catharinaremix",
+        Component: FangateCatharina,
+      },
+      {
+        path: "/link/tellme",
+        Component: FangateTellMe,
+      },
+      {
+        path: "/link/ijustflow",
+        Component: Fangate,
+      },
+      {
+        path: "/link/backtome",
+        Component: FangateBackToMe,
+      },
+      {
+        path: "/link/lostinyou",
+        Component: FangateLostInYou,
+      },
+      {
+        path: "/link/runwithyou",
+        Component: FangateRunWithYou,
+      },
+      {
+        path: "/link/dontkillmyviberemix",
+        Component: FangateDontKillMyVibe,
+      },
+      {
+        path: "/link/ghostofyouremix",
+        Component: FangateGhostOfYou,
+      },
+      {
+        path: "/link/neverlookingback",
+        Component: FangateNeverLookingBack,
+      },
+      {
+        path: "/link/clarityremix",
+        Component: FangateClarityRemix,
+      },
+      {
+        path: "/link/lovemetoo",
+        Component: FangateLoveMeToo,
+      },
+      {
+        path: "/link/infinityremix",
+        Component: FangateInfinityRemix,
+      },
+      {
+        path: "/link/youandi",
+        Component: FangateYouAndI,
+      },
+      {
+        path: "/link/morethanyesterdayremix",
+        Component: FangateMoreThanYesterday,
+      },
+      {
+        path: "/link/always",
+        Component: FangateAlways,
+      },
+      {
+        path: "/link/backintime",
+        Component: FangateBackInTime,
+      },
+      {
+        path: "/link/lucky",
+        Component: FangateLucky,
+      },
+      {
+        path: "/link/askyfullofstarsremix",
+        Component: FangateASkyFullOfStarsRemix,
+      },
+      {
+        path: "/link/sikeflip",
+        Component: FangateSikeFlip,
+      },
+      {
+        path: "/link/theendedit",
+        Component: FangateTheEndEdit,
+      },
+      {
+        path: "/link/sendmeanangel",
+        Component: FangateSendMeAnAngel,
+      },
+      {
+        path: "/link/boom",
+        Component: FangateBoom,
+      },
+      {
+        path: "/link/mashuppackvol1",
+        Component: FangateMashupPack,
+      },
+      {
+        path: "/link/outofcontrolep",
+        Component: FangateOutOfControlEP,
+      },
+      {
+        path: "/tools/gd-auto-export",
+        Component: GDAutoExport,
+      },
+      {
+        path: "/tools/audio-silence-padder",
+        Component: AudioSilencePadder,
+      },
+      {
+        path: "/tools/spotify-art-tester",
+        Component: SpotifyArtTester,
+      },
+      {
+        path: "/privacy",
+        Component: Privacy,
+      },
+      {
+        path: "/terms",
+        Component: Terms,
+      },
+      {
+        path: "/accessibility",
+        Component: Accessibility,
+      },
+      {
+        path: "*",
+        Component: NotFound,
+      },
+    ],
   },
   {
     path: "/soundcloud-callback",
     Component: SoundCloudCallback,
-  },
-  {
-    path: "/tools/gd-auto-export",
-    Component: () => (
-      <Layout>
-        <GDAutoExport />
-      </Layout>
-    ),
-  },
-  {
-    path: "/tools/audio-silence-padder",
-    Component: () => (
-      <Layout>
-        <AudioSilencePadder />
-      </Layout>
-    ),
-  },
-  {
-    path: "/tools/spotify-art-tester",
-    Component: () => (
-      <Layout>
-        <SpotifyArtTester />
-      </Layout>
-    ),
-  },
-  {
-    path: "/privacy",
-    Component: () => (
-      <Layout>
-        <Privacy />
-      </Layout>
-    ),
-  },
-  {
-    path: "/terms",
-    Component: () => (
-      <Layout>
-        <Terms />
-      </Layout>
-    ),
-  },
-  {
-    path: "/accessibility",
-    Component: () => (
-      <Layout>
-        <Accessibility />
-      </Layout>
-    ),
-  },
-  {
-    path: "*",
-    Component: () => (
-      <Layout>
-        <NotFound />
-      </Layout>
-    ),
   },
 ]);

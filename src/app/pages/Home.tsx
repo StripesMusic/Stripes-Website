@@ -73,8 +73,10 @@ export function Home() {
   // The first panel scrolls natively over the pinned stage; scroll only drives what's inside it.
   useEffect(() => {
     return onFrame(() => {
+      // the refs go before this loop does when the page unmounts
+      if (!introRef.current || !innerRef.current) return;
       const { vh, peek } = dims.current;
-      const y = -introRef.current!.getBoundingClientRect().top;
+      const y = -introRef.current.getBoundingClientRect().top;
       const cv = clamp01(y / (vh - peek));
       scroll.current = { cover: cv };
       if (cv >= 1) return;
