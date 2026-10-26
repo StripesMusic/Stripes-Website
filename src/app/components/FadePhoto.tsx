@@ -14,7 +14,8 @@ export function FadePhoto({ srcs, pos, className = "", on = true, onFail }: Prop
       alt=""
       aria-hidden="true"
       decoding="async"
-      fetchPriority="low"
+      // React 18 only passes the attribute through in lowercase
+      {...{ fetchpriority: "low" }}
       className={`s-fade ${loaded && on ? "on" : ""} ${className}`}
       style={pos ? { objectPosition: pos } : undefined}
       ref={(el) => {
