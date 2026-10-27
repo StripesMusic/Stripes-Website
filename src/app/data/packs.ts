@@ -59,7 +59,7 @@ const clientName = (c = "") =>
         .filter((x) => x && x !== "Myself")
         .join(" / ") || "Self-released";
 // the labels get their own filter; everyone else is grouped as artists / other
-export const LABELS = ["Timeless", "Solvana Records", "TON 618", "Quadron Records", "Stardust Records"];
+export const LABELS = ["Timeless", "Solvana Records", "TON 618", "Quadron Records"];
 export const OTHER = "Artists / other";
 const labelOf = (client: string) => (client.includes("Octadron") ? "Quadron Records" : LABELS.find((l) => client.includes(l)) ?? OTHER);
 const artistsOf = (client: string) => client.split(" / ").filter((c) => c && !LABELS.includes(c));
