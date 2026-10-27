@@ -12,7 +12,6 @@ content:
     fields:
       - name: items
         label: Designs
-        description: Oldest at the top. Add new work at the bottom, and the site puts it in date order.
         type: object
         list:
           collapsible:
@@ -111,7 +110,6 @@ content:
     fields:
       - name: items
         label: Releases
-        description: Oldest at the top. Add new releases at the bottom; the site lists them newest first.
         type: object
         list:
           collapsible:
@@ -170,7 +168,6 @@ content:
     fields:
       - name: items
         label: Drum covers
-        description: Oldest at the top. Add new covers at the bottom; the site shows the newest first.
         type: object
         list:
           collapsible:
