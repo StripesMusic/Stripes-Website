@@ -1318,6 +1318,11 @@
     transform-origin: top left;
   }
 }
+/* the badges sit on the cover, so a title that wraps never runs under them */
+.s-art-thumb {
+  position: relative;
+  display: block;
+}
 /* a solo lyric video's tile: the YouTube still, cropped square, with a play tag */
 .s-art-badge-play {
   right: auto;

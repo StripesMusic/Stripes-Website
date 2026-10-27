@@ -336,23 +336,25 @@ export function Artwork() {
           {shown.map((p) => (
             <li key={p.key}>
               <button type="button" onClick={() => setOpen(p)} aria-label={p.solo ? `Open ${p.name}` : `Open the ${p.name} pack`}>
-                <ImageSlot src={p.cover} alt="" label={p.name} />
+                <span className="s-art-thumb">
+                  <ImageSlot src={p.cover} alt="" label={p.name} />
+                  {p.lyric && p.solo && (
+                    <span className="s-art-badge s-art-badge-play s-mono" aria-hidden="true">
+                      ▶ Lyric video
+                    </span>
+                  )}
+                  {!p.solo && piecesIn(p) > 1 && (
+                    <span className="s-art-badge s-mono" aria-hidden="true">
+                      +{piecesIn(p) - 1}
+                    </span>
+                  )}
+                </span>
                 <span className="s-art-cap">
                   <span>{p.name}</span>
                   <span className="s-mono">
                     {LABELS.includes(p.label) ? p.label.replace(" Records", "") : p.client || p.kinds[0]} · {p.date}
                   </span>
                 </span>
-                {p.lyric && p.solo && (
-                  <span className="s-art-badge s-art-badge-play s-mono" aria-hidden="true">
-                    ▶ Lyric video
-                  </span>
-                )}
-                {!p.solo && piecesIn(p) > 1 && (
-                  <span className="s-art-badge s-mono" aria-hidden="true">
-                    +{piecesIn(p) - 1}
-                  </span>
-                )}
               </button>
             </li>
           ))}
