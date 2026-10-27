@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
-import { SC_API } from "../lib/soundcloud";
-
-const EDGE_FUNCTION_NAME = "soundcloud-exchange-follow";
+import { SC_API, decodeState } from "../lib/soundcloud";
 
 export function SoundCloudCallback() {
   const [searchParams] = useSearchParams();
@@ -12,7 +10,11 @@ export function SoundCloudCallback() {
   );
   const [backUrl, setBackUrl] = useState("/link/ijustflow");
 
+  // a code works once, so the exchange runs once even if the effect runs again
+  const ran = useRef(false);
   useEffect(() => {
+    if (ran.current) return;
+    ran.current = true;
     (async () => {
       const code = searchParams.get("code");
       const state = searchParams.get("state");
@@ -36,50 +38,16 @@ export function SoundCloudCallback() {
         return;
       }
 
-      let codeVerifier = "";
-      let returnTo = "/link/ijustflow";
-
-      // Prefer sessionStorage (written just before the OAuth redirect) — avoids all URL encoding issues
-      const storedPkce = sessionStorage.getItem("sc_pkce");
-      if (storedPkce) {
-        try {
-          const pkceData = JSON.parse(storedPkce);
-          codeVerifier = pkceData.verifier;
-          returnTo = pkceData.return_to || "/link/ijustflow";
-          sessionStorage.removeItem("sc_pkce");
-          setBackUrl(returnTo);
-        } catch {
-          setMsg("Session data corrupted. Please go back and try again.");
-          return;
-        }
-      } else {
-        // Fallback: decode state parameter (multiple encoding strategies)
-        let parsed = false;
-        const attempts = [
-          () => JSON.parse(atob(state.replace(/ /g, "+"))),
-          () => JSON.parse(atob(decodeURIComponent(state))),
-          () => JSON.parse(atob(state)),
-        ];
-        for (const attempt of attempts) {
-          try {
-            const stateData = attempt();
-            codeVerifier = stateData.verifier;
-            returnTo = stateData.return_to || "/link/ijustflow";
-            setBackUrl(returnTo);
-            parsed = true;
-            break;
-          } catch { /* try next */ }
-        }
-        if (!parsed) {
-          setMsg("Invalid state parameter. Please go back and try again.");
-          return;
-        }
-      }
-
-      if (!codeVerifier) {
-        setMsg("Missing PKCE verifier in URL. Please go back and try again.");
+      // the verifier and the page to go back to come back in the state (lib/soundcloud.ts); only
+      // a path on this site is followed
+      const st = decodeState(state);
+      if (!st?.v) {
+        setMsg("The sign-in didn't come back complete. Go back and press Follow on SoundCloud again.");
         return;
       }
+      const codeVerifier = st.v;
+      const returnTo = /^\/(?!\/)/.test(st.r) ? st.r : "/";
+      setBackUrl(returnTo);
 
       try {
         const res = await fetch(`${SC_API}/exchange`, {
