@@ -26,6 +26,7 @@ export type Pack = {
   tools: string[];
   kinds: Kind[];
   solo?: boolean; // a lyric video or misc piece on its own, not a release's cover
+  idx: number; // position in artwork.json: later entries count as newer
 };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -34,6 +35,10 @@ const monthNum = (d: string) => {
   const i = MONTHS.indexOf(m);
   return i < 0 || !y ? 0 : +y * 12 + i;
 };
+// newest month first; within a month, the higher catalogue number (TMLS046 before TMLS045),
+// then whichever was added to the list later
+const catNum = (p: Pack) => +(p.code?.match(/\d+$/)?.[0] ?? 0);
+const newest = (a: Pack, b: Pack) => b.sort - a.sort || catNum(b) - catNum(a) || b.idx - a.idx;
 const codeOf = (s: string) => s.match(/\b([A-Z]{2,5}\d{3})\b/)?.[1];
 const nameOf = (t: string) =>
   t
@@ -85,6 +90,7 @@ function build(): Pack[] {
       credit: it.credit,
       tools: (it.software ?? []).map((s) => s.replace(/^Adobe /, "")),
       kinds: [it.category === "2d" ? "2D" : "3D"],
+      idx: artworkItems.indexOf(it),
     };
     packs.set(key, p);
     const song = songOf(release);
@@ -123,7 +129,7 @@ function build(): Pack[] {
     }
   });
 
-  return [...packs.values()].sort((a, b) => b.sort - a.sort);
+  return [...packs.values()].sort(newest);
 }
 
 export const packs = build();
@@ -152,6 +158,7 @@ const solo = (it: ArtworkItem, kind: Kind, cover: string, lyric?: Pack["lyric"])
   tools: (it.software ?? []).map((s) => s.replace(/^Adobe /, "")),
   kinds: [kind],
   solo: true,
+  idx: artworkItems.indexOf(it),
 });
 const solos = artworkItems.flatMap((it) => {
   const id = ytId(it.youtubeUrl);
@@ -160,7 +167,7 @@ const solos = artworkItems.flatMap((it) => {
   return [];
 });
 // the gallery: every release and every solo piece, newest first
-export const gallery = [...packs, ...solos].sort((a, b) => b.sort - a.sort);
+export const gallery = [...packs, ...solos].sort(newest);
 export const artistNames = [...new Set(gallery.flatMap((p) => p.artists))].sort((a, b) => a.localeCompare(b));
 
 // websites, set visuals and clips that aren't a release's animated cover
