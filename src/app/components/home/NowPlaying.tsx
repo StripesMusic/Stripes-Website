@@ -6,10 +6,12 @@ import { Link } from "react-router";
 import { audio } from "../../lib/audio";
 import { useAudio } from "../../lib/useAudio";
 import { Eq } from "./Eq";
+import { isPreview } from "../../lib/drafts";
 
 export function NowPlaying() {
   const s = useAudio();
-  const on = s.playing || s.unavailable;
+  // on preview links the draft player bar takes over once something is played on purpose
+  const on = (s.playing || s.unavailable) && !(isPreview() && s.bar);
   return (
     <div className={"s-np" + (on ? " on" : "")} aria-live="polite" aria-hidden={!on}>
       {s.playing && <Eq on />}

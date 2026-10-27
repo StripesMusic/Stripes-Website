@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PageTransition } from "./PageTransition";
 import { StripesMark } from "./StripesMark";
 import { Preloader } from "./Preloader";
@@ -7,6 +7,13 @@ import { useScenes } from "../lib/scenes";
 import { showPreloader } from "../lib/intro";
 import { setTheme, useTheme } from "../lib/theme";
 import { socials } from "../data/socials";
+import { isPreview } from "../lib/drafts";
+import { audio } from "../lib/audio";
+import { useAudio } from "../lib/useAudio";
+import { PlayerBar } from "./PlayerBar";
+import { DraftPanel } from "./DraftPanel";
+import { Eq } from "./home/Eq";
+import { epTracks } from "./home/EpBody";
 
 const navLinks = [
   { name: "Music", path: "/music" },
@@ -37,6 +44,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
   const flipTheme = () => setTheme(theme === "light" ? "dark" : "light");
   useScenes(location.pathname);
+  const preview = isPreview();
+  const s = useAudio();
+  const ep = s.queue === epTracks;
+  const epPlaying = ep && s.playing;
+  // draft: "listen while you browse" plays the EP from the nav, on through every track
+  const listen = () => {
+    if (epPlaying) audio.pause();
+    else if (ep && s.paused) audio.resume();
+    else audio.playQueue(epTracks, 0);
+  };
+  // draft: the S in the nav bumps on each kick while something plays (not with reduced motion)
+  const markRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!preview || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    return audio.onKick((k) => {
+      markRef.current?.animate([{ transform: "scale(1)" }, { transform: `scale(${1 + 0.18 * k})` }, { transform: "scale(1)" }], { duration: 220, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" });
+    });
+  }, [preview]);
 
   // close the menus on a page change (the new page scrolls to the top itself, see PageTransition)
   useEffect(() => {
@@ -71,7 +96,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {!isLinkPage && (
         <header className={"s-nav s-pad" + (scrolled ? " is-scrolled" : "")}>
           <Link to="/" className="s-brand" aria-label="Stripes, home">
-            <StripesMark className="s-brand-mark" />
+            <span className="s-brand-pulse" ref={markRef}>
+              <StripesMark className="s-brand-mark" />
+            </span>
             <span>STRIPES</span>
           </Link>
           <nav className="s-nav-links" aria-label="Main">
@@ -102,6 +129,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </nav>
           <div className="s-nav-end">
+            {preview && (
+              <button type="button" className="s-btn s-nav-listen" aria-pressed={epPlaying} onClick={listen} title="Play the EP while you browse">
+                {epPlaying ? <Eq on /> : <span className="s-tri s-tri-sm" aria-hidden="true" />}
+                {epPlaying ? "Pause" : "Listen"}
+              </button>
+            )}
             <Link to="/contact" className="s-btn s-nav-cta" aria-current={isActive("/contact") ? "page" : undefined}>
               Contact
             </Link>
@@ -139,6 +172,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
         </div>
+      )}
+
+      {preview && !isLinkPage && <PlayerBar />}
+      {preview && <DraftPanel />}
+      {/* draft: the wobble behind the rough look (drafts.css). Small displacement, so lines shake
+          a little and text bleeds without losing its shape. */}
+      {preview && (
+        <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+          <filter id="s-rough-line">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="3" />
+            <feDisplacementMap in="SourceGraphic" scale="2.5" />
+          </filter>
+          <filter id="s-rough-ink">
+            <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="7" />
+            <feDisplacementMap in="SourceGraphic" scale="1.6" />
+          </filter>
+        </svg>
       )}
 
       <main className={isLinkPage || isHome ? "" : "s-main"}>

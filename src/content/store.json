@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "title": "Out Of Control Stems",
+      "type": "Stems",
+      "price": "$10",
+      "image": "https://assets.musicbystripes.com/releases%20cover%20arts/Out_Of_Control_Artwork.jpg",
+      "details": "Every track from the EP split into drums, bass, synths and vocals, for remixes and DJ edits.",
+      "includes": ["4 tracks", "WAV, 24-bit", "BPM and key in the file names"],
+      "checkout": ""
+    },
+    {
+      "title": "Mashup Pack Vol. 1",
+      "type": "Mashup pack",
+      "price": "Pay what you want",
+      "image": "https://assets.musicbystripes.com/releases%20cover%20arts/Forget_You_Artwork.jpg",
+      "details": "The edits and mashups I play out, ready to drop into a set.",
+      "includes": ["10 edits", "MP3 320 and WAV"],
+      "checkout": ""
+    },
+    {
+      "title": "Cover Art Template Pack",
+      "type": "Templates",
+      "price": "$15",
+      "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS047.jpg",
+      "details": "The layered Photoshop files behind my 2D covers: type, textures and grading, so you can make your own.",
+      "includes": ["5 PSD templates", "Texture pack", "Spotify Canvas safe zones"],
+      "checkout": ""
+    }
+  ]
+}
