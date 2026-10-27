@@ -1,5 +1,5 @@
 // Designs: cover art, motion and web work. Every release is a pack (cover, animated cover, lyric
-// video, process shots and mockups when there are any): the fullest packs are shown open at the
+// video, process shots and mockups when there are any): a hand-picked few are shown open at the
 // top, then a contact sheet of every release and solo piece (lyric videos, misc) that opens each
 // one on click, filtered by kind, label and artist. Websites, set visuals and clips come last.
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,7 +12,14 @@ import { MultiSelect } from "../components/MultiSelect";
 import { packs, gallery, artistNames, piecesIn, otherWork, LABELS, ytId, type Kind, type Pack } from "../data/packs";
 
 const KINDS: Kind[] = ["2D", "3D", "Motion", "Lyric video", "Misc"];
-const featured = [...packs].sort((a, b) => piecesIn(b) - piecesIn(a) || b.sort - a.sort).slice(0, 3);
+// the packs shown open at the top, in order (by catalogue number or name); if one goes missing,
+// the fullest pack not already picked fills its slot
+const FEATURED = ["TMLS043", "TON031", "QDRN121", "SR044"];
+const fullest = [...packs].sort((a, b) => piecesIn(b) - piecesIn(a) || b.sort - a.sort);
+const featured = FEATURED.map((k) => packs.find((p) => p.key === k || p.name === k)).reduce<Pack[]>(
+  (out, p) => [...out, p ?? fullest.find((f) => !out.includes(f) && !FEATURED.includes(f.key))!],
+  [],
+);
 const years = packs.map((p) => p.sort).filter(Boolean);
 const span = `${Math.floor(Math.min(...years) / 12)}–${Math.floor(Math.max(...years) / 12)}`;
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -329,23 +336,25 @@ export function Artwork() {
           {shown.map((p) => (
             <li key={p.key}>
               <button type="button" onClick={() => setOpen(p)} aria-label={p.solo ? `Open ${p.name}` : `Open the ${p.name} pack`}>
-                <ImageSlot src={p.cover} alt="" label={p.name} />
+                <span className="s-art-thumb">
+                  <ImageSlot src={p.cover} alt="" label={p.name} />
+                  {p.lyric && p.solo && (
+                    <span className="s-art-badge s-art-badge-play s-mono" aria-hidden="true">
+                      ▶ Lyric video
+                    </span>
+                  )}
+                  {!p.solo && piecesIn(p) > 1 && (
+                    <span className="s-art-badge s-mono" aria-hidden="true">
+                      +{piecesIn(p) - 1}
+                    </span>
+                  )}
+                </span>
                 <span className="s-art-cap">
                   <span>{p.name}</span>
                   <span className="s-mono">
                     {LABELS.includes(p.label) ? p.label.replace(" Records", "") : p.client || p.kinds[0]} · {p.date}
                   </span>
                 </span>
-                {p.lyric && p.solo && (
-                  <span className="s-art-badge s-art-badge-play s-mono" aria-hidden="true">
-                    ▶ Lyric video
-                  </span>
-                )}
-                {!p.solo && piecesIn(p) > 1 && (
-                  <span className="s-art-badge s-mono" aria-hidden="true">
-                    +{piecesIn(p) - 1}
-                  </span>
-                )}
               </button>
             </li>
           ))}

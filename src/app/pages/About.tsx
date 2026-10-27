@@ -130,7 +130,7 @@ export function About() {
         </ol>
         <p className="s-clients">
           <span className="s-mono">Cover art for</span>
-          <span>{[...LABELS, "independent artists"].join(" · ")}</span>
+          <span>{[...LABELS, "Stardust Records", "independent artists"].join(" · ")}</span>
         </p>
       </section>
 
