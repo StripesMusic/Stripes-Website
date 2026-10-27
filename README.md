@@ -23,5 +23,5 @@ npm run dev
 
 ## Notes
 
-- The fangate pages talk to a Supabase function (`supabase/functions/server`). That function still runs on Supabase, not Cloudflare; the project id and public key are in `utils/supabase/info.tsx`.
+- The download pages' SoundCloud follow runs on Cloudflare Pages Functions in `functions/api/soundcloud`. Its four settings (SOUNDCLOUD_CLIENT_ID, SOUNDCLOUD_CLIENT_SECRET, SOUNDCLOUD_REDIRECT_URI, SOUNDCLOUD_FOLLOW_USER_ID) live in the Pages project's Variables and Secrets. To run them locally, put them in a `.dev.vars` file (git-ignored) and run `npx wrangler pages dev dist` after a build.
 - Changes made in Figma Make after this export are not synced here automatically.

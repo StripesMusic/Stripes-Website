@@ -1569,8 +1569,8 @@ export const artworkItems: ArtworkItem[] = [
       "https://assets.musicbystripes.com/websites/mywebsite.png",
     youtubeUrl: "https://musicbystripes.com",
     details:
-      "Personal portfolio website showcasing music production, graphic design work, drum samples, and contact information. Built with React, Tailwind CSS, and Supabase.",
-    software: ["React", "Tailwind CSS", "Supabase", "Figma"],
+      "Personal portfolio website showcasing music production, graphic design work, drum samples, and contact information. Built with React, Tailwind CSS, and Cloudflare.",
+    software: ["React", "Tailwind CSS", "Cloudflare", "Figma"],
     client: "Myself",
   },
   {
