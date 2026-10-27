@@ -1,10 +1,9 @@
 {
   "items": [
     {
-      "id": 1029,
       "title": "Till We Make It Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "TBD",
       "client": "blo0my",
       "release": "blo0my - Till We Make It",
@@ -13,13 +12,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1029
     },
     {
-      "id": 3001,
       "title": "Time To Talk, Azertion, JJD - Street Lights (ft. Axollo) (Fan-Made Lyric Video)",
-      "type": "Lyric Video",
       "category": "lyric-videos",
+      "type": "Lyric Video",
       "date": "Oct 2022",
       "client": "N/A",
       "details": "Full-length lyric video with animated text, interesting backgrounds, and visual effects synchronized to the music.",
@@ -27,13 +26,13 @@
       "youtubeUrl": "https://www.youtube.com/watch?v=PbFfEBsAXrs",
       "software": [
         "Adobe After Effects"
-      ]
+      ],
+      "id": 3001
     },
     {
-      "id": 8,
       "title": "Send Me An Angel Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Jan 2024",
       "client": "Quadron Records/Myself",
       "release": "Stripes - Send Me An Angel",
@@ -41,13 +40,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Send_Me_An_Angel_Artwork.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 8
     },
     {
-      "id": 2012,
       "title": "Send Me An Angel - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Jan 2024",
       "client": "Quadron Records/Myself",
       "details": "8-second looping 2D animation of the Send Me An Angel artwork optimized for a Spotify Canvas.",
@@ -55,13 +54,13 @@
       "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SendMeAnAngelAnimation.mp4",
       "software": [
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2012
     },
     {
-      "id": 3003,
       "title": "Nexoria - Rewind (ft. Charlie Copper) (Official Lyric Video)",
-      "type": "Lyric Video",
       "category": "lyric-videos",
+      "type": "Lyric Video",
       "date": "Mar 2024",
       "client": "Quadron Records",
       "details": "Full-length lyric video with animated text and visual effects synchronized to the music.",
@@ -69,13 +68,13 @@
       "youtubeUrl": "https://www.youtube.com/watch?v=2-YM31nuCpI",
       "software": [
         "Adobe After Effects"
-      ]
+      ],
+      "id": 3003
     },
     {
-      "id": 9,
       "title": "Back In Time Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Jun 2024",
       "client": "Myself, NSJ, Aprox, Lonely Heaven",
       "release": "Stripes, NSJ, Aprox, Lonely Heaven - Back In Time",
@@ -83,13 +82,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Back_In_Time_Artwork.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 9
     },
     {
-      "id": 13,
       "title": "QDRN093 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Jun 2024",
       "client": "Quadron Records",
       "release": "Wave & Dooper - Keep Drivin'",
@@ -97,13 +96,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/QDRN093.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 13
     },
     {
-      "id": 12,
       "title": "QDRN096 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Jul 2024",
       "client": "Quadron Records",
       "release": "Neon Viruz - Golden Coil",
@@ -111,13 +110,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/QDRN096.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 12
     },
     {
-      "id": 11,
       "title": "QDRN102 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Aug 2024",
       "client": "Quadron Records",
       "release": "ARMAN, V3NUS - Be",
@@ -125,13 +124,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/QDRN102.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 11
     },
     {
-      "id": 1033,
       "title": "QDRN104 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Aug 2024",
       "client": "Quadron Records",
       "release": "Relacity, paulø - Out Of My Mind",
@@ -140,13 +139,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1033
     },
     {
-      "id": 1032,
       "title": "QDRN106 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Sep 2024",
       "client": "Quadron Records",
       "release": "NSJ, Grage, Ultra Line - Keeps Me High",
@@ -155,13 +154,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1032
     },
     {
-      "id": 10,
       "title": "QDRN108 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Sep 2024",
       "client": "Quadron Records",
       "release": "NØT ME - Touch",
@@ -169,13 +168,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/QDRN108.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 10
     },
     {
-      "id": 2018,
       "title": "QDRN108 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Sep 2024",
       "client": "Quadron Records",
       "details": "8-second looping 2D animation of the QDRN108 artwork optimized for a Spotify Canvas.",
@@ -183,13 +182,13 @@
       "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN108Animation.mp4",
       "software": [
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2018
     },
     {
-      "id": 3002,
       "title": "Wyko, Cl04k, Sghob - In My Mind (ft. Barmuda) (Official Lyric Video)",
-      "type": "Lyric Video",
       "category": "lyric-videos",
+      "type": "Lyric Video",
       "date": "Oct 2024",
       "client": "Quadron Records",
       "details": "Full-length lyric video with animated text and visual effects synchronized to the music.",
@@ -197,13 +196,13 @@
       "youtubeUrl": "https://www.youtube.com/watch?v=W3OyWIeCZOc",
       "software": [
         "Adobe After Effects"
-      ]
+      ],
+      "id": 3002
     },
     {
-      "id": 14,
       "title": "OCT023 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Oct 2024",
       "client": "Octadron Records (Sub-label of Quadron Records)",
       "release": "Dakota Arlond - Still Broken",
@@ -211,13 +210,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/OCT023.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 14
     },
     {
-      "id": 1031,
       "title": "QDRN109 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Oct 2024",
       "client": "Quadron Records",
       "release": "Kamix - Don't Wanna Wait",
@@ -226,13 +225,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1031
     },
     {
-      "id": 1030,
       "title": "QDRN110 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Oct 2024",
       "client": "Quadron Records",
       "release": "Nil Martorell, Charlie Dens - Shine Your Light",
@@ -241,13 +240,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1030
     },
     {
-      "id": 1029,
       "title": "QDRN111 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Oct 2024",
       "client": "Quadron Records",
       "release": "Wyko, Cl04k, Sghob ft. Barmuda - In My Mind",
@@ -256,13 +255,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1029
     },
     {
-      "id": 1028,
       "title": "QDRN112 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2024",
       "client": "Quadron Records",
       "release": "Vezenance, Nari, Mike X - Jealous",
@@ -271,13 +270,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1028
     },
     {
-      "id": 1027,
       "title": "QDRN113 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2024",
       "client": "Quadron Records",
       "release": "AVIS, INA FALL - Lie",
@@ -286,13 +285,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1027
     },
     {
-      "id": 1026,
       "title": "QDRN114 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2024",
       "client": "Quadron Records",
       "release": "Kamix, Coruxion - To The Beat",
@@ -301,13 +300,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1026
     },
     {
-      "id": 1025,
       "title": "QDRN115/RCSV057 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2024",
       "client": "Quadron Records/Recursive Recordings",
       "release": "Arlane, Samarth Goel, Sukhbir Singh ft. Nathan Brumley - Heartless",
@@ -316,13 +315,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1025
     },
     {
-      "id": 2017,
       "title": "QDRN115/RCSV057 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Nov 2024",
       "client": "Quadron Records/Recursive Recordings",
       "details": "8-second looping 3D animation of the QDRN115/RCSV057 artwork optimized for a Spotify Canvas.",
@@ -331,13 +330,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2017
     },
     {
-      "id": 1034,
       "title": "Quadron Best of 2024",
-      "type": "Compilation Cover Art",
       "category": "3d",
+      "type": "Compilation Cover Art",
       "date": "Dec 2024",
       "client": "Quadron Records",
       "release": "Best Of Quadron 2024",
@@ -346,13 +345,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1034
     },
     {
-      "id": 1024,
       "title": "QDRN116 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Dec 2024",
       "client": "Quadron Records",
       "release": "Kamix, Michael Roman, Cl04k - New World",
@@ -361,13 +360,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1024
     },
     {
-      "id": 1023,
       "title": "QDRN117 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Dec 2024",
       "client": "Quadron Records",
       "release": "Toxic Wraith ft. LUIGI - Clock Strike Twelve",
@@ -376,13 +375,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1023
     },
     {
-      "id": 1022,
       "title": "QDRN118 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Dec 2024",
       "client": "Quadron Records",
       "release": "Neon Viruz - Running Away",
@@ -391,13 +390,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1022
     },
     {
-      "id": 1021,
       "title": "QDRN119 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2025",
       "client": "Quadron Records",
       "release": "Cl04k, BAMBINO, Teorah - Blame",
@@ -406,13 +405,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1021
     },
     {
-      "id": 1020,
       "title": "QDRN120 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2025",
       "client": "Quadron Records",
       "release": "Kajacks - Run For Your Life",
@@ -421,13 +420,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1020
     },
     {
-      "id": 2016,
       "title": "QDRN120 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Jan 2025",
       "client": "Quadron Records",
       "details": "8-second looping 3D animation of the QDRN120 artwork optimized for a Spotify Canvas.",
@@ -436,13 +435,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2016
     },
     {
-      "id": 1019,
       "title": "QDRN121 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2025",
       "client": "Quadron Records",
       "release": "SLNCEpls - Go Deep",
@@ -451,13 +450,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1019
     },
     {
-      "id": 2015,
       "title": "QDRN121 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Jan 2025",
       "client": "Quadron Records",
       "details": "8-second looping 3D animation of the QDRN121 artwork optimized for a Spotify Canvas.",
@@ -466,13 +465,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2015
     },
     {
-      "id": 1018,
       "title": "QDRN122 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2025",
       "client": "Quadron Records",
       "release": "Nexoria - Take Us Home",
@@ -481,13 +480,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1018
     },
     {
-      "id": 1017,
       "title": "QDRN123 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2025",
       "client": "Quadron Records",
       "release": "MusicByDavid - Telos",
@@ -496,13 +495,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1017
     },
     {
-      "id": 1016,
       "title": "QDRN124 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Feb 2025",
       "client": "Quadron Records",
       "release": "Kamix - Blind",
@@ -511,13 +510,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1016
     },
     {
-      "id": 1015,
       "title": "QDRN125 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Feb 2025",
       "client": "Quadron Records",
       "release": "Hedclem - Ghost",
@@ -526,13 +525,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1015
     },
     {
-      "id": 1014,
       "title": "QDRN126 Cover Art",
-      "type": "Remix EP Cover",
       "category": "3d",
+      "type": "Remix EP Cover",
       "date": "Feb 2025",
       "client": "Quadron Records",
       "release": "Toxic Wraith ft. LUIGI - Clock Strike Twelve (The Remixes)",
@@ -541,13 +540,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1014
     },
     {
-      "id": 1013,
       "title": "QDRN127 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Feb 2025",
       "client": "Quadron Records",
       "release": "Nūves ft. Till - Statelines",
@@ -556,13 +555,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1013
     },
     {
-      "id": 1012,
       "title": "QDRN128 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Mar 2025",
       "client": "Quadron Records",
       "release": "Sun1ight, NeverFall. - Sweet Escape",
@@ -571,13 +570,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1012
     },
     {
-      "id": 2014,
       "title": "QDRN128 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Mar 2025",
       "client": "Quadron Records",
       "details": "8-second looping 3D animation of the QDRN128 artwork optimized for a Spotify Canvas.",
@@ -586,13 +585,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2014
     },
     {
-      "id": 1011,
       "title": "QDRN129 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Mar 2025",
       "client": "Quadron Records",
       "release": "Nexoria - I'm Lost",
@@ -601,13 +600,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1011
     },
     {
-      "id": 1010,
       "title": "QDRN130 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Mar 2025",
       "client": "Quadron Records",
       "release": "Cl04k, CHOKKTAW, Teorah - Sanity",
@@ -616,13 +615,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1010
     },
     {
-      "id": 1009,
       "title": "QDRN131 Cover Art",
-      "type": "EP Cover",
       "category": "3d",
+      "type": "EP Cover",
       "date": "Mar 2025",
       "client": "Quadron Records",
       "release": "MusicByDavid - All The Time EP",
@@ -631,13 +630,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1009
     },
     {
-      "id": 4001,
       "title": "Daevo, paulø, Adi - Wondering (ft. VINC) (Concept Lyric Video)",
-      "type": "Lyric Video",
       "category": "lyric-videos",
+      "type": "Lyric Video",
       "date": "Apr 2025",
       "client": "Quadron Records",
       "details": "Full-length lyric video with animated text, interesting backgrounds, and visual effects synchronized to the music.",
@@ -645,13 +644,13 @@
       "youtubeUrl": "https://www.youtube.com/watch?v=8ymRbuqmVPg",
       "software": [
         "Adobe After Effects"
-      ]
+      ],
+      "id": 4001
     },
     {
-      "id": 1008,
       "title": "QDRN132 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Apr 2025",
       "client": "Quadron Records",
       "release": "Jacøb, AVIS - Colorado",
@@ -660,13 +659,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1008
     },
     {
-      "id": 1007,
       "title": "QDRN133 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Apr 2025",
       "client": "Quadron Records",
       "release": "SLNCEpls - Out Of The Frame",
@@ -675,13 +674,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1007
     },
     {
-      "id": 1006,
       "title": "QDRN134 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Apr 2025",
       "client": "Quadron Records",
       "release": "Daevo, paulø, Adi ft. VINC - Wondering",
@@ -690,13 +689,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1006
     },
     {
-      "id": 1005,
       "title": "QDRN135 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Apr 2025",
       "client": "Quadron Records",
       "release": "Mystic Lee, Kaydell, Black Winter - Heartbeat",
@@ -705,13 +704,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1005
     },
     {
-      "id": 2013,
       "title": "QDRN135 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Apr 2025",
       "client": "Quadron Records",
       "details": "8-second looping 3D animation of the QDRN135 artwork optimized for a Spotify Canvas.",
@@ -720,13 +719,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2013
     },
     {
-      "id": 1002,
       "title": "Love Me Too",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "May 2025",
       "client": "Quadron Records/Myself",
       "release": "Firee, Stripes - Love Me Too",
@@ -735,13 +734,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1002
     },
     {
-      "id": 1004,
       "title": "QDRN136 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "May 2025",
       "client": "Quadron Records",
       "release": "Thome, BLUVZ - Thunder",
@@ -750,13 +749,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1004
     },
     {
-      "id": 1003,
       "title": "QDRN138 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "May 2025",
       "client": "Quadron Records",
       "release": "ADROIT, VEATZ ft. Destiny Hooks - Never Be The Same",
@@ -765,13 +764,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1003
     },
     {
-      "id": 1003,
       "title": "QDRN139 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "May 2025",
       "client": "Quadron Records",
       "release": "WEARY ft. Lucas Kozlov - With Me",
@@ -780,13 +779,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1003
     },
     {
-      "id": 1027,
       "title": "Solvana Records Radio Artwork",
-      "type": "Radio Art",
       "category": "3d",
+      "type": "Radio Art",
       "date": "Jul 2025",
       "client": "Solvana Records",
       "release": "Solvana Radio - Episode 3",
@@ -795,13 +794,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1027
     },
     {
-      "id": 2005,
       "title": "Solvana Records Radio - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Jul 2025",
       "client": "Solvana Records",
       "details": "8-second looping 3D animation of the Solvana Records Radio artwork optimized for a Spotify Canvas.",
@@ -810,13 +809,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2005
     },
     {
-      "id": 1020,
       "title": "TON009 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Aug 2025",
       "client": "TON 618",
       "release": "GRDR, RYTE - Lovers Do",
@@ -825,13 +824,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1020
     },
     {
-      "id": 1019,
       "title": "TON010 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Aug 2025",
       "client": "TON 618",
       "release": "BNK - On My Own",
@@ -840,13 +839,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1019
     },
     {
-      "id": 2011,
       "title": "TON010 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Aug 2025",
       "client": "TON 618",
       "details": "8-second looping 3D animation of the TON010 artwork optimized for a Spotify Canvas.",
@@ -855,13 +854,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2011
     },
     {
-      "id": 1018,
       "title": "TON011 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Aug 2025",
       "client": "TON 618",
       "release": "MagLix - Live Your Way",
@@ -870,13 +869,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1018
     },
     {
-      "id": 7,
       "title": "Boom Cover Art (2025 Version)",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Sep 2025",
       "client": "Myself",
       "release": "Stripes - Boom",
@@ -884,13 +883,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Boom_Artwork.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 7
     },
     {
-      "id": 1017,
       "title": "TON012 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Sep 2025",
       "client": "TON 618",
       "release": "clrwtr - Still Breathing",
@@ -899,13 +898,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1017
     },
     {
-      "id": 2010,
       "title": "TON012 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Sep 2025",
       "client": "TON 618",
       "details": "8-second looping 3D animation of the TON012 artwork optimized for a Spotify Canvas.",
@@ -914,13 +913,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2010
     },
     {
-      "id": 1026,
       "title": "MNTN X Solvana ADE EP Cover Art",
-      "type": "EP Cover",
       "category": "3d",
+      "type": "EP Cover",
       "date": "Oct 2025",
       "client": "MNTN Records/Solvana Records",
       "release": "Solvana x MNTN - ADE Sampler 2025",
@@ -929,13 +928,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1026
     },
     {
-      "id": 2004,
       "title": "MNTN X Solvana ADE EP - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Oct 2025",
       "client": "MNTN Records/Solvana Records",
       "details": "8-second looping 3D animation of the MNTN X Solvana ADE EP artwork optimized for a Spotify Canvas.",
@@ -944,13 +943,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2004
     },
     {
-      "id": 1016,
       "title": "TON014 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Oct 2025",
       "client": "TON 618",
       "release": "CHOKKTAW, Dephan - LOW",
@@ -959,13 +958,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1016
     },
     {
-      "id": 1015,
       "title": "TON015 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Oct 2025",
       "client": "TON 618",
       "release": "Jaxxinator - In The Dark",
@@ -974,13 +973,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1015
     },
     {
-      "id": 1025,
       "title": "SR034 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Oct 2025",
       "client": "Solvana Records",
       "release": "BENRED - In The Dark",
@@ -989,13 +988,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1025
     },
     {
-      "id": 2003,
       "title": "SR034 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Oct 2025",
       "client": "Solvana Records",
       "details": "8-second looping 3D animation of the SR034 artwork optimized for a Spotify Canvas.",
@@ -1004,13 +1003,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2003
     },
     {
-      "id": 1024,
       "title": "SR035 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Oct 2025",
       "client": "Solvana Records",
       "release": "paulø - ready2party (Hands Up!) (VIP Mix)",
@@ -1019,13 +1018,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1024
     },
     {
-      "id": 1,
       "title": "Lost In You Remix",
-      "type": "Remix Cover",
       "category": "2d",
+      "type": "Remix Cover",
       "date": "Nov 2025",
       "client": "Myself/Toxic Wraith",
       "release": "Quintino, NERVO - Lost In You (Toxic Wraith, Stripes Remix)",
@@ -1033,13 +1032,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Lost_In_You_Remix_Artwork.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1
     },
     {
-      "id": 1014,
       "title": "TON016 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2025",
       "client": "TON 618",
       "release": "Toja - Love Tonight",
@@ -1052,13 +1051,13 @@
       "credit": {
         "name": "Lumo Artworks",
         "href": "https://www.instagram.com/lumo.artworks/"
-      }
+      },
+      "id": 1014
     },
     {
-      "id": 1013,
       "title": "TON017 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2025",
       "client": "TON 618",
       "release": "ANAHĀTA, Rafael Delucee, Garret - The Way You Are",
@@ -1067,13 +1066,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1013
     },
     {
-      "id": 1023,
       "title": "SR036 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2025",
       "client": "Solvana Records",
       "release": "WSO - She Said",
@@ -1082,13 +1081,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1023
     },
     {
-      "id": 2002,
       "title": "SR036 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Nov 2025",
       "client": "Solvana Records",
       "details": "8-second looping 3D animation of the SR036 artwork optimized for a Spotify Canvas.",
@@ -1097,13 +1096,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2002
     },
     {
-      "id": 1022,
       "title": "SR037 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2025",
       "client": "Solvana Records",
       "release": "JPT3R - Stamina",
@@ -1112,13 +1111,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1022
     },
     {
-      "id": 1021,
       "title": "SR038 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Nov 2025",
       "client": "Solvana Records",
       "release": "Kamix, ClO4k - Affection",
@@ -1127,13 +1126,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1021
     },
     {
-      "id": 2001,
       "title": "SR038 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Nov 2025",
       "client": "Solvana Records",
       "details": "8-second looping 3D animation of the SR038 artwork optimized for a Spotify Canvas.",
@@ -1142,13 +1141,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2001
     },
     {
-      "id": 1012,
       "title": "TON018 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Dec 2025",
       "client": "TON 618",
       "release": "FNTS, Fablers, Ryan Crosby - The Place I Need To Go",
@@ -1157,13 +1156,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1012
     },
     {
-      "id": 1011,
       "title": "TON019 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Dec 2025",
       "client": "TON 618",
       "release": "Guy Coolid, Orexo - Feelings For You",
@@ -1172,13 +1171,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1011
     },
     {
-      "id": 2009,
       "title": "TON019 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Dec 2025",
       "client": "TON 618",
       "details": "8-second looping 3D animation of the TON019 artwork optimized for a Spotify Canvas.",
@@ -1187,13 +1186,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2009
     },
     {
-      "id": 1001,
       "title": "I Just Flow",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2026",
       "client": "Myself/Hilefex",
       "release": "Hilefex, Stripes - I Just Flow",
@@ -1202,13 +1201,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1001
     },
     {
-      "id": 1030,
       "title": "I Just Flow - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Jan 2026",
       "client": "Myself/Hilefex",
       "details": "8-second looping 3D animation of the I Just Flow artwork optimized for a Spotify Canvas.",
@@ -1217,13 +1216,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 1030
     },
     {
-      "id": 1010,
       "title": "TON020 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2026",
       "client": "TON 618",
       "release": "ARNASH - Lost Without You",
@@ -1232,13 +1231,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1010
     },
     {
-      "id": 1009,
       "title": "TON021 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2026",
       "client": "TON 618",
       "release": "ZeTrix - Cold",
@@ -1247,13 +1246,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1009
     },
     {
-      "id": 2008,
       "title": "TON021 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Jan 2026",
       "client": "TON 618",
       "details": "8-second looping 3D animation of the TON021 artwork optimized for a Spotify Canvas.",
@@ -1262,13 +1261,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2008
     },
     {
-      "id": 1008,
       "title": "TON022 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jan 2026",
       "client": "TON 618",
       "release": "KRIS DAM - Never Forever",
@@ -1277,13 +1276,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1008
     },
     {
-      "id": 6,
       "title": "SR039 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Jan 2026",
       "client": "Solvana Records",
       "release": "Jaxxinator - Too Heavy (Carry On)",
@@ -1291,13 +1290,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR039.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 6
     },
     {
-      "id": 15,
       "title": "Tunnel Visions EP Cover Art",
-      "type": "EP Cover",
       "category": "2d",
+      "type": "EP Cover",
       "date": "Feb 2026",
       "client": "Guy Coolid",
       "release": "Guy Coolid - Tunnel Visions EP",
@@ -1305,13 +1304,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Tunnel_Visions_EP_Artwork.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 15
     },
     {
-      "id": 1028,
       "title": "Sober Cover Art (OG Version)",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Feb 2026",
       "client": "AVIS/Jacøb/Nuance Recordings",
       "release": "AVIS, Jacøb - Sober",
@@ -1320,13 +1319,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1028
     },
     {
-      "id": 1007,
       "title": "TON023 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Feb 2026",
       "client": "TON 618",
       "release": "West Collins - Worlds Apart",
@@ -1335,13 +1334,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1007
     },
     {
-      "id": 1006,
       "title": "TON024 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Feb 2026",
       "client": "TON 618",
       "release": "niviko. -  The Wild One",
@@ -1350,13 +1349,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1006
     },
     {
-      "id": 2007,
       "title": "TON024 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Feb 2026",
       "client": "TON 618",
       "details": "8-second looping 3D animation of the TON024 artwork optimized for a Spotify Canvas.",
@@ -1365,13 +1364,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2007
     },
     {
-      "id": 5,
       "title": "SR040 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Feb 2026",
       "client": "Solvana Records",
       "release": "WSO - Hold On",
@@ -1379,26 +1378,26 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR040.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 5
     },
     {
-      "id": 2019,
       "title": "Toxic Wraith Lost In It Remix Comp Social Media Graphic",
-      "type": "Social Media Graphic",
       "category": "misc",
+      "type": "Social Media Graphic",
       "date": "Mar 2026",
       "client": "Toxic Wraith/LAWEN/Audius",
       "details": "Social media graphic announcing/promoting the Lost In It Remix competition for Toxic Wraith and LAWEN's song \"Lost In It\".",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/misc/LostInItRemixCompGraphic.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 2019
     },
     {
-      "id": 5001,
       "title": "Stripes' Website",
-      "type": "Website",
       "category": "websites",
+      "type": "Website",
       "date": "Mar 2026",
       "client": "Myself",
       "details": "Personal portfolio website showcasing music production, graphic design work, drum samples, and contact information. Built with React, Tailwind CSS, and Cloudflare.",
@@ -1409,13 +1408,13 @@
         "Tailwind CSS",
         "Cloudflare",
         "Figma"
-      ]
+      ],
+      "id": 5001
     },
     {
-      "id": 1005,
       "title": "TON025 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Mar 2026",
       "client": "TON 618",
       "release": "VANINO - For You",
@@ -1424,13 +1423,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1005
     },
     {
-      "id": 1004,
       "title": "TON026 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Mar 2026",
       "client": "TON 618",
       "release": "JaxonZ - Steal Your Heart",
@@ -1439,13 +1438,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1004
     },
     {
-      "id": 2006,
       "title": "TON026 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Mar 2026",
       "client": "TON 618",
       "details": "8-second looping 3D animation of the TON026 artwork optimized for a Spotify Canvas.",
@@ -1454,13 +1453,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2006
     },
     {
-      "id": 4,
       "title": "SR041 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Mar 2026",
       "client": "Solvana Records",
       "release": "IRXN - DONTGETMAD!",
@@ -1468,13 +1467,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR041.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 4
     },
     {
-      "id": 3,
       "title": "SR042 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Mar 2026",
       "client": "Solvana Records",
       "release": "Orexo - Bring It Down",
@@ -1483,13 +1482,13 @@
       "software": [
         "Adobe Photoshop",
         "Ditherista"
-      ]
+      ],
+      "id": 3
     },
     {
-      "id": 2,
       "title": "SR043 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Mar 2026",
       "client": "Solvana Records",
       "release": "Guy Coolid, paulø - BADMAN!",
@@ -1497,13 +1496,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR043.png",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 2
     },
     {
-      "id": 16,
       "title": "Catharina Remix",
-      "type": "Remix Cover",
       "category": "2d",
+      "type": "Remix Cover",
       "date": "Apr 2026",
       "client": "Myself/Thome",
       "release": "Martin Garrix - Catharina (Thome, Stripes Remix)",
@@ -1511,13 +1510,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Catharina_Remix_Artwork.png",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 16
     },
     {
-      "id": 1035,
       "title": "Stripes Mashup Pack Vol.1",
-      "type": "Mashup Pack Artwork",
       "category": "misc",
+      "type": "Mashup Pack Artwork",
       "date": "Apr 2026",
       "client": "Myself",
       "details": "Orange computer-textured DJ controller artwork with soft glowing tubes for the first edition of a mashup pack.",
@@ -1525,13 +1524,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1035
     },
     {
-      "id": 1003,
       "title": "TON027 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Apr 2026",
       "client": "TON 618",
       "release": "Aureonix, Danzzle - Love Is Confusing",
@@ -1540,13 +1539,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1003
     },
     {
-      "id": 1002,
       "title": "TON028 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Apr 2026",
       "client": "TON 618",
       "release": "Keilex - Feeling The Light",
@@ -1555,13 +1554,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1002
     },
     {
-      "id": 1,
       "title": "SR044 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Apr 2026",
       "client": "Solvana Records",
       "release": "pøbel - Thrilla",
@@ -1573,13 +1572,13 @@
       ],
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1
     },
     {
-      "id": 1031,
       "title": "TON029 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "May 2026",
       "client": "TON 618",
       "release": "clrwtr - Where Have You Gone",
@@ -1588,13 +1587,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1031
     },
     {
-      "id": 1036,
       "title": "TON030 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "May 2026",
       "client": "TON 618",
       "release": "Andreayer - Again & Again",
@@ -1603,13 +1602,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1036
     },
     {
-      "id": 17,
       "title": "Through Hell Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Jun 2026",
       "client": "Stardust Records",
       "release": "M1CK3Y, Illusionz, M4R1US BP - Through Hell",
@@ -1617,26 +1616,26 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/ThroughHell.jpeg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 17
     },
     {
-      "id": 2021,
       "title": "Timeless Isle Spotify Playlist Covers",
-      "type": "Spotify Playlist Covers",
       "category": "misc",
+      "type": "Spotify Playlist Covers",
       "date": "Jun 2026",
       "client": "Timeless Isle",
       "details": "Package of five 1500x1500 2D artworks for Spotify Playlist covers.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/misc/TimelessIslePlaylistProject.jpg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 2021
     },
     {
-      "id": 6001,
       "title": "AVIS Visuals",
-      "type": "DJ Set Visuals",
       "category": "set-visuals",
+      "type": "DJ Set Visuals",
       "date": "Jun 2026",
       "client": "AVIS",
       "details": "Collection of custom DJ set visuals created for AVIS performances. Features dynamic motion graphics, branding elements, and synchronized visual effects.",
@@ -1652,13 +1651,13 @@
         "Blender",
         "Adobe After Effects",
         "Adobe Premiere Pro"
-      ]
+      ],
+      "id": 6001
     },
     {
-      "id": 5002,
       "title": "BUTTER's Website",
-      "type": "Website",
       "category": "websites",
+      "type": "Website",
       "date": "Jun 2026",
       "client": "Butter Music",
       "details": "Website for BUTTER, a Danish music producer. Features eye-catching home page, release catalog, and tour dates.",
@@ -1668,13 +1667,13 @@
         "React",
         "Tailwind CSS",
         "Figma"
-      ]
+      ],
+      "id": 5002
     },
     {
-      "id": 1037,
       "title": "TON031 Cover Art",
-      "type": "Single Cover",
       "category": "3d",
+      "type": "Single Cover",
       "date": "Jun 2026",
       "client": "TON 618",
       "release": "Aureonix - Metamorphosis",
@@ -1683,13 +1682,13 @@
       "software": [
         "Blender",
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 1037
     },
     {
-      "id": 2020,
       "title": "TON031 - Animated Cover",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Jun 2026",
       "client": "TON 618",
       "details": "8-second looping 3D animation of the TON031 artwork optimized for a Spotify Canvas.",
@@ -1698,13 +1697,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 2020
     },
     {
-      "id": 1038,
       "title": "Heartsick EP Visuals",
-      "type": "Animation",
       "category": "animations",
+      "type": "Animation",
       "date": "Aug 2026",
       "client": "JOE",
       "details": "8-second 3D animation of a heart with flashing effects and particles.",
@@ -1713,13 +1712,13 @@
       "software": [
         "Blender",
         "Adobe After Effects"
-      ]
+      ],
+      "id": 1038
     },
     {
-      "id": 4002,
       "title": "Bukkoy, Ray - Flying So High (Official Lyric Video)",
-      "type": "Lyric Video",
       "category": "lyric-videos",
+      "type": "Lyric Video",
       "date": "Aug 2026",
       "client": "Timeless",
       "details": "Full-length lyric video with animated text, animated backgrounds, and visual effects synchronized to the music matching the official cover art.",
@@ -1727,13 +1726,13 @@
       "youtubeUrl": "https://www.youtube.com/watch?v=CVymDXIjxZ4",
       "software": [
         "Adobe After Effects"
-      ]
+      ],
+      "id": 4002
     },
     {
-      "id": 18,
       "title": "TMLS043 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Aug 2026",
       "client": "Timeless",
       "release": "Bukkoy, Ray - Flying So High",
@@ -1741,13 +1740,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS043.jpg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 18
     },
     {
-      "id": 19,
       "title": "TMLS044 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Aug 2026",
       "client": "Timeless",
       "release": "Maulik - She Wants To Party",
@@ -1755,13 +1754,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS044.jpg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 19
     },
     {
-      "id": 20,
       "title": "TMLS045 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Sep 2026",
       "client": "Timeless",
       "release": "Larza, Fisher Mackley ft. Alistair Jones - Come Alive",
@@ -1769,13 +1768,13 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS045.jpg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 20
     },
     {
-      "id": 21,
       "title": "TMLS046 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Sep 2026",
       "client": "Timeless",
       "release": "CHRSTN, Auryn - Tonight",
@@ -1783,18 +1782,32 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS046.jpg",
       "software": [
         "Adobe Photoshop"
-      ]
+      ],
+      "id": 21
     },
     {
-      "id": 22,
       "title": "TMLS047 Cover Art",
-      "type": "Single Cover",
       "category": "2d",
+      "type": "Single Cover",
       "date": "Oct 2026",
       "client": "Timeless",
       "release": "NANDAN - Say You're Sorry",
       "details": "Textured, dithered, wavy & abstract themed artwork.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS047.jpg",
+      "software": [
+        "Adobe Photoshop"
+      ],
+      "id": 22
+    },
+    {
+      "title": "TMLS048 Cover art",
+      "category": "2d",
+      "type": "EP Cover",
+      "date": "Oct 2026",
+      "client": "Timeless",
+      "release": "ADE Sampler 2026",
+      "details": "Yellow and blue 2.5D artwork with Amsterdam vibes and old-school touches.",
+      "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS048.jpg",
       "software": [
         "Adobe Photoshop"
       ]
