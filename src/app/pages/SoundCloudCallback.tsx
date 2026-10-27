@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
-import { projectId, publicAnonKey } from "/utils/supabase/info";
+import { SC_API } from "../lib/soundcloud";
 
 const EDGE_FUNCTION_NAME = "soundcloud-exchange-follow";
 
@@ -82,13 +82,9 @@ export function SoundCloudCallback() {
       }
 
       try {
-        const fnUrl = `https://${projectId}.supabase.co/functions/v1/make-server-302ccf60/soundcloud-exchange-follow/exchange`;
-        const res = await fetch(fnUrl, {
+        const res = await fetch(`${SC_API}/exchange`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${publicAnonKey}`,
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code, codeVerifier }),
         });
 

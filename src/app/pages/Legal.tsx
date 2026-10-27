@@ -113,9 +113,9 @@ export function Privacy() {
             <>
               <p>
                 Some free downloads ask you to follow Stripes first. If you choose to connect SoundCloud, you sign in on SoundCloud's own page, and SoundCloud gives
-                this site a one-time permission that it uses to follow the Stripes account from yours. That exchange runs on a small server hosted by{" "}
-                <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">
-                  Supabase
+                this site a one-time permission that it uses to follow the Stripes account from yours. That exchange runs on this site's own server, hosted by{" "}
+                <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">
+                  Cloudflare
                 </a>
                 . I never see your SoundCloud password, and the permission isn't kept afterwards; the server's logs may record that a request happened and whether
                 the follow worked. You can unfollow, or remove the app's access, in your SoundCloud settings at any time.

@@ -57,3 +57,7 @@ logs/
 # beside it.
 /.plugins/
 /.opencode-skills/
+
+# local secrets for wrangler pages dev
+.dev.vars
+.wrangler

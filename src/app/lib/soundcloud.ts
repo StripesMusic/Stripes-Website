@@ -1,9 +1,8 @@
 // Following on SoundCloud to unlock a download: the visitor signs in on SoundCloud (OAuth with
-// PKCE), the Supabase function follows Stripes for them, and /soundcloud-callback sends them back
-// to the page with ?sc_success=true. The verifier waits in sessionStorage during the round trip.
-import { projectId, publicAnonKey } from "/utils/supabase/info";
-
-const FN = `https://${projectId}.supabase.co/functions/v1/make-server-302ccf60/soundcloud-exchange-follow`;
+// PKCE), the site's own function (functions/api/soundcloud) follows Stripes for them, and
+// /soundcloud-callback sends them back to the page with ?sc_success=true. The verifier waits in
+// sessionStorage during the round trip.
+export const SC_API = "/api/soundcloud";
 
 const randomHex = (len: number) => Array.from(crypto.getRandomValues(new Uint8Array(len)), (b) => b.toString(16).padStart(2, "0")).join("");
 const base64Url = (buf: ArrayBuffer) =>
@@ -18,9 +17,7 @@ export async function startSoundCloudFollow(returnTo: string): Promise<boolean> 
     const verifier = randomHex(48);
     const challenge = base64Url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier)));
     const state = randomHex(16);
-    const res = await fetch(`${FN}/auth-url?code_challenge=${encodeURIComponent(challenge)}&state=${encodeURIComponent(state)}`, {
-      headers: { Authorization: `Bearer ${publicAnonKey}` },
-    });
+    const res = await fetch(`${SC_API}/auth-url?code_challenge=${encodeURIComponent(challenge)}&state=${encodeURIComponent(state)}`);
     const json = await res.json().catch(() => ({}));
     if (!res.ok || !json?.authUrl) {
       console.error("auth-url failed:", json);
