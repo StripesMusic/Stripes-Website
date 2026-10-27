@@ -4,7 +4,8 @@ export interface Env {
   SOUNDCLOUD_CLIENT_ID: string;
   SOUNDCLOUD_CLIENT_SECRET: string;
   SOUNDCLOUD_REDIRECT_URI: string;
-  SOUNDCLOUD_FOLLOW_USER_ID: string;
+  // optional: Stripes' numeric SoundCloud id (looked up from the profile link when it's missing)
+  SOUNDCLOUD_FOLLOW_USER_ID?: string;
 }
 
 export const json = (body: unknown, status = 200) =>
