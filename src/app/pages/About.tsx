@@ -1,258 +1,154 @@
-import { Music, Headphones, Zap, Globe } from "lucide-react";
+// About: who I am, a few highlights, who I've made art for, and the press bio to copy.
+import { useState } from "react";
+import { Link } from "react-router";
+import { PageHead } from "../components/PageHead";
+import { Photo } from "../components/Photo";
+import { photos } from "../data/images";
+import { LABELS } from "../data/packs";
+import { pressBio } from "../data/bio";
+
+const sp = (id: string) => `https://open.spotify.com/artist/${id}`;
+const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer">
+    {children}
+  </a>
+);
+const BUTTER = sp("5SOSqzQyhsHTTuxAMGPkaO");
+const ANDREW = sp("01BNEFdzawMyAXoHVdtyPx");
+const E2D2 = sp("4pYWodVn2BToKzPRDXPxPX");
+const TOXIC = sp("7IzlaNBh2EWdsR6xIOp9Bb");
+
+const highlights = [
+  {
+    year: "2025",
+    title: "ADE 2025",
+    text: (
+      <>
+        Joined my close friend <A href={TOXIC}>Toxic Wraith</A> on stage at <A href="https://fallbackrecords.com/">Fallback Records</A>' ADE event.
+      </>
+    ),
+  },
+  {
+    year: "2025",
+    title: "Played at Tomorrowland",
+    text: (
+      <>
+        My Ghost Of You remix with <A href={E2D2}>E2D2</A> was played live at Tomorrowland by <A href={ANDREW}>Andrew A</A>.
+      </>
+    ),
+  },
+  {
+    year: "2025",
+    title: "Won the Ghost Of You remix contest",
+    text: (
+      <>
+        <A href={BUTTER}>BUTTER</A> and <A href={ANDREW}>Andrew A</A> picked our DnB remix with <A href={E2D2}>E2D2</A>.
+      </>
+    ),
+  },
+];
+
+// the copy button copies it as plain paragraphs
+const PRESS = pressBio.join("\n\n");
 
 export function About() {
+  const [copied, setCopied] = useState(false);
+  const copy = () =>
+    navigator.clipboard?.writeText(PRESS).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Hero Section */}
-      <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://assets.musicbystripes.com/b2c486953058c57367796745ebe3803df489fdc9.webp"
-            alt="Jake Profile"
-            className="w-full h-full object-cover opacity-20"
-            style={{ objectPosition: "70% center" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent"></div>
-        </div>
+    <div className="s-page s-apage">
+      <PageHead
+        id="about-title"
+        label="About"
+        aside="Virginia, US"
+        title="About"
+        lede="Hey! I'm Stripes :)"
+        scene="about"
+        photo={{ srcs: [photos.portraitAlt.small], pos: photos.portraitAlt.pos }}
+      />
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter">
-            ABOUT{" "}
-            <span style={{ color: "var(--lime-green)" }}>
-              STRIPES
-            </span>
-          </h1>
-          <p
-            className="text-2xl font-semibold"
-            style={{ color: "var(--golden-yellow)" }}
-          >
-            <span className="italic">hey! :)</span>
-          </p>
-        </div>
-      </section>
-
-      {/* Press Release Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Text Content */}
-            <div>
-              <h2
-                className="text-4xl md:text-5xl font-black mb-8"
-                style={{ color: "var(--lime-green)" }}
-              >
-                PRESS RELEASE
-              </h2>
-              <div className="space-y-6 text-gray-300 leading-relaxed">
-                <p className="font-[Barlow] text-[20px]">
-                  In 2025, Stripes won{" "}
-                  <a
-                    href="https://open.spotify.com/artist/5SOSqzQyhsHTTuxAMGPkaO"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white"
-                    style={{ color: "#87ceeb" }}
-                  >
-                    BUTTER
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="https://open.spotify.com/artist/01BNEFdzawMyAXoHVdtyPx"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white"
-                    style={{ color: "#87ceeb" }}
-                  >
-                    Andrew A
-                  </a>
-                  's Ghost Of You remix contest with a DnB spin
-                  alongside{" "}
-                  <a
-                    href="https://open.spotify.com/artist/4pYWodVn2BToKzPRDXPxPX"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white"
-                    style={{ color: "#87ceeb" }}
-                  >
-                    E2D2
-                  </a>
-                  , earning Tomorrowland support from Andrew A,
-                  with additional DJ support from well-known
-                  names like{" "}
-                  <a
-                    href="https://open.spotify.com/artist/7IzlaNBh2EWdsR6xIOp9Bb"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white"
-                    style={{ color: "#87ceeb" }}
-                  >
-                    Toxic Wraith
-                  </a>
-                  .
-                </p>
-
-                <p className="font-[Barlow] text-[20px]">
-                  Stripes is a US-based electronic music
-                  producer who draws on his background as an
-                  intense drummer since the age of four. Having
-                  honed his production skills through classes at
-                  Berklee College of Music and drawing
-                  inspiration from influential artists such as{" "}
-                  <a
-                    href="https://open.spotify.com/artist/4mHAu7NX2UNsnGXjviBD9e"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white"
-                    style={{ color: "#87ceeb" }}
-                  >
-                    Brooks
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="https://open.spotify.com/artist/7hf6L4LN1RTVN66IdBVpPr"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white"
-                    style={{ color: "#87ceeb" }}
-                  >
-                    RudeLies
-                  </a>
-                  , he has been forging an unmistakable creative
-                  identity.
-                </p>
-
-                <p className="font-[Barlow] text-[20px]">
-                  On the side, Stripes works for three record
-                  labels, managing releases, overseeing A&R, and
-                  designing cover artwork. He has another
-                  release coming soon and is a promising talent
-                  to watch!
-                </p>
-              </div>
-            </div>
-
-            {/* Profile Photo */}
-            <div className="flex justify-center lg:justify-end m-[0px] p-[0px]">
-              <img
-                src="https://assets.musicbystripes.com/about_section_pic.jpeg"
-                alt="Stripes with his dog"
-                className="max-w-md w-full shadow-2xl mx-[80px] my-[0px] rounded-[46px]"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What I Do Section */}
-
-      {/* Achievements Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a]">
-        <div className="max-w-7xl mx-auto">
-          <h2
-            className="text-4xl md:text-5xl font-black mb-16 text-center"
-            style={{ color: "var(--lime-green)" }}
-          >
-            ACHIEVEMENTS
+      <section className="s-panel s-pad s-pbody s-bio" data-scene="about" aria-labelledby="bio-h">
+        <div className="s-bio-text s-prose">
+          <h2 className="s-mono" id="bio-h">
+            Bio
           </h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            {/* ADE 2025 */}
-            <div className="text-center">
-              <div
-                className="text-6xl font-black mb-4 font-[Barlow]"
-                style={{ color: "var(--golden-yellow)" }}
-              >
-                2025
-              </div>
-              <h3 className="text-2xl font-black mb-4">
-                ADE 2025
-              </h3>
-              <p className="text-gray-400 leading-relaxed font-[Barlow]">
-                Joined my close friend{" "}
-                <a
-                  href="https://open.spotify.com/artist/7IzlaNBh2EWdsR6xIOp9Bb"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white text-[#87ceeb]"
-                >
-                  Toxic Wraith{" "}
-                </a>
-                on stage at{" "}
-                <a
-                  href="https://fallbackrecords.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white text-[#87ceeb]"
-                >
-                  Fallback Records'
-                </a>{" "}
-                ADE Event
-              </p>
-            </div>
-
-            {/* Tomorrowland 2025 */}
-            <div className="text-center">
-              <div
-                className="text-6xl font-black mb-4 font-[Barlow]"
-                style={{ color: "var(--golden-yellow)" }}
-              >
-                2025
-              </div>
-              <h3 className="text-2xl font-black mb-4">
-                Played at Tomorrowland
-              </h3>
-              <p className="text-gray-400 leading-relaxed font-[Barlow]">
-                My Ghost Of You Remix with{" "}
-                <a
-                  href="https://open.spotify.com/artist/4pYWodVn2BToKzPRDXPxPX"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white text-[#87ceeb]"
-                >
-                  E2D2
-                </a>{" "}
-                was played live at Tomorrowland by talented DJ
-                and producer{" "}
-                <a
-                  href="https://open.spotify.com/artist/01BNEFdzawMyAXoHVdtyPx"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white text-[#87ceeb]"
-                >
-                  Andrew A
-                </a>
-              </p>
-            </div>
-
-            {/* Beatport #1 */}
-            <div className="text-center">
-              <div
-                className="text-6xl font-black mb-4 font-[Barlow]"
-                style={{ color: "var(--golden-yellow)" }}
-              >
-                2024
-              </div>
-              <h3 className="text-2xl font-black mb-4">
-                50,000 Streams
-              </h3>
-              <p className="text-gray-400 leading-relaxed font-[Barlow]">
-                My second ever track released, "
-                <a
-                  href="https://open.spotify.com/track/3TjhWlVc8NSWZRPQAOlst8"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white text-[#87ceeb]"
-                >
-                  Send Me An Angel
-                </a>
-                ", hit 50,000 streams on Spotify
-              </p>
-            </div>
+          <p className="s-big">I'm a US-based electronic music producer, and I've been drumming since I was four.</p>
+          <p>
+            In 2025 I won <A href={BUTTER}>BUTTER</A> and <A href={ANDREW}>Andrew A</A>'s Ghost Of You remix contest with a DnB spin, alongside <A href={E2D2}>E2D2</A>. Andrew A
+            played it at Tomorrowland, and it got more DJ support from names like <A href={TOXIC}>Toxic Wraith</A>.
+          </p>
+          <p>
+            I sharpened my production in classes at Berklee College of Music, and I take a lot from artists like <A href={sp("4mHAu7NX2UNsnGXjviBD9e")}>Brooks</A> and{" "}
+            <A href={sp("7hf6L4LN1RTVN66IdBVpPr")}>RudeLies</A>.
+          </p>
+          <p>
+            On the side I work for three record labels, managing releases, overseeing A&amp;R and designing cover art. You can see that work on the <Link to="/designs">Designs</Link>{" "}
+            page.
+          </p>
+          <div className="s-ctas">
+            <Link className="s-btn" to="/music">
+              Listen ↗
+            </Link>
+            <Link className="s-btn" to="/contact">
+              Contact
+            </Link>
           </div>
         </div>
+        <figure className="s-bio-photo">
+          <Photo p={photos.press} ratio="4 / 5" sizes="(max-width: 860px) 92vw, 40vw" label="Portrait" />
+        </figure>
       </section>
 
-      {/* Footer Logo */}
+      <section className="s-panel s-pad s-pbody" data-scene="hero" aria-labelledby="hl-h">
+        <div className="s-sec-head">
+          <h2 className="s-mono" id="hl-h">
+            Highlights
+          </h2>
+        </div>
+        <dl className="s-stats">
+          <div>
+            <dd>220k+</dd>
+            <dt>Streams across every release combined</dt>
+          </div>
+          <div>
+            <dd>22</dd>
+            <dt>Countries I've worked with artists from</dt>
+          </div>
+        </dl>
+        <ol className="s-rules s-timeline s-prose">
+          {highlights.map((h) => (
+            <li key={h.title}>
+              <span className="s-timeline-year">{h.year}</span>
+              <span className="s-timeline-title">{h.title}</span>
+              <span className="s-timeline-text">{h.text}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="s-clients">
+          <span className="s-mono">Cover art for</span>
+          <span>{[...LABELS, "independent artists"].join(" · ")}</span>
+        </p>
+      </section>
+
+      <section className="s-panel s-pad s-pbody s-press" data-scene="about" aria-labelledby="press-h">
+        <div className="s-sec-head">
+          <h2 className="s-mono" id="press-h">
+            Press bio
+          </h2>
+          <button type="button" className="s-btn" onClick={copy} aria-live="polite">
+            {copied ? "Copied ✓" : "Copy bio"}
+          </button>
+        </div>
+        <div className="s-press-text">
+          {pressBio.map((p) => (
+            <p key={p.slice(0, 20)}>{p}</p>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

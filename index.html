@@ -2,21 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#262626" />
+    <script>
+      // the saved theme, before anything paints
+      try {
+        if (localStorage.getItem("s-theme") === "light") {
+          document.documentElement.dataset.theme = "light";
+          document.querySelector('meta[name="theme-color"]').content = "#cdcec8";
+        }
+      } catch (e) {}
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Stripes</title>
     <style>
       html,
       body {
         height: 100%;
         margin: 0;
+        background: #262626;
+      }
+      html[data-theme="light"],
+      html[data-theme="light"] body {
+        background: #cdcec8;
       }
       #root {
         height: 100%;
       }
     </style>
-    <meta name="description" content="Stripes' Official Website" />
-    <link rel="icon" href="/favicon.png" />
+    <meta name="description" content="Stripes: melodic dance music producer and cover artist. Releases, cover art and release packs." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" sizes="48x48" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:title" content="Stripes" />
     <meta property="og:description" content="Stripes' Official Website" />
     <meta property="og:image" content="/social-image.png" />

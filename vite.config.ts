@@ -12,9 +12,13 @@ export default defineConfig({
     {
       name: "configure-response-headers",
       configureServer(server) {
-        server.middlewares.use((_req, res, next) => {
-          res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-          res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+        // only the audio tool needs cross-origin isolation (ffmpeg); elsewhere these headers
+        // would block the photos and covers from the assets bucket, which the live site shows
+        server.middlewares.use((req, res, next) => {
+          if (req.url?.startsWith("/tools/audio-silence-padder")) {
+            res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+            res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+          }
           next();
         });
       },
