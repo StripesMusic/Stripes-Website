@@ -1147,3 +1147,34 @@
 .s-callback .s-eq i {
   width: 4px;
 }
+
+/* About: the big numbers above the highlights */
+.s-stats {
+  margin: 0 0 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px 32px;
+}
+.s-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.s-stats dd {
+  order: -1;
+  margin: 0;
+  font-family: var(--s-display);
+  font-size: clamp(72px, 10vw, 148px);
+  font-weight: 200;
+  font-variation-settings: "wdth" 80, "opsz" 96;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: var(--s-fg);
+}
+.s-stats dt {
+  max-width: 26ch;
+  font: 500 condensed 11.5px/1.5 var(--s-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--s-muted);
+}

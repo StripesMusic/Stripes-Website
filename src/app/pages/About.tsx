@@ -45,22 +45,13 @@ const highlights = [
       </>
     ),
   },
-  {
-    year: "2024",
-    title: "50,000 streams",
-    text: (
-      <>
-        <A href="https://open.spotify.com/track/3TjhWlVc8NSWZRPQAOlst8">Send Me An Angel</A>, my second ever release, passed 50,000 streams on Spotify.
-      </>
-    ),
-  },
 ];
 
 // for promoters and blogs, in the third person, as it was written
 const PRESS = [
   "In 2025, Stripes won BUTTER and Andrew A's Ghost Of You remix contest with a DnB spin alongside E2D2, earning Tomorrowland support from Andrew A, with additional DJ support from well-known names like Toxic Wraith.",
   "Stripes is a US-based electronic music producer who draws on his background as an intense drummer since the age of four. Having honed his production skills through classes at Berklee College of Music and drawing inspiration from influential artists such as Brooks and RudeLies, he has been forging an unmistakable creative identity.",
-  "On the side, Stripes works for three record labels, managing releases, overseeing A&R, and designing cover artwork. He has another release coming soon and is a promising talent to watch!",
+  "On the side, Stripes works for three record labels, managing releases, overseeing A&R, and designing cover artwork. His music has passed 220,000 streams combined, and he has worked with artists from 22 countries. He has another release coming soon and is a promising talent to watch!",
 ].join("\n\n");
 
 export function About() {
@@ -121,6 +112,16 @@ export function About() {
             Highlights
           </h2>
         </div>
+        <dl className="s-stats">
+          <div>
+            <dd>220k+</dd>
+            <dt>Streams across every release combined</dt>
+          </div>
+          <div>
+            <dd>22</dd>
+            <dt>Countries I've worked with artists from</dt>
+          </div>
+        </dl>
         <ol className="s-rules s-timeline s-prose">
           {highlights.map((h) => (
             <li key={h.title}>
