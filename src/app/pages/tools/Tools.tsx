@@ -1,12 +1,12 @@
 // /tools: the free tools, one line each
 import { Link } from "react-router";
 import { PageHead } from "../../components/PageHead";
-import { tools } from "../../components/ToolPage";
+import { tools, toolsPhoto } from "../../components/ToolPage";
 
 export function Tools() {
   return (
     <div className="s-page s-tpage">
-      <PageHead id="tools-title" label="Tools" aside="Free, and they run in your browser" title="Tools" lede="Small things I made for getting a release out the door." />
+      <PageHead id="tools-title" label="Tools" aside="Free, and they run in your browser" title="Tools" lede="Small things I made for getting a release out the door." photo={toolsPhoto} />
       <section className="s-panel s-pad s-pbody s-toolsp" data-scene="olive" aria-label="Every tool">
         <ul className="s-tools-list">
           {tools.map((t, i) => (

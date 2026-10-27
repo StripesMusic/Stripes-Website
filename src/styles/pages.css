@@ -19,9 +19,12 @@
 }
 .s-phead-bg {
   --fade: 0.2;
+  --nav-clear: linear-gradient(to bottom, transparent calc(var(--s-nav-h) * 0.4), #000 calc(var(--s-nav-h) + 72px));
   z-index: -1;
-  -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
-  mask-image: linear-gradient(to bottom, #000 40%, transparent);
+  -webkit-mask-image: var(--nav-clear), linear-gradient(to bottom, #000 40%, transparent);
+  mask-image: var(--nav-clear), linear-gradient(to bottom, #000 40%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 .s-ptitle {
   margin: clamp(48px, 10vh, 120px) 0 28px;
@@ -669,10 +672,10 @@
 .s-dhead .s-phead-bg {
   --fade: 0.5;
   left: 34%;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%), linear-gradient(to bottom, #000 55%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 45%), linear-gradient(to bottom, #000 55%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
+  -webkit-mask-image: var(--nav-clear), linear-gradient(to right, transparent, #000 45%), linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: var(--nav-clear), linear-gradient(to right, transparent, #000 45%), linear-gradient(to bottom, #000 55%, transparent);
+  -webkit-mask-composite: source-in, source-in;
+  mask-composite: intersect, intersect;
 }
 .s-dcovers {
   display: grid;
@@ -1037,10 +1040,27 @@
 .s-tool-info ol,
 .s-tool-info ul {
   margin: 0;
-  padding-left: 1.2em;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+/* steps line up with the label above them, their numbers in a small mono gutter */
+.s-tool-info ol {
+  counter-reset: step;
+}
+.s-tool-info ol > li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2.4em minmax(0, 1fr);
+}
+.s-tool-info ol > li::before {
+  content: counter(step, decimal-leading-zero);
+  padding-top: 0.2em;
+  font: 500 11.5px/1.5 var(--s-label);
+  letter-spacing: 0.06em;
+  color: var(--s-muted);
 }
 .s-tool-info p {
   margin: 0 0 14px;
@@ -1177,4 +1197,135 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--s-muted);
+}
+
+/* the Spotify mock is Spotify's own dark UI in every colour scheme: nothing inside it reads the
+   site's colours */
+.s-sat-mock {
+  color-scheme: dark;
+  color: #fff;
+}
+.s-sat-mock :where(h1, h2, h3, h4, p, span, li, a, button, label) {
+  color: inherit;
+}
+
+/* Designs gallery: label and artist dropdowns beside the kind pills */
+.s-art-who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.s-ms {
+  position: relative;
+}
+.s-ms-btn {
+  gap: 8px;
+}
+.s-ms-count {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font: 600 11px/18px var(--s-sans);
+  text-align: center;
+  color: var(--s-accent);
+  background: var(--s-accent-ink);
+}
+.s-ms-caret {
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+.s-ms-btn[aria-expanded="true"] .s-ms-caret {
+  margin-top: 3px;
+  transform: rotate(-135deg);
+}
+.s-ms-list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 240px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid var(--s-line);
+  border-radius: 12px;
+  background: var(--s-panel);
+  box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.45);
+  transform-origin: top right;
+  animation: s-ms-in 0.16s cubic-bezier(0.2, 0, 0, 1);
+}
+@keyframes s-ms-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-4px);
+  }
+}
+.s-ms-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font: 400 14.5px/1.3 var(--s-sans);
+  color: var(--s-fg);
+  cursor: pointer;
+}
+.s-ms-opt input {
+  appearance: none;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  border: 1px solid var(--s-line-strong);
+  border-radius: 3px;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+.s-ms-opt input::after {
+  content: "";
+  width: 7px;
+  height: 4px;
+  margin-top: -2px;
+  border-left: 1.5px solid var(--s-accent-ink);
+  border-bottom: 1.5px solid var(--s-accent-ink);
+  transform: rotate(-45deg) scale(0);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
+}
+.s-ms-opt input:checked {
+  border-color: var(--s-accent);
+  background: var(--s-accent);
+}
+.s-ms-opt input:checked::after {
+  transform: rotate(-45deg) scale(1);
+}
+.s-ms-opt input:focus-visible {
+  outline: 2px solid var(--s-accent);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .s-ms-opt:hover {
+    background: var(--s-line);
+  }
+}
+@media (max-width: 640px) {
+  .s-ms-list {
+    left: 0;
+    right: auto;
+    transform-origin: top left;
+  }
+}
+/* a solo lyric video's tile: the YouTube still, cropped square, with a play tag */
+.s-art-badge-play {
+  right: auto;
+  left: 8px;
+  top: auto;
+  bottom: 8px;
 }

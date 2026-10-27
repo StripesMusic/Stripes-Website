@@ -3,6 +3,10 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { PageHead } from "./PageHead";
+import { photos } from "../data/images";
+
+// the ADE crowd behind every tool page's head
+export const toolsPhoto = { srcs: [photos.tools.small, photos.tools.orig], pos: photos.tools.pos };
 
 export const tools = [
   { name: "GD Auto Export", path: "/tools/gd-auto-export", text: "Turn Google Drive links into direct downloads" },
@@ -16,7 +20,7 @@ export function ToolPage({ path, title, lede, note, children, how, why, wide }: 
   const n = tools.findIndex((t) => t.path === path) + 1;
   return (
     <div className="s-page s-tpage">
-      <PageHead id="tool-title" label={`Tool ${String(n).padStart(2, "0")} · Free`} aside={<Link to="/tools">All tools</Link>} title={title} lede={lede}>
+      <PageHead id="tool-title" label={`Tool ${String(n).padStart(2, "0")} · Free`} aside={<Link to="/tools">All tools</Link>} title={title} lede={lede} photo={toolsPhoto}>
         <p className="s-mono s-tool-note">{note}</p>
       </PageHead>
       <section className="s-panel s-pad s-pbody" data-scene="olive" aria-label="Tool">

@@ -30,7 +30,7 @@ const FILTERS = [
 
 export function ReleaseList({ count = 8, full = false }: { count?: number; full?: boolean }) {
   const [filter, setFilter] = useState(0);
-  const list = full ? byDate.filter(FILTERS[filter].test) : releases.slice(0, count);
+  const list = full ? byDate.filter(FILTERS[filter].test) : byDate.slice(0, count);
   const state = useAudio();
   const [previews, setPreviews] = useState(false);
   const [hover, setHover] = useState(-1);

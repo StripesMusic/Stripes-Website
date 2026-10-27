@@ -1,11 +1,10 @@
-// Drum covers, newest first. Shared by the Drums page and the homepage.
+import data from "../../content/drums.json";
+
+// Drum covers, newest first, in src/content/drums.json. Shared by the Drums page and the homepage.
 export type DrumCover = { title: string; artist: string; date: string; youtubeId: string };
 
-export const drumCovers: DrumCover[] = [
-  { title: "Misery Business", artist: "Paramore", date: "May 2026", youtubeId: "Ob_QOy7iFeQ" },
-  { title: "Ruin", artist: "Lamb of God", date: "May 2026", youtubeId: "ISmoJL4XWQw" },
-  { title: "Struck Dead", artist: "Trivium", date: "Apr 2026", youtubeId: "tvb6E6NfFW8" },
-];
+// newest first, whatever order they were added in
+export const drumCovers = [...(data as DrumCover[])].sort((a, b) => Date.parse(`1 ${b.date}`) - Date.parse(`1 ${a.date}`));
 
 // YouTube's privacy-enhanced player, which doesn't store anything until the video is played
 export const embedUrl = (c: DrumCover) => `https://www.youtube-nocookie.com/embed/${c.youtubeId}`;

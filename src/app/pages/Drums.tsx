@@ -1,11 +1,8 @@
 // Drums: the newest cover big, the rest beside it, each playing in place.
 import { PageHead } from "../components/PageHead";
 import { YouTube } from "../components/YouTube";
-import { YouTubeIcon } from "../components/icons/Platforms";
 import { drumCovers } from "../data/drums";
 import { photos } from "../data/images";
-
-const CHANNEL = "https://www.youtube.com/@musicbystripes";
 
 export function Drums() {
   const [latest, ...rest] = drumCovers;
@@ -14,22 +11,12 @@ export function Drums() {
       <PageHead
         id="drums-title"
         label="Drums"
-        aside={
-          <>
-            <span className="s-num">{drumCovers.length}</span> covers on YouTube
-          </>
-        }
         title="Drums"
         lede="Drum covers of songs I enjoy, recorded for fun :)"
         scene="drums"
         photo={{ srcs: [photos.drums.small], pos: photos.drums.pos }}
         className="s-dhead"
-      >
-        <a className="s-btn" href={CHANNEL} target="_blank" rel="noopener noreferrer">
-          <YouTubeIcon className="s-gate-ico" />
-          Subscribe ↗
-        </a>
-      </PageHead>
+      />
 
       <section className="s-panel s-pad s-pbody" data-scene="drums" aria-labelledby="covers-h">
         <div className="s-sec-head">
@@ -50,11 +37,6 @@ export function Drums() {
               </figcaption>
             </figure>
           ))}
-        </div>
-        <div className="s-ctas s-dmore">
-          <a className="s-btn" href={CHANNEL} target="_blank" rel="noopener noreferrer">
-            More on YouTube ↗
-          </a>
         </div>
       </section>
     </div>

@@ -1,16 +1,17 @@
 // Designs: cover art, motion and web work. Every release is a pack (cover, animated cover, lyric
 // video, process shots and mockups when there are any): the fullest packs are shown open at the
-// top, the rest are a contact sheet of covers that opens each pack on click, and everything that
-// isn't a release (lyric videos, visuals, websites) comes last, playable in place.
+// top, then a contact sheet of every release and solo piece (lyric videos, misc) that opens each
+// one on click, filtered by kind, label and artist. Websites, set visuals and clips come last.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LoopVideo } from "../components/LoopVideo";
 import { YouTube } from "../components/YouTube";
 import { Link } from "react-router";
 import { ImageSlot } from "../components/ImageSlot";
 import { ArtworkBg } from "../components/ArtworkBg";
-import { packs, piecesIn, otherWork, LABELS, ytId, type Kind, type Pack } from "../data/packs";
+import { MultiSelect } from "../components/MultiSelect";
+import { packs, gallery, artistNames, piecesIn, otherWork, LABELS, ytId, type Kind, type Pack } from "../data/packs";
 
-const KINDS: Kind[] = ["2D", "3D", "Motion", "Lyric video"];
+const KINDS: Kind[] = ["2D", "3D", "Motion", "Lyric video", "Misc"];
 const featured = [...packs].sort((a, b) => piecesIn(b) - piecesIn(a) || b.sort - a.sort).slice(0, 3);
 const years = packs.map((p) => p.sort).filter(Boolean);
 const span = `${Math.floor(Math.min(...years) / 12)}–${Math.floor(Math.max(...years) / 12)}`;
@@ -37,7 +38,7 @@ function Lyric({ id, title }: { id: string; title: string }) {
 
 function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string }) {
   const pieces = [
-    "Cover",
+    !p.lyric || !p.solo ? (p.solo ? "Artwork" : "Cover") : "",
     ...p.versions.map((_, i) => `Version ${i + 2}`),
     p.canvas && "Animated cover",
     p.lyric && "Lyric video",
@@ -53,27 +54,33 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
         </h3>
         {p.release && p.release !== p.name && <p className="s-art-release">{p.release}</p>}
         <dl className="s-art-dl">
-          <div>
-            <dt>Client</dt>
-            <dd>{p.client}</dd>
-          </div>
+          {p.client && (
+            <div>
+              <dt>Client</dt>
+              <dd>{p.client}</dd>
+            </div>
+          )}
           <div>
             <dt>Date</dt>
             <dd>{p.date}</dd>
           </div>
-          <div>
-            <dt>Tools</dt>
-            <dd>{p.tools.join(", ")}</dd>
-          </div>
-          <div>
-            <dt>In the pack</dt>
-            <dd>{pieces.join(" · ")}</dd>
-          </div>
+          {p.tools.length > 0 && (
+            <div>
+              <dt>Tools</dt>
+              <dd>{p.tools.join(", ")}</dd>
+            </div>
+          )}
+          {!p.solo && (
+            <div>
+              <dt>In the pack</dt>
+              <dd>{pieces.join(" · ")}</dd>
+            </div>
+          )}
         </dl>
         {p.details && (
           <p className="s-art-details">
             {p.details}
-            {p.credit && (
+            {p.credit?.name && (
               <>
                 , with{" "}
                 <a href={p.credit.href} target="_blank" rel="noopener noreferrer">
@@ -85,9 +92,11 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
         )}
       </div>
       <div className="s-art-media">
-        <figure className="s-art-piece s-art-cover">
-          <ImageSlot src={p.cover} alt={`${p.name} cover art for ${p.client}`} label={p.name} />
-        </figure>
+        {!(p.solo && p.lyric) && (
+          <figure className="s-art-piece s-art-cover">
+            <ImageSlot src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} />
+          </figure>
+        )}
         {p.canvas && <Canvas video={p.canvas.video} poster={p.canvas.poster} label={`${p.name} animated cover`} />}
         {p.versions.map((v, i) => (
           <figure className="s-art-piece" key={v}>
@@ -215,18 +224,24 @@ function ClipPlayer({ clip }: { clip: Clip }) {
 }
 
 export function Artwork() {
-  const [label, setLabel] = useState("All");
+  const [labels, setLabels] = useState<string[]>([]);
+  const [artists, setArtists] = useState<string[]>([]);
   const [kind, setKind] = useState<Kind | "All">("All");
   const [open, setOpen] = useState<Pack | null>(null);
   const [clip, setClip] = useState<Clip | null>(null);
   const dlg = useRef<HTMLDialogElement>(null);
   const clipDlg = useRef<HTMLDialogElement>(null);
 
+  // kind, and then any of the ticked labels or artists (nothing ticked shows everyone)
   const shown = useMemo(
-    () => packs.filter((p) => (label === "All" || p.label === label) && (kind === "All" || p.kinds.includes(kind))),
-    [label, kind],
+    () =>
+      gallery.filter(
+        (p) =>
+          (kind === "All" || p.kinds.includes(kind)) &&
+          ((!labels.length && !artists.length) || labels.includes(p.label) || p.artists.some((a) => artists.includes(a))),
+      ),
+    [labels, artists, kind],
   );
-  const labels = ["All", ...LABELS, "Artists"];
 
   useEffect(() => {
     const d = dlg.current!;
@@ -286,13 +301,6 @@ export function Artwork() {
           </span>
         </div>
         <div className="s-art-filters">
-          <div role="group" aria-label="Client">
-            {labels.map((l) => (
-              <button type="button" key={l} className="s-btn" aria-pressed={label === l} onClick={() => setLabel(l)}>
-                {l.replace(" Records", "")}
-              </button>
-            ))}
-          </div>
           <div role="group" aria-label="Kind">
             {(["All", ...KINDS] as const).map((k) => (
               <button type="button" key={k} className="s-btn" aria-pressed={kind === k} onClick={() => setKind(k)}>
@@ -300,19 +308,40 @@ export function Artwork() {
               </button>
             ))}
           </div>
+          <div className="s-art-who">
+            <MultiSelect label="Labels" options={LABELS} selected={labels} onChange={setLabels} show={(l) => l.replace(" Records", "")} />
+            <MultiSelect label="Artists / other" options={artistNames} selected={artists} onChange={setArtists} />
+            {(labels.length > 0 || artists.length > 0) && (
+              <button
+                type="button"
+                className="s-btn s-btn-ghost"
+                onClick={() => {
+                  setLabels([]);
+                  setArtists([]);
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
         <ul className="s-art-grid">
           {shown.map((p) => (
             <li key={p.key}>
-              <button type="button" onClick={() => setOpen(p)} aria-label={`Open the ${p.name} pack`}>
+              <button type="button" onClick={() => setOpen(p)} aria-label={p.solo ? `Open ${p.name}` : `Open the ${p.name} pack`}>
                 <ImageSlot src={p.cover} alt="" label={p.name} />
                 <span className="s-art-cap">
                   <span>{p.name}</span>
                   <span className="s-mono">
-                    {p.label === "Artists" ? p.client : p.label.replace(" Records", "")} · {p.date}
+                    {LABELS.includes(p.label) ? p.label.replace(" Records", "") : p.client || p.kinds[0]} · {p.date}
                   </span>
                 </span>
-                {piecesIn(p) > 1 && (
+                {p.lyric && p.solo && (
+                  <span className="s-art-badge s-art-badge-play s-mono" aria-hidden="true">
+                    ▶ Lyric video
+                  </span>
+                )}
+                {!p.solo && piecesIn(p) > 1 && (
                   <span className="s-art-badge s-mono" aria-hidden="true">
                     +{piecesIn(p) - 1}
                   </span>
@@ -321,7 +350,7 @@ export function Artwork() {
             </li>
           ))}
         </ul>
-        {shown.length === 0 && <p className="s-muted">Nothing matches both filters yet.</p>}
+        {shown.length === 0 && <p className="s-muted">Nothing matches those filters yet.</p>}
       </section>
 
       <section className="s-panel s-pad s-art-other" data-scene="about" aria-labelledby="other-h">
@@ -333,7 +362,7 @@ export function Artwork() {
         </div>
         <ul className="s-art-others">
           {otherWork.map((w) => (
-            <li key={w.id + w.title} className={"s-art-other-" + w.category}>
+            <li key={`${w.id}${w.title}`} className={"s-art-other-" + w.category}>
               <Other w={w} onClip={setClip} />
             </li>
           ))}
@@ -346,7 +375,7 @@ export function Artwork() {
             <button type="button" className="s-btn s-art-close" onClick={() => setOpen(null)}>
               Close
             </button>
-            <CaseStudy p={open} n={packs.indexOf(open) + 1} headingId="pack-title" />
+            <CaseStudy p={open} n={gallery.indexOf(open) + 1} headingId="pack-title" />
           </div>
         )}
       </dialog>

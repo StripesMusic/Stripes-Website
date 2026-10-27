@@ -200,7 +200,7 @@ export function Home() {
             <div className="s-drums-text">
               <div className="s-sec-head">
                 <span className="s-mono">Drums</span>
-                <span className="s-mono">{drumCovers.length} covers on YouTube</span>
+                <span className="s-mono">{drumCovers.length} covers</span>
               </div>
               <p className="s-big">Drum covers of songs I enjoy, recorded for fun.</p>
               <Link className="s-btn" to="/drums">

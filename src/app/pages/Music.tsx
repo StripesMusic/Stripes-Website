@@ -4,7 +4,7 @@ import { EpBody } from "../components/home/EpBody";
 import { ReleaseList, byDate } from "../components/home/ReleaseList";
 import { NowPlaying } from "../components/home/NowPlaying";
 import { PLATFORMS } from "../components/icons/Platforms";
-import { adePhotos, photos } from "../data/images";
+import { photos } from "../data/images";
 import { ep } from "../data/releases";
 
 const listen = [
@@ -28,7 +28,7 @@ export function Music() {
         }
         title="Music"
         lede="Everything I've released, newest first. Most of it is free to download."
-        photo={{ srcs: [adePhotos.bridge.src, photos.amsterdamStreet.small], pos: "40% 45%" }}
+        photo={{ srcs: [photos.music.small, photos.music.orig], pos: photos.music.pos }}
       >
         <ul className="s-pills" aria-label="Listen on">
           {listen.map(({ p, href }) => (
