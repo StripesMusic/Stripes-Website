@@ -271,7 +271,7 @@ export function Artwork() {
           <p className="s-big">Cover art, animated covers, social media assets, lyric videos and set visuals for labels and artists.</p>
           <div className="s-ctas">
             <a className="s-btn" href="#packs">
-              Release packs ↓
+              See my work ↓
             </a>
             <Link className="s-btn s-btn-solid" to="/contact">
               Commission art
