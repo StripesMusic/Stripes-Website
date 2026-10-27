@@ -15,6 +15,7 @@ import { EpBody, epTracks } from "../components/home/EpBody";
 import { Eq } from "../components/home/Eq";
 import { ImageSlot } from "../components/ImageSlot";
 import { Photo } from "../components/Photo";
+import { PressBio } from "../components/PressBio";
 import { ep } from "../data/releases";
 import { drumCovers, thumbUrl } from "../data/drums";
 import { photos } from "../data/images";
@@ -256,25 +257,7 @@ export function Home() {
             <div className="s-sec-head">
               <span className="s-mono">About</span>
             </div>
-            <p className="s-big">Stripes is a US-based electronic music producer and a drummer since the age of four.</p>
-            <dl className="s-facts">
-              <div>
-                <dt>Labels</dt>
-                <dd>Releases, A&amp;R and cover art for three record labels</dd>
-              </div>
-              <div>
-                <dt>2025</dt>
-                <dd>Won BUTTER and Andrew A's Ghost Of You remix contest with E2D2, with Tomorrowland support from Andrew A</dd>
-              </div>
-              <div>
-                <dt>Studied</dt>
-                <dd>Production classes at Berklee College of Music</dd>
-              </div>
-              <div>
-                <dt>Inspired by</dt>
-                <dd>Brooks, RudeLies</dd>
-              </div>
-            </dl>
+            <PressBio className="s-about-bio s-prose" />
             <div className="s-ctas">
               <Link className="s-btn" to="/about">
                 Read more ↗
@@ -285,7 +268,7 @@ export function Home() {
             </div>
           </div>
           <figure className="s-about-photo s-plx" ref={plxRef}>
-            <Photo p={photos.portrait} ratio="4 / 5" sizes="(max-width: 860px) 92vw, 46vw" label="Portrait" />
+            <Photo p={photos.press} ratio="4 / 5" sizes="(max-width: 860px) 92vw, 46vw" label="Portrait" />
           </figure>
         </section>
       </div>

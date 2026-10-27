@@ -5,6 +5,7 @@ import { PageHead } from "../components/PageHead";
 import { Photo } from "../components/Photo";
 import { photos } from "../data/images";
 import { LABELS } from "../data/packs";
+import { pressBio } from "../data/bio";
 
 const sp = (id: string) => `https://open.spotify.com/artist/${id}`;
 const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -47,12 +48,8 @@ const highlights = [
   },
 ];
 
-// for promoters and blogs, in the third person, as it was written
-const PRESS = [
-  "In 2025, Stripes won BUTTER and Andrew A's Ghost Of You remix contest with a DnB spin alongside E2D2, earning Tomorrowland support from Andrew A, with additional DJ support from well-known names like Toxic Wraith.",
-  "Stripes is a US-based electronic music producer who draws on his background as an intense drummer since the age of four. Having honed his production skills through classes at Berklee College of Music and drawing inspiration from influential artists such as Brooks and RudeLies, he has been forging an unmistakable creative identity.",
-  "On the side, Stripes works for three record labels, managing releases, overseeing A&R, and designing cover artwork. His music has passed 220,000 streams combined, and he has worked with artists from 22 countries. He has another release coming soon and is a promising talent to watch!",
-].join("\n\n");
+// the copy button copies it as plain paragraphs
+const PRESS = pressBio.join("\n\n");
 
 export function About() {
   const [copied, setCopied] = useState(false);
@@ -102,7 +99,7 @@ export function About() {
           </div>
         </div>
         <figure className="s-bio-photo">
-          <Photo p={photos.portrait} ratio="4 / 5" sizes="(max-width: 860px) 92vw, 40vw" label="Portrait" />
+          <Photo p={photos.press} ratio="4 / 5" sizes="(max-width: 860px) 92vw, 40vw" label="Portrait" />
         </figure>
       </section>
 
@@ -147,7 +144,7 @@ export function About() {
           </button>
         </div>
         <div className="s-press-text">
-          {PRESS.split("\n\n").map((p) => (
+          {pressBio.map((p) => (
             <p key={p.slice(0, 20)}>{p}</p>
           ))}
         </div>

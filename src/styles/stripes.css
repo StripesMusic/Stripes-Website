@@ -15,7 +15,7 @@
   --s-line: color-mix(in srgb, var(--s-fg) 15%, transparent);
   --s-line-strong: color-mix(in srgb, var(--s-fg) 36%, transparent);
   --s-accent-hi: color-mix(in oklab, var(--s-accent), white 14%);
-  --s-sans: "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s-sans: "Stripes Hyphen", "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --s-display: "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   /* small labels: Bricolage at its condensed width (set with font-stretch); numbers in Doto */
   --s-label: "Bricolage Grotesque Variable", "Arial Narrow", ui-sans-serif, sans-serif;
@@ -1800,6 +1800,17 @@ html.s-locked {
   inset: -14% 0;
   height: 128%;
   will-change: transform;
+}
+.s-about-bio {
+  max-width: 62ch;
+  font-size: 18px;
+  line-height: 1.55;
+}
+.s-about-bio p {
+  margin: 0 0 1em;
+}
+.s-about-bio p:last-child {
+  margin-bottom: 0;
 }
 .s-facts {
   width: 100%;

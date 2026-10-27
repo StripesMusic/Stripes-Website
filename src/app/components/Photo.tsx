@@ -17,6 +17,7 @@ export function Photo({ p, ratio, sizes, label, className = "", eager }: { p: P;
       label={label}
       className={className}
       eager={eager}
+      fallback={p.orig}
     />
   );
 }

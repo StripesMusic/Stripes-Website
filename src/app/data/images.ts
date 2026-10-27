@@ -3,7 +3,7 @@
 // without location data. pos is the crop's focal point (CSS object-position).
 const W = "https://assets.musicbystripes.com/web-photos/";
 
-export type Photo = { src: string; small: string; w: number; h: number; alt: string; pos: string };
+export type Photo = { src: string; small: string; w: number; h: number; alt: string; pos: string; orig?: string };
 const photo = (name: string, w: number, h: number, alt: string, pos = "50% 50%"): Photo => ({
   src: `${W}${name}-2400.webp`,
   small: `${W}${name}-1200.webp`,
@@ -20,6 +20,9 @@ export const photos = {
   amsterdamDoor: photo("amsterdam-laptop", 602, 900, "Two people with a laptop at a brick theatre doorway in Amsterdam", "50% 30%"),
   drums: photo("drums-shop", 1477, 1969, "Stripes standing by a blue drum kit in a drum shop, a wall of cymbals behind", "44% 28%"),
   portrait: photo("about-sky", 2400, 2215, "Stripes smiling up at a clear blue sky", "40% 40%"),
+  // the official press photo (5539×4000), beside the bio on the homepage and the About page: the
+  // web copies first, the original until they're uploaded
+  press: { ...photo("press-pic", 2400, 1733, "Stripes outdoors in a black tee", "48% 28%"), orig: `${W}stripes_official_press_pic.jpg` },
   // ADE 2025 (CCd-0121, CCd-0024): web copies first, the originals until they're uploaded
   tools: { ...photo("ade-tools", 2400, 1600, "Stripes at ADE 2025", "50% 40%"), orig: `${W}add_ADE%202025%20Favorites%20CCd-0121.jpg` },
   music: { ...photo("ade-music", 2400, 1600, "Stripes at ADE 2025", "50% 40%"), orig: `${W}add_ADE%202025%20Favorites%20CCd-0024.jpg` },

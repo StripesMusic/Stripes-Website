@@ -10,7 +10,6 @@ import { ArtworkBg } from "../ArtworkBg";
 
 const SLOT_VH = 70; // scroll distance per cover
 const WIPE = 0.4; // share of a slot the wipe takes, centred on the slot boundary
-const clients = [...new Set(featuredWork.map((w) => w.client).filter((c) => c !== "Self-released"))];
 // pieces of each pack shown beside the cover; files go in data/images.ts
 const pieces = [
   { key: "canvas", name: "Canvas", ratio: "9 / 16" },
@@ -68,7 +67,7 @@ export function Packs() {
         <ArtworkBg />
         <div className="s-sec-head">
           <span className="s-mono">Designs</span>
-          <span className="s-mono s-packs-clients">Covers for {clients.join(" · ")}</span>
+          <span className="s-mono s-packs-clients">Covers for labels and artists</span>
           <span className="s-mono s-packs-count">
             {String(idx + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
             <span className="s-packs-bar" aria-hidden="true">

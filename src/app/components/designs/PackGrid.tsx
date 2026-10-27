@@ -3,14 +3,12 @@
 import { Link } from "react-router";
 import { featuredWork, packContents } from "../../data/featuredWork";
 
-const clients = [...new Set(featuredWork.map((w) => w.client).filter((c) => c !== "Self-released"))];
-
 export function PackGrid() {
   return (
     <section className="s-panel s-pad s-pgrid" aria-label="Designs">
       <div className="s-sec-head">
         <span className="s-mono">Designs</span>
-        <span className="s-mono">Covers for {clients.join(" · ")}</span>
+        <span className="s-mono">Covers for labels and artists</span>
       </div>
       <h2 className="s-big s-pgrid-title">Cover art &amp; release packs</h2>
       <ul className="s-pgrid-grid">

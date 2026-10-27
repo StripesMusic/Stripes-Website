@@ -14,3 +14,14 @@
 @import "@fontsource/figtree/700.css";
 @import "@fontsource/figtree/800.css";
 @import "@fontsource/figtree/900.css";
+
+/* Host Grotesk draws its hyphen long and high, so "Artist - Title" reads like an en dash. Text in
+   Host Grotesk takes just the hyphen from Bricolage, which is short and sits on the middle. */
+@font-face {
+  font-family: "Stripes Hyphen";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("../../node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2") format("woff2-variations");
+  unicode-range: U+002D;
+}
