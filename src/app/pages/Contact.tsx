@@ -5,7 +5,7 @@ import { PLATFORMS } from "../components/icons/Platforms";
 import { socials } from "../data/socials";
 import { adePhotos, photos } from "../data/images";
 
-const EMAIL = "jake.h.trombley@gmail.com";
+const EMAIL = "jake@musicbystripes.com";
 const DISCORD = "@musicbystripes";
 const BRIEF = encodeURIComponent("Release title and date:\nArtist / label:\nGenre:\nWhat you need (cover, animated cover, lyric video, flyers…):\nReferences:\n");
 const icons: Record<string, (typeof PLATFORMS)[keyof typeof PLATFORMS]> = {
