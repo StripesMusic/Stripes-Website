@@ -280,7 +280,7 @@ export function Home() {
                 Read more ↗
               </Link>
               <Link className="s-btn" to="/contact">
-                Get in touch
+                Contact
               </Link>
             </div>
           </div>

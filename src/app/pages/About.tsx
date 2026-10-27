@@ -97,7 +97,7 @@ export function About() {
               Listen ↗
             </Link>
             <Link className="s-btn" to="/contact">
-              Get in touch
+              Contact
             </Link>
           </div>
         </div>

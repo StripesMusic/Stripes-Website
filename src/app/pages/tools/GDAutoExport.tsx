@@ -32,8 +32,8 @@ export function GDAutoExport() {
     <ToolPage
       path="/tools/gd-auto-export"
       title="GD Auto Export"
-      lede="Turn a Google Drive file link into a link that downloads straight away."
-      note="Works in your browser; your links aren't sent anywhere. Not affiliated with or endorsed by Google."
+      lede="Turn a Google Drive file link into a link that downloads instantly."
+      note="Works locally. Not affiliated with Google."
       how={
         <ol>
           <li>Share the file in Google Drive with "Anyone with the link".</li>

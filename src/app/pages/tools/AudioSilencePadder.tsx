@@ -189,7 +189,7 @@ export function AudioSilencePadder() {
       path="/tools/audio-silence-padder"
       title="Audio Silence Padder"
       lede="Add silence to the start or end of any track, right in your browser."
-      note="Your audio is processed on your device and is never uploaded."
+      note="Works locally."
       how={
         <ul>
           <li>Uses the browser's own Web Audio API: nothing to install or load.</li>

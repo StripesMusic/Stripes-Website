@@ -244,7 +244,7 @@ export function Artwork() {
       <section className="s-panel s-pad s-art-head" data-scene="designs" aria-labelledby="art-title">
         <ArtworkBg />
         <div className="s-sec-head">
-          <span className="s-mono">Cover art · Motion · Web</span>
+          <span className="s-mono">Cover art · Motion · Set visuals</span>
           <span className="s-mono">
             <span className="s-num">{packs.length}</span> releases · {span}
           </span>
@@ -253,7 +253,7 @@ export function Artwork() {
           Designs
         </h1>
         <div className="s-art-intro">
-          <p className="s-big">Cover art, animated covers, lyric videos, set visuals and websites for labels and artists.</p>
+          <p className="s-big">Cover art, animated covers, social media assets, lyric videos and set visuals for labels and artists.</p>
           <div className="s-ctas">
             <a className="s-btn" href="#packs">
               Release packs ↓
@@ -270,7 +270,6 @@ export function Artwork() {
           <h2 className="s-mono" id="packs-h">
             Release packs
           </h2>
-          <span className="s-mono">Everything made for one release, together</span>
         </div>
         {featured.map((p, i) => (
           <CaseStudy p={p} n={i + 1} key={p.key} />
@@ -328,7 +327,7 @@ export function Artwork() {
       <section className="s-panel s-pad s-art-other" data-scene="about" aria-labelledby="other-h">
         <div className="s-sec-head">
           <h2 className="s-mono" id="other-h">
-            Motion and web
+            More
           </h2>
           <span className="s-mono">Lyric videos, visuals, websites and more</span>
         </div>

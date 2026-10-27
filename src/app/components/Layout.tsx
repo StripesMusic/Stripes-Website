@@ -162,7 +162,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="s-panel s-pad s-footer-inner">
             <div className="s-footer-top">
               <div className="s-footer-cta">
-                <p className="s-big">Have a release coming up? Let's make its pack.</p>
+                <p className="s-big">Have a release coming up? Hmu :)</p>
                 <Link className="s-btn s-btn-solid" to="/contact">
                   Commission art
                 </Link>
@@ -190,7 +190,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </ul>
               </div>
               <div>
-                <p className="s-mono">Listen</p>
+                <p className="s-mono">Socials</p>
                 <ul>
                   {socials.map((l) => (
                     <li key={l.name}>
