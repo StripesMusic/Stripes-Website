@@ -5,6 +5,8 @@
 // sends the visitor back in another tab or to the other address (www or not), where this tab's
 // storage can't be read.
 export const SC_API = "/api/soundcloud";
+// the page the visitor left from, in case the state comes back unreadable
+export const SC_RETURN_KEY = "sc_return";
 
 const randomHex = (len: number) => Array.from(crypto.getRandomValues(new Uint8Array(len)), (b) => b.toString(16).padStart(2, "0")).join("");
 const base64Url = (bytes: Uint8Array) =>
@@ -37,6 +39,11 @@ export async function startSoundCloudFollow(returnTo: string): Promise<boolean> 
     if (!res.ok || !json?.authUrl) {
       console.error("auth-url failed:", json);
       return false;
+    }
+    try {
+      localStorage.setItem(SC_RETURN_KEY, returnTo);
+    } catch {
+      /* private mode: the state still carries it */
     }
     location.href = json.authUrl;
     return true;
