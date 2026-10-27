@@ -39,7 +39,6 @@ export function Fangate({ g }: { g: Gate }) {
   const [params, setParams] = useSearchParams();
   const [sc, setSc] = useState(() => read(`sc_followed_${path}`));
   const [busy, setBusy] = useState(false);
-  const [scError, setScError] = useState(false);
   const igKeys = [`ig_followed_${path}`, ...(g.follows ?? []).map((f) => `ig_${f.name.toLowerCase()}_followed_${path}`)];
   const [ig, setIg] = useState(() => igKeys.map(read));
   const [nudge, setNudge] = useState(0);
@@ -59,10 +58,11 @@ export function Fangate({ g }: { g: Gate }) {
   const followSc = async () => {
     if (sc || busy) return;
     setBusy(true);
-    setScError(false);
+    // if SoundCloud can't be opened, the step counts as done: the download shouldn't depend on it
     if (!(await startSoundCloudFollow(location.pathname + location.search))) {
       setBusy(false);
-      setScError(true);
+      setSc(true);
+      save(`sc_followed_${path}`);
     }
   };
   const followIg = (i: number, href: string) => {
@@ -176,7 +176,6 @@ export function Fangate({ g }: { g: Gate }) {
                   ))}
                 </ol>
               )}
-              {scError && <p className="s-gate-error">SoundCloud didn't open. Try again in a moment.</p>}
 
               {g.tracks ? (
                 <ol className="s-gate-tracks">

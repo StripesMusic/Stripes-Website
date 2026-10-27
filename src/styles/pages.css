@@ -500,10 +500,6 @@
     border-color: var(--s-accent);
   }
 }
-.s-gate-error {
-  margin: -6px 0 12px;
-  color: var(--s-muted);
-}
 .s-gate-go {
   height: 44px;
   padding: 0 22px;
