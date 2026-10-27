@@ -1,6 +1,6 @@
 /* Drafts, on preview addresses only (lib/drafts.ts): the player bar, the nav's Listen button, the
    Drafts panel, the hidden store, and two looks switched by classes on <html>: s-draft-grain (film
-   grain over everything) and s-draft-rough (torn panel edges, hand-drawn button lines, inky titles). */
+   grain under the content) and s-draft-rough (torn panel edges, hand-drawn button lines, inky titles). */
 
 /* nav: listen while you browse */
 .s-nav-listen {
@@ -289,44 +289,23 @@
   color: var(--s-muted);
 }
 
-/* ——— film grain: a fine noise over the whole page that shifts a few times a second, like film.
-   Overlay blending keeps it in the colours below, so it works in both schemes. */
-html.s-draft-grain body::after {
-  content: "";
-  position: fixed;
-  z-index: 60;
-  inset: -120px;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.9' intercept='-.45'/%3E%3CfeFuncG type='linear' slope='1.9' intercept='-.45'/%3E%3CfeFuncB type='linear' slope='1.9' intercept='-.45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+/* ——— film grain: a fine noise in the page and panel backgrounds, so it sits under the text, the
+   covers and the photos and never changes how the artwork looks. Overlay blending keeps it in the
+   colours below, so it works in both schemes. */
+html.s-draft-grain {
+  --s-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.9' intercept='-.45'/%3E%3CfeFuncG type='linear' slope='1.9' intercept='-.45'/%3E%3CfeFuncB type='linear' slope='1.9' intercept='-.45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.36'/%3E%3C/svg%3E");
+}
+html.s-draft-grain[data-theme="light"] {
+  --s-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.9' intercept='-.45'/%3E%3CfeFuncG type='linear' slope='1.9' intercept='-.45'/%3E%3CfeFuncB type='linear' slope='1.9' intercept='-.45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.56'/%3E%3C/svg%3E");
+}
+html.s-draft-grain body {
+  background-image: var(--s-noise);
   background-size: 220px 220px;
-  opacity: 0.45;
-  mix-blend-mode: overlay;
-  animation: s-grain 0.6s steps(1) infinite;
+  background-blend-mode: overlay;
 }
-html.s-draft-grain[data-theme="light"] body::after {
-  opacity: 0.7;
-}
-@keyframes s-grain {
-  0% {
-    transform: translate(0, 0);
-  }
-  20% {
-    transform: translate(-37px, 22px);
-  }
-  40% {
-    transform: translate(51px, -14px);
-  }
-  60% {
-    transform: translate(-19px, -48px);
-  }
-  80% {
-    transform: translate(28px, 41px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  html.s-draft-grain body::after {
-    animation: none;
-  }
+html.s-draft-grain .s-panel {
+  background: var(--s-noise) 0 0 / 220px 220px, var(--s-panel);
+  background-blend-mode: overlay;
 }
 
 /* ——— rough edges: panels get a torn top edge, button lines wobble like they were drawn by hand,
@@ -342,12 +321,20 @@ html.s-draft-rough[data-theme="light"] {
 /* not the page heads: their top edge sits under the nav */
 html.s-draft-rough .s-panel:not(.s-phead) {
   background: var(--s-torn-rim) top left / 960px 14px repeat-x, var(--s-panel);
+  background-blend-mode: normal;
   -webkit-mask:
     var(--s-torn) top left / 960px 14px repeat-x,
     linear-gradient(#000 0 0) 0 13px / 100% calc(100% - 13px) no-repeat;
   mask:
     var(--s-torn) top left / 960px 14px repeat-x,
     linear-gradient(#000 0 0) 0 13px / 100% calc(100% - 13px) no-repeat;
+}
+html.s-draft-grain.s-draft-rough .s-panel:not(.s-phead) {
+  background:
+    var(--s-torn-rim) top left / 960px 14px repeat-x,
+    var(--s-noise) 0 0 / 220px 220px,
+    var(--s-panel);
+  background-blend-mode: normal, overlay;
 }
 html.s-draft-rough .s-btn,
 html.s-draft-rough .s-icon-btn {
