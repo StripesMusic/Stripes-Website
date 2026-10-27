@@ -176,17 +176,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {preview && !isLinkPage && <PlayerBar />}
       {preview && <DraftPanel />}
-      {/* draft: the wobble behind the rough look (drafts.css). Small displacement, so lines shake
-          a little and text bleeds without losing its shape. */}
+      {/* draft: the wobble behind the rough look (drafts.css). Fine, small displacement, so lines
+          fray and text bleeds at the edges without losing its shape. */}
       {preview && (
         <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
           <filter id="s-rough-line">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="3" />
-            <feDisplacementMap in="SourceGraphic" scale="2.5" />
+            <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="2" seed="3" />
+            <feDisplacementMap in="SourceGraphic" scale="2.2" />
           </filter>
           <filter id="s-rough-ink">
-            <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="7" />
-            <feDisplacementMap in="SourceGraphic" scale="1.6" />
+            <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="7" />
+            <feDisplacementMap in="SourceGraphic" scale="2" />
           </filter>
         </svg>
       )}
