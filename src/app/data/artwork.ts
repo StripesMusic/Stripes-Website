@@ -19,4 +19,4 @@ export type ArtworkItem = {
   client?: string;
 };
 
-export const artworkItems = data as ArtworkItem[];
+export const artworkItems = data.items as ArtworkItem[];

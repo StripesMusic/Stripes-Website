@@ -20,7 +20,8 @@ const when = (d: string) => {
   const [day, m, y] = d.split(" ");
   return +y * 400 + MONTHS.indexOf(m) * 32 + +day;
 };
-export const byDate = [...releases].sort((a, b) => when(b.date) - when(a.date));
+// newest first; on the same day, the one added to the list later
+export const byDate = [...releases].sort((a, b) => when(b.date) - when(a.date) || releases.indexOf(b) - releases.indexOf(a));
 const FILTERS = [
   { name: "All", test: () => true },
   { name: "Originals", test: (r: Release) => r.type === "Single" || r.type === "EP" },

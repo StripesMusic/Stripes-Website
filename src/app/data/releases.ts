@@ -14,7 +14,7 @@ export type Release = {
 };
 
 // Newest first, in src/content/releases.json. The homepage and the Music page both read from here.
-export const releases = data as Release[];
+export const releases = data.items as Release[];
 
 // Preview clips live on R2 at previews/<name>.mp3. The name is the fangate slug
 // ("/link/forgetyou" -> "forgetyou") unless the release says otherwise.

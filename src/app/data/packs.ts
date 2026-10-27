@@ -26,7 +26,7 @@ export type Pack = {
   tools: string[];
   kinds: Kind[];
   solo?: boolean; // a lyric video or misc piece on its own, not a release's cover
-  idx: number; // position in artwork.json: later entries count as newer
+  idx: number; // position in artwork.json, which is stored oldest first: later entries count as newer
 };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -170,11 +170,13 @@ const solos = artworkItems.flatMap((it) => {
 export const gallery = [...packs, ...solos].sort(newest);
 export const artistNames = [...new Set(gallery.flatMap((p) => p.artists))].sort((a, b) => a.localeCompare(b));
 
-// websites, set visuals and clips that aren't a release's animated cover
-export const otherWork = artworkItems.filter(
-  (i) =>
-    i.category === "websites" ||
-    i.category === "set-visuals" ||
-    (i.category === "animations" && !packs.some((p) => p.canvas?.video === i.videoUrl)),
-);
+// websites, set visuals and clips that aren't a release's animated cover, newest first
+export const otherWork = artworkItems
+  .filter(
+    (i) =>
+      i.category === "websites" ||
+      i.category === "set-visuals" ||
+      (i.category === "animations" && !packs.some((p) => p.canvas?.video === i.videoUrl)),
+  )
+  .sort((a, b) => monthNum(b.date) - monthNum(a.date) || artworkItems.indexOf(b) - artworkItems.indexOf(a));
 export { ytId };

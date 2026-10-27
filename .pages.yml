@@ -1,6 +1,7 @@
 # The content panel (Pages CMS, app.pagescms.org): forms for the site's lists, saved straight to
 # src/content/*.json in this repo. Every save is a commit, and Cloudflare rebuilds the site.
 # Images and videos stay in the assets bucket: upload them there and paste their link.
+# Each list is stored oldest first, so new entries go at the bottom and get the next number.
 
 content:
   - name: artwork
@@ -8,181 +9,213 @@ content:
     type: file
     path: src/content/artwork.json
     format: json
-    list: true
     fields:
-      - name: title
-        label: Title
-        type: string
-        required: true
-        description: 'e.g. "TON031 Cover Art" or "I Just Flow". Animated covers end in " - Animated Cover" so they join the cover with the same name.'
-      - name: category
-        label: Kind
-        type: select
-        required: true
-        options:
-          values:
-            - name: 2d
-              label: 2D cover
-            - name: 3d
-              label: 3D cover
-            - name: animations
-              label: Animated cover / animation
-            - name: lyric-videos
-              label: Lyric video
-            - name: misc
-              label: Misc
-            - name: websites
-              label: Website
-            - name: set-visuals
-              label: Set visuals
-      - name: type
-        label: Type
-        type: string
-        description: 'Shown under the title, e.g. "Single Cover", "EP Cover", "Lyric Video".'
-      - name: date
-        label: Date
-        type: string
-        required: true
-        description: 'Month and year, like "Oct 2026".'
-      - name: client
-        label: Client
-        type: string
-        description: 'A label (Timeless, Solvana Records, TON 618, Quadron Records, Stardust Records) or the artist. Several go with slashes: "Myself/Hilefex". "N/A" for fan-made.'
-      - name: release
-        label: Release
-        type: string
-        description: 'The release it was made for, as "Artist - Title". Lyric videos find their cover through this.'
-      - name: details
-        label: Description
-        type: text
-        description: One or two sentences about the art itself.
-      - name: image
-        label: Image link
-        type: string
-        required: true
-        description: 'The cover (or a still), from the assets bucket: https://assets.musicbystripes.com/…'
-      - name: images
-        label: More images or clips
-        type: string
-        list: true
-        description: Alternate versions, or extra .mp4 clips.
-      - name: videoUrl
-        label: Video link
-        type: string
-        description: 'The .mp4 for an animated cover or clip.'
-      - name: youtubeUrl
-        label: YouTube or site link
-        type: string
-        description: 'A lyric video on YouTube, or the address of a website.'
-      - name: software
-        label: Tools
-        type: string
-        list: true
-        description: 'e.g. "Adobe Photoshop", "Blender".'
-      - name: credit
-        label: Made with
+      - name: items
+        label: Designs
+        description: Oldest at the top. Add new work at the bottom, and the site puts it in date order.
         type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '#{index}   {date} · {title}'
         fields:
-          - name: name
-            label: Name
+          - name: title
+            label: Title
             type: string
-          - name: href
-            label: Link
+            required: true
+            description: 'e.g. "TON031 Cover Art" or "I Just Flow". Animated covers end in " - Animated Cover" so they join the cover with the same name.'
+          - name: category
+            label: Kind
+            type: select
+            required: true
+            options:
+              values:
+                - name: 2d
+                  label: 2D cover
+                - name: 3d
+                  label: 3D cover
+                - name: animations
+                  label: Animated cover / animation
+                - name: lyric-videos
+                  label: Lyric video
+                - name: misc
+                  label: Misc
+                - name: websites
+                  label: Website
+                - name: set-visuals
+                  label: Set visuals
+          - name: type
+            label: Type
             type: string
-      - name: id
-        label: Number
-        type: number
-        description: Optional.
+            description: 'Shown under the title, e.g. "Single Cover", "EP Cover", "Lyric Video".'
+          - name: date
+            label: Date
+            type: string
+            required: true
+            description: 'Month and year, like "Oct 2026".'
+          - name: client
+            label: Client
+            type: string
+            description: 'A label (Timeless, Solvana Records, TON 618, Quadron Records, Stardust Records) or the artist. Several go with slashes: "Myself/Hilefex". "N/A" for fan-made.'
+          - name: release
+            label: Release
+            type: string
+            description: 'The release it was made for, as "Artist - Title". Lyric videos find their cover through this.'
+          - name: details
+            label: Description
+            type: text
+            description: One or two sentences about the art itself.
+          - name: image
+            label: Image link
+            type: string
+            required: true
+            description: 'The cover (or a still), from the assets bucket: https://assets.musicbystripes.com/…'
+          - name: images
+            label: More images or clips
+            type: string
+            list: true
+            description: Alternate versions, or extra .mp4 clips.
+          - name: videoUrl
+            label: Video link
+            type: string
+            description: 'The .mp4 for an animated cover or clip.'
+          - name: youtubeUrl
+            label: YouTube or site link
+            type: string
+            description: 'A lyric video on YouTube, or the address of a website.'
+          - name: software
+            label: Tools
+            type: string
+            list: true
+            description: 'e.g. "Adobe Photoshop", "Blender".'
+          - name: credit
+            label: Made with
+            type: object
+            fields:
+              - name: name
+                label: Name
+                type: string
+              - name: href
+                label: Link
+                type: string
+          - name: id
+            label: Number
+            type: number
+            description: Optional, and only used internally. Leave it empty for new work.
 
   - name: releases
     label: Music
     type: file
     path: src/content/releases.json
     format: json
-    list: true
     fields:
-      - name: title
-        label: Title
-        type: string
-        required: true
-      - name: type
-        label: Type
-        type: select
-        required: true
-        options:
-          values: [Single, Official Remix, Unofficial Remix, Unofficial Edit, Unofficial Flip]
-      - name: date
-        label: Release date
-        type: string
-        required: true
-        description: 'Day, month and year, like "09 Oct 2026". The list sorts itself, newest first.'
-      - name: image
-        label: Cover link
-        type: string
-        required: true
-        description: 'From the assets bucket: https://assets.musicbystripes.com/releases%20cover%20arts/…'
-      - name: link
-        label: Page
-        type: string
-        required: true
-        description: 'The release page, like "/link/forgetyou", or a full link elsewhere.'
-      - name: preview
-        label: Preview clip
-        type: string
-        description: 'Leave empty if the clip in previews/ is named after the page (forgetyou.mp3). Type its name if it differs, or "none" if there is no clip yet.'
-      - name: collaborators
-        label: With
+      - name: items
+        label: Releases
+        description: Oldest at the top. Add new releases at the bottom; the site lists them newest first.
         type: object
-        list: true
+        list:
+          collapsible:
+            collapsed: true
+            summary: '#{index}   {date} · {title}'
         fields:
-          - name: name
-            label: Name
+          - name: title
+            label: Title
             type: string
+            required: true
+          - name: type
+            label: Type
+            type: select
+            required: true
+            options:
+              values: [Single, Official Remix, Unofficial Remix, Unofficial Edit, Unofficial Flip]
+          - name: date
+            label: Release date
+            type: string
+            required: true
+            description: 'Day, month and year, like "09 Oct 2026". The list sorts itself, newest first.'
           - name: image
-            label: Photo link
+            label: Cover link
             type: string
+            required: true
+            description: 'From the assets bucket: https://assets.musicbystripes.com/releases%20cover%20arts/…'
           - name: link
-            label: Spotify link
+            label: Page
             type: string
+            required: true
+            description: 'The release page, like "/link/forgetyou", or a full link elsewhere.'
+          - name: preview
+            label: Preview clip
+            type: string
+            description: 'Leave empty if the clip in previews/ is named after the page (forgetyou.mp3). Type its name if it differs, or "none" if there is no clip yet.'
+          - name: collaborators
+            label: With
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: Name
+                type: string
+              - name: image
+                label: Photo link
+                type: string
+              - name: link
+                label: Spotify link
+                type: string
 
   - name: drums
     label: Drum covers
     type: file
     path: src/content/drums.json
     format: json
-    list: true
     fields:
-      - name: title
-        label: Song
-        type: string
-        required: true
-      - name: artist
-        label: Artist
-        type: string
-        required: true
-      - name: date
-        label: Date
-        type: string
-        required: true
-        description: 'Month and year, like "May 2026".'
-      - name: youtubeId
-        label: YouTube video ID
-        type: string
-        required: true
-        description: 'The 11 characters after "v=" in the video link.'
+      - name: items
+        label: Drum covers
+        description: Oldest at the top. Add new covers at the bottom; the site shows the newest first.
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '#{index}   {date} · {artist} - {title}'
+        fields:
+          - name: title
+            label: Song
+            type: string
+            required: true
+          - name: artist
+            label: Artist
+            type: string
+            required: true
+          - name: date
+            label: Date
+            type: string
+            required: true
+            description: 'Month and year, like "May 2026".'
+          - name: youtubeId
+            label: YouTube video ID
+            type: string
+            required: true
+            description: 'The 11 characters after "v=" in the video link.'
 
   - name: socials
     label: Socials
     type: file
     path: src/content/socials.json
     format: json
-    list: true
     fields:
-      - name: name
-        label: Name
-        type: string
-        required: true
-      - name: href
-        label: Link
-        type: string
-        required: true
+      - name: items
+        label: Links
+        description: In the order they appear on the site.
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{name}'
+        fields:
+          - name: name
+            label: Name
+            type: string
+            required: true
+          - name: href
+            label: Link
+            type: string
+            required: true

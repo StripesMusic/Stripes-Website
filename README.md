@@ -23,7 +23,7 @@ npm run dev
 
 ## Editing content
 
-The Designs gallery, the music releases, the drum covers and the socials live in `src/content/*.json`. You can edit them in the content panel at [app.pagescms.org](https://app.pagescms.org): sign in with GitHub, pick this repo and branch, and use the forms. Each save is a commit, and Cloudflare rebuilds the site in a minute or two. The forms are defined in `.pages.yml`.
+The Designs gallery, the music releases, the drum covers and the socials live in `src/content/*.json`. You can edit them in the content panel at [app.pagescms.org](https://app.pagescms.org): sign in with GitHub, pick this repo and branch, and use the forms. Each save is a commit, and Cloudflare rebuilds the site in a minute or two. The forms are defined in `.pages.yml`. Each list is stored oldest first (new entries go at the bottom), and the site sorts by date itself.
 
 Images and videos stay in the assets bucket (assets.musicbystripes.com): upload them there first, then paste the link into the form.
 
