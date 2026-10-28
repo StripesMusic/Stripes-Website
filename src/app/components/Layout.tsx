@@ -141,6 +141,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
+      {/* the wobble behind the texture's hand-drawn lines and inky titles (texture.css). Fine, small
+          displacement, so lines fray and text bleeds at the edges without losing its shape. */}
+      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+        <filter id="s-rough-line">
+          <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="2" seed="3" />
+          <feDisplacementMap in="SourceGraphic" scale="2.2" />
+        </filter>
+        <filter id="s-rough-ink">
+          <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="7" />
+          <feDisplacementMap in="SourceGraphic" scale="2" />
+        </filter>
+      </svg>
+
       <main className={isLinkPage || isHome ? "" : "s-main"}>
         <PageTransition>{children}</PageTransition>
       </main>
