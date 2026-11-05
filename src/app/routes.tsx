@@ -12,6 +12,7 @@ import { SoundCloudCallback } from "./pages/SoundCloudCallback";
 import { GDAutoExport } from "./pages/tools/GDAutoExport";
 import { AudioSilencePadder } from "./pages/tools/AudioSilencePadder";
 import { SpotifyArtTester } from "./pages/tools/SpotifyArtTester";
+import { SoundCloudBannerSplitter } from "./pages/tools/SoundCloudBannerSplitter";
 import { Tools } from "./pages/tools/Tools";
 import { NotFound } from "./pages/NotFound";
 import { Privacy, Terms, Accessibility } from "./pages/Legal";
@@ -71,6 +72,10 @@ export const router = createBrowserRouter([
       {
         path: "/tools/spotify-art-tester",
         Component: SpotifyArtTester,
+      },
+      {
+        path: "/tools/soundcloud-banner-splitter",
+        Component: SoundCloudBannerSplitter,
       },
       {
         path: "/privacy",
