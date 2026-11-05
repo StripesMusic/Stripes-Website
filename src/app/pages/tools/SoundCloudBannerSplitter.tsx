@@ -286,8 +286,10 @@ export function SoundCloudBannerSplitter() {
           <li>Check the preview, then download the profile picture.</li>
           <li>Upload the header and the picture to SoundCloud. If you cropped, or the header is over 2 MB, download the banner here too and upload that one.</li>
           <li>
-            Check it <strong>logged out</strong> (a private window) on a computer. Your own profile view pushes the picture out of place, and phones lay the page out
-            differently, so it only lines up on desktop.
+            <span>
+              Check it <strong>logged out</strong> (a private window) on a computer. Your own profile view pushes the picture out of place, and phones lay the page
+              out differently, so it only lines up on desktop.
+            </span>
           </li>
         </ol>
       }
