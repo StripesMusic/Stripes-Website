@@ -1180,28 +1180,40 @@
 .s-scb-pfp.is-edge.is-lift {
   box-shadow: 0 0 0 2px var(--s-accent), 0 1.4cqw 3cqw rgb(0 0 0 / 0.55);
 }
+/* SoundCloud's name tags, measured on a 1328px-wide header: 1cqw = 13.28px there */
 .s-scb-name {
   position: absolute;
+  left: 21.23%;
+  top: 33.4%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.6cqw;
-  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
-  color: #fff;
-  pointer-events: none;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
 }
 .s-scb-name span,
 .s-scb-name small {
-  padding: 0.3cqw 0.55cqw;
-  background: rgb(0 0 0 / 0.85);
-  line-height: 1.2;
+  background: #121212;
+  white-space: nowrap;
+  outline: none;
+  cursor: text;
 }
 .s-scb-name span {
-  font-size: 1.9cqw;
+  padding: 0.527cqw 1.13cqw 0.527cqw 0.753cqw;
+  font-size: 2.108cqw;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
 }
 .s-scb-name small {
-  font-size: 1.15cqw;
-  color: #ccc;
+  padding: 0.527cqw 0.753cqw;
+  font-size: 1.28cqw;
+  font-weight: 600;
+  line-height: 1.235;
+  color: #999;
+}
+.s-scb-name span:focus-visible,
+.s-scb-name small:focus-visible {
+  box-shadow: 0 0 0 2px var(--s-accent);
 }
 .s-scb-out {
   display: flex;
@@ -1219,7 +1231,14 @@
   gap: 14px;
 }
 .s-scb-tune-row .s-field {
-  width: 180px;
+  width: 130px;
+}
+.s-scb-tune-row .s-scb-grain {
+  width: 200px;
+}
+.s-scb-grain input {
+  height: 44px;
+  accent-color: var(--s-accent);
 }
 @media (prefers-reduced-motion: reduce) {
   .s-scb-pfp {
