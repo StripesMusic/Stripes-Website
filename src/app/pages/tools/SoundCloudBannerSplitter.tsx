@@ -387,8 +387,7 @@ export function SoundCloudBannerSplitter() {
                 <span className="s-mono">{Math.round(win.w)} px wide</span>
               </label>
             )}
-            {!shapeOk && <p className="s-hint">This image isn't 124 : 26, so the frame shows what SoundCloud would get. Download the banner below and upload that instead of the original.</p>}
-            {win.w < BW - 1 && <p className="s-hint">The frame is narrower than 2480px, so the banner download is upscaled and will be a little soft.</p>}
+            {!whole && <p className="s-hint">Upload the banner download from here, not your original, or the picture won't line up.</p>}
           </div>
 
           {/* 2. preview */}
@@ -419,7 +418,6 @@ export function SoundCloudBannerSplitter() {
                 <small>Virginia, United States</small>
               </div>
             </div>
-            <p className="s-hint">The round picture here is the exact file you'll download, laid on top. The name tags are a rough stand-in for SoundCloud's.</p>
           </div>
 
           {/* 3. downloads */}
@@ -435,11 +433,6 @@ export function SoundCloudBannerSplitter() {
                   </button>
                 ))}
               </div>
-              <p className="s-hint">
-                {outSize !== "native" && Number(outSize) > nativePfp
-                  ? "Upscaled from the cut. SoundCloud suggests 800px or more for pictures; it won't add detail but some people like the headroom."
-                  : "Pixel for pixel from your header, so it matches it exactly."}
-              </p>
             </div>
             <div className="s-ctas">
               <button type="button" className="s-btn s-btn-solid s-btn-lg" onClick={downloadPfp} disabled={!!busy}>
@@ -452,19 +445,12 @@ export function SoundCloudBannerSplitter() {
                 Start over
               </button>
             </div>
-            <p className="s-hint">
-              {!whole
-                ? "You cropped, so upload this banner download, not your original, or the picture won't line up."
-                : tooBig
-                  ? `Your file is ${mb(file!.size)} and SoundCloud's limit is 2 MB. The banner download is the same image as a JPG under 2 MB.`
-                  : "Your original header is fine to upload as it is; the banner download is optional."}
-            </p>
+            {whole && tooBig && <p className="s-hint">Over SoundCloud's 2 MB limit, so upload the banner download from here instead.</p>}
           </div>
 
           {/* 4. fine tune */}
           <details className="s-scb-tune">
             <summary className="s-mono">Fine tune{tuned ? " · changed" : ""}</summary>
-            <p className="s-hint">In 2480 × 520 pixels. SoundCloud's layout is 60 in, 400 across; only change these if your live profile shows a seam. They're remembered on this device.</p>
             <div className="s-scb-tune-row">
               <label className="s-field">
                 <span className="s-mono">Margin (left, top, bottom)</span>

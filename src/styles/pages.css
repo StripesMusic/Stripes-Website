@@ -1211,10 +1211,8 @@
 .s-scb-tune summary {
   cursor: pointer;
 }
-.s-scb-tune > .s-hint {
-  margin: 10px 0 14px;
-}
 .s-scb-tune-row {
+  margin-top: 14px;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
