@@ -1,34 +1,32 @@
 // SoundCloud Banner Splitter: cut the profile picture out of a banner so the two line up.
 //
-// The geometry is in the units of a 2480 x 520 header. Measured on soundcloud.com (Nov 2026,
-// desktop, logged out, at two window sizes) against a known header and picture: the circle is
-// 405.5 across, 55 in from the left and centred top to bottom (57.25 above and below). It scales
-// with the header, so any header the same shape as 2480 x 520 works at any size. On your own
-// logged-in profile SoundCloud lifts the circle about 11 higher, so check from a private window.
+// The geometry is in SoundCloud's own banner units. The header is drawn at 1240 x 260 CSS px on
+// desktop (2480 x 520 is that at 2x), and the round avatar sits 30px in from the left, top and
+// bottom, 200px across. At 2x that is a 400px square, 60px in. Everything below scales from
+// those numbers, so any banner the same shape as 2480 x 520 works at any size.
 import { useCallback, useEffect, useRef, useState } from "react";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/700.css";
 import { ToolPage } from "../../components/ToolPage";
 
 const BW = 2480; // banner reference width
 const BH = 520; // banner reference height
 const ASPECT = BW / BH;
-const DEF: Tune = { left: 55, top: 57.25, size: 405.5, grain: 0 };
+const DEF_MARGIN = 60;
+const DEF_SIZE = 400;
 const MAX_BYTES = 2 * 1024 * 1024; // SoundCloud's upload cap for header images
-const TUNE_KEY = "scb-tune-2";
+const TUNE_KEY = "scb-tune";
 
 type Win = { x: number; y: number; w: number }; // in source pixels; height = w / ASPECT
-type Tune = { left: number; top: number; size: number; grain: number };
+type Tune = { margin: number; size: number };
 type OutSize = "native" | "800" | "1000";
 
 function loadTune(): Tune {
   try {
     const t = JSON.parse(localStorage.getItem(TUNE_KEY) || "null");
-    if (t && ["left", "top", "size", "grain"].every((k) => typeof t[k] === "number")) return t;
+    if (t && typeof t.margin === "number" && typeof t.size === "number") return t;
   } catch {
     /* no storage: use the defaults */
   }
-  return DEF;
+  return { margin: DEF_MARGIN, size: DEF_SIZE };
 }
 
 function saveTune(t: Tune) {
@@ -56,27 +54,6 @@ function save(blob: Blob, name: string) {
   a.download = name;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
-}
-
-// SoundCloud squashes the fine grain in profile pictures harder than in headers, so the picture
-// can look smoother than the header around it. This adds the grain back: an unsharp mask on the
-// finest detail (a 1px blur), amount 0-1.
-function boostGrain(ctx: CanvasRenderingContext2D, px: number, amount: number) {
-  const src = ctx.getImageData(0, 0, px, px);
-  const d = src.data;
-  const out = new Uint8ClampedArray(d);
-  const row = px * 4;
-  for (let y = 1; y < px - 1; y++) {
-    for (let x = 1; x < px - 1; x++) {
-      const i = y * row + x * 4;
-      for (let c = 0; c < 3; c++) {
-        const j = i + c;
-        const blur = (d[j] * 4 + (d[j - 4] + d[j + 4] + d[j - row] + d[j + row]) * 2 + d[j - row - 4] + d[j - row + 4] + d[j + row - 4] + d[j + row + 4]) / 16;
-        out[j] = d[j] + (d[j] - blur) * amount;
-      }
-    }
-  }
-  ctx.putImageData(new ImageData(out, px, px), 0, 0);
 }
 
 // the biggest window of the banner's shape that fits, centred
@@ -157,8 +134,7 @@ export function SoundCloudBannerSplitter() {
       if (!ctx) return null;
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, win.x + tune.left * scale, win.y + tune.top * scale, tune.size * scale, tune.size * scale, 0, 0, px, px);
-      if (tune.grain > 0) boostGrain(ctx, px, tune.grain / 100);
+      ctx.drawImage(img, win.x + tune.margin * scale, win.y + tune.margin * scale, tune.size * scale, tune.size * scale, 0, 0, px, px);
       return c;
     },
     [img, win, tune, scale],
@@ -230,8 +206,7 @@ export function SoundCloudBannerSplitter() {
   };
 
   const setTuneSave = (t: Tune) => {
-    const r = (v: number) => Math.round(v * 100) / 100;
-    const next = { left: clamp(r(t.left), 0, 200), top: clamp(r(t.top), 0, 200), size: clamp(r(t.size), 100, BH), grain: clamp(Math.round(t.grain), 0, 100) };
+    const next = { margin: clamp(Math.round(t.margin * 10) / 10, 0, 200), size: clamp(Math.round(t.size * 10) / 10, 100, BH) };
     setTune(next);
     saveTune(next);
   };
@@ -294,7 +269,7 @@ export function SoundCloudBannerSplitter() {
     setBusy("");
   };
 
-  const tuned = (Object.keys(DEF) as (keyof Tune)[]).some((k) => tune[k] !== DEF[k]);
+  const tuned = tune.margin !== DEF_MARGIN || tune.size !== DEF_SIZE;
   const tooBig = !!file && file.size > MAX_BYTES;
   const pct = (v: number, of: number) => `${(v / of) * 100}%`;
 
@@ -321,12 +296,12 @@ export function SoundCloudBannerSplitter() {
       why={
         <>
           <p>
-            SoundCloud doesn't put the picture where you'd guess. I measured it on the live site against a known header: on a 2480 × 520 header the circle is 405.5
-            across, 55 in from the left and centred top to bottom. Cut a plain 400 square 60 in and the edges miss by a pixel or two, which is the seam you see.
+            On desktop SoundCloud draws the header at 1240 × 260 and puts a 200px round picture 30px in from the left, top and bottom. Your 2480 × 520 upload is that at
+            double size, so the picture is the 400 × 400 square starting 60px in. Cut it from there and the edge disappears.
           </p>
           <p>
-            It only lines up on a computer with the window wide enough for the full header, and only for other people: on your own logged-in profile SoundCloud lifts
-            the picture a few pixels. SoundCloud also smooths the grain in pictures more than in headers; "Grain boost" under Fine tune adds some back.
+            Most mismatches come from somewhere else: a header that isn't exactly the 124 : 26 shape (SoundCloud crops it to fit and everything shifts), checking on
+            your own logged-in profile, or a narrow window or phone. If yours is still off by a hair, nudge the numbers under "Fine tune".
           </p>
         </>
       }
@@ -402,7 +377,7 @@ export function SoundCloudBannerSplitter() {
                 onKeyDown={onKey}
                 style={{ left: pct(win.x, iw), top: pct(win.y, ih), width: pct(win.w, iw), height: pct(wh, ih) }}
               >
-                <span className="s-scb-ring" style={{ left: pct(tune.left, BW), top: pct(tune.top, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }} />
+                <span className="s-scb-ring" style={{ left: pct(tune.margin, BW), top: pct(tune.margin, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }} />
               </div>
             </div>
             {maxW > minW + 1 && (
@@ -435,17 +410,12 @@ export function SoundCloudBannerSplitter() {
                   className={"s-scb-pfp" + (edge ? " is-edge" : "") + (lift ? " is-lift" : "")}
                   src={pfpUrl}
                   alt="Profile picture preview"
-                  style={{ left: pct(tune.left, BW), top: pct(tune.top, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }}
+                  style={{ left: pct(tune.margin, BW), top: pct(tune.margin, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }}
                 />
               )}
-              {/* SoundCloud's name tags, measured from the live page; click them to type your own */}
-              <div className="s-scb-name">
-                <span contentEditable suppressContentEditableWarning spellCheck={false} aria-label="Display name (editable)">
-                  Stripes
-                </span>
-                <small contentEditable suppressContentEditableWarning spellCheck={false} aria-label="Second line (editable)">
-                  Virginia, United States
-                </small>
+              <div className="s-scb-name" style={{ left: pct(tune.margin * 2 + tune.size, BW), top: pct(tune.margin, BH) }} aria-hidden="true">
+                <span>Stripes</span>
+                <small>Virginia, United States</small>
               </div>
             </div>
           </div>
@@ -482,24 +452,16 @@ export function SoundCloudBannerSplitter() {
           <details className="s-scb-tune">
             <summary className="s-mono">Fine tune{tuned ? " · changed" : ""}</summary>
             <div className="s-scb-tune-row">
-              {(
-                [
-                  ["left", "From the left"],
-                  ["top", "From the top"],
-                  ["size", "Size"],
-                ] as const
-              ).map(([k, label]) => (
-                <label key={k} className="s-field">
-                  <span className="s-mono">{label}</span>
-                  <input className="s-input" type="number" step="0.25" value={tune[k]} onChange={(e) => setTuneSave({ ...tune, [k]: Number(e.target.value) })} />
-                </label>
-              ))}
-              <label className="s-field s-scb-grain">
-                <span className="s-mono">Grain boost {tune.grain}%</span>
-                <input type="range" min={0} max={60} value={tune.grain} onChange={(e) => setTuneSave({ ...tune, grain: Number(e.target.value) })} />
+              <label className="s-field">
+                <span className="s-mono">Margin (left, top, bottom)</span>
+                <input className="s-input" type="number" step="0.5" value={tune.margin} onChange={(e) => setTuneSave({ ...tune, margin: Number(e.target.value) })} />
               </label>
-              <button type="button" className="s-btn" onClick={() => setTuneSave(DEF)} disabled={!tuned}>
-                Reset
+              <label className="s-field">
+                <span className="s-mono">Picture size</span>
+                <input className="s-input" type="number" step="0.5" value={tune.size} onChange={(e) => setTuneSave({ ...tune, size: Number(e.target.value) })} />
+              </label>
+              <button type="button" className="s-btn" onClick={() => setTuneSave({ margin: DEF_MARGIN, size: DEF_SIZE })} disabled={!tuned}>
+                Back to 60 / 400
               </button>
             </div>
           </details>
