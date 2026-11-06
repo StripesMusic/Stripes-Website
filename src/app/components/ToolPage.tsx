@@ -12,6 +12,7 @@ export const tools = [
   { name: "GD Auto Export", path: "/tools/gd-auto-export", text: "Turn Google Drive links into direct downloads" },
   { name: "Audio Silence Padder", path: "/tools/audio-silence-padder", text: "Add silence to the start or end of a track" },
   { name: "Spotify Art Tester", path: "/tools/spotify-art-tester", text: "Preview your cover across Spotify views" },
+  { name: "SoundCloud Banner Splitter", path: "/tools/soundcloud-banner-splitter", text: "Cut a seamless profile picture out of your header" },
 ];
 
 type Props = { path: string; title: ReactNode; lede: string; note: string; children: ReactNode; how?: ReactNode; why?: ReactNode; wide?: boolean };
