@@ -1,19 +1,19 @@
 // SoundCloud Banner Splitter: cut the profile picture out of a banner so the two line up.
 //
-// The geometry is in SoundCloud's own banner units. The header is drawn at 1240 x 260 CSS px on
-// desktop (2480 x 520 is that at 2x), and the round avatar sits 30px in from the left, top and
-// bottom, 200px across. At 2x that is a 400px square, 60px in. Everything below scales from
-// those numbers, so any banner the same shape as 2480 x 520 works at any size.
+// The geometry is in the units of a 2480 x 520 header. Measured on soundcloud.com (Nov 2026,
+// desktop, logged out, three checks at two window sizes against known files): the circle is
+// 405.5 across, 55 in from the left and centred top to bottom. It scales with the header.
+// Your own logged-in profile draws it higher, so it only lines up for everyone else.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ToolPage } from "../../components/ToolPage";
 
 const BW = 2480; // banner reference width
 const BH = 520; // banner reference height
 const ASPECT = BW / BH;
-const DEF_MARGIN = 60;
-const DEF_SIZE = 400;
+const DEF_MARGIN = 55; // from the left; top and bottom are centred
+const DEF_SIZE = 405.5;
 const MAX_BYTES = 2 * 1024 * 1024; // SoundCloud's upload cap for header images
-const TUNE_KEY = "scb-tune";
+const TUNE_KEY = "scb-tune-3";
 
 type Win = { x: number; y: number; w: number }; // in source pixels; height = w / ASPECT
 type Tune = { margin: number; size: number };
@@ -134,7 +134,7 @@ export function SoundCloudBannerSplitter() {
       if (!ctx) return null;
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, win.x + tune.margin * scale, win.y + tune.margin * scale, tune.size * scale, tune.size * scale, 0, 0, px, px);
+      ctx.drawImage(img, win.x + tune.margin * scale, win.y + ((BH - tune.size) / 2) * scale, tune.size * scale, tune.size * scale, 0, 0, px, px);
       return c;
     },
     [img, win, tune, scale],
@@ -206,7 +206,7 @@ export function SoundCloudBannerSplitter() {
   };
 
   const setTuneSave = (t: Tune) => {
-    const next = { margin: clamp(Math.round(t.margin * 10) / 10, 0, 200), size: clamp(Math.round(t.size * 10) / 10, 100, BH) };
+    const next = { margin: clamp(Math.round(t.margin * 100) / 100, 0, 200), size: clamp(Math.round(t.size * 100) / 100, 100, BH) };
     setTune(next);
     saveTune(next);
   };
@@ -296,8 +296,8 @@ export function SoundCloudBannerSplitter() {
       why={
         <>
           <p>
-            On desktop SoundCloud draws the header at 1240 × 260 and puts a 200px round picture 30px in from the left, top and bottom. Your 2480 × 520 upload is that at
-            double size, so the picture is the 400 × 400 square starting 60px in. Cut it from there and the edge disappears.
+            I measured where SoundCloud really draws the picture on desktop: on a 2480 × 520 header the circle is 405.5 across, 55 in from the left and centred top
+            to bottom. The usual "400 square, 60 in" guess is a couple of pixels off, which is the seam people see.
           </p>
           <p>
             Most mismatches come from somewhere else: a header that isn't exactly the 124 : 26 shape (SoundCloud crops it to fit and everything shifts), checking on
@@ -377,7 +377,7 @@ export function SoundCloudBannerSplitter() {
                 onKeyDown={onKey}
                 style={{ left: pct(win.x, iw), top: pct(win.y, ih), width: pct(win.w, iw), height: pct(wh, ih) }}
               >
-                <span className="s-scb-ring" style={{ left: pct(tune.margin, BW), top: pct(tune.margin, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }} />
+                <span className="s-scb-ring" style={{ left: pct(tune.margin, BW), top: pct((BH - tune.size) / 2, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }} />
               </div>
             </div>
             {maxW > minW + 1 && (
@@ -410,10 +410,10 @@ export function SoundCloudBannerSplitter() {
                   className={"s-scb-pfp" + (edge ? " is-edge" : "") + (lift ? " is-lift" : "")}
                   src={pfpUrl}
                   alt="Profile picture preview"
-                  style={{ left: pct(tune.margin, BW), top: pct(tune.margin, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }}
+                  style={{ left: pct(tune.margin, BW), top: pct((BH - tune.size) / 2, BH), width: pct(tune.size, BW), height: pct(tune.size, BH) }}
                 />
               )}
-              <div className="s-scb-name" style={{ left: pct(tune.margin * 2 + tune.size, BW), top: pct(tune.margin, BH) }} aria-hidden="true">
+              <div className="s-scb-name" style={{ left: pct(tune.margin * 2 + tune.size, BW), top: pct((BH - tune.size) / 2, BH) }} aria-hidden="true">
                 <span>Stripes</span>
                 <small>Virginia, United States</small>
               </div>
@@ -453,7 +453,7 @@ export function SoundCloudBannerSplitter() {
             <summary className="s-mono">Fine tune{tuned ? " · changed" : ""}</summary>
             <div className="s-scb-tune-row">
               <label className="s-field">
-                <span className="s-mono">Margin (left, top, bottom)</span>
+                <span className="s-mono">From the left</span>
                 <input className="s-input" type="number" step="0.5" value={tune.margin} onChange={(e) => setTuneSave({ ...tune, margin: Number(e.target.value) })} />
               </label>
               <label className="s-field">
@@ -461,7 +461,7 @@ export function SoundCloudBannerSplitter() {
                 <input className="s-input" type="number" step="0.5" value={tune.size} onChange={(e) => setTuneSave({ ...tune, size: Number(e.target.value) })} />
               </label>
               <button type="button" className="s-btn" onClick={() => setTuneSave({ margin: DEF_MARGIN, size: DEF_SIZE })} disabled={!tuned}>
-                Back to 60 / 400
+                Back to 55 / 405.5
               </button>
             </div>
           </details>
