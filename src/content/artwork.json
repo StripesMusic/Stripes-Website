@@ -1800,7 +1800,7 @@
       "id": 22
     },
     {
-      "title": "TMLS048 Cover art",
+      "title": "TMLS048 Cover Art",
       "category": "2d",
       "type": "EP Cover",
       "date": "Oct 2026",
@@ -1821,6 +1821,19 @@
       "release": "Larza, IVRY ft. guiti - Tell Me Why",
       "details": "Abstract and metallic 2D artwork with smooth blue glows and noise.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/LarzaArtwork.jpg",
+      "software": [
+        "Adobe Photoshop"
+      ]
+    },
+    {
+      "title": "TMLS049 Cover Art",
+      "category": "2d",
+      "type": "Single Cover",
+      "date": "Nov 2026",
+      "client": "Timeless",
+      "release": "IØNITH & Joe Alderson - Cut You Deep",
+      "details": "Red and dark purple spacey Mars artwork with a glowing lightning-struck fire and particle effects.",
+      "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS049.jpg",
       "software": [
         "Adobe Photoshop"
       ]
