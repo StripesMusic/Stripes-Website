@@ -16,6 +16,8 @@ import { SoundCloudBannerSplitter } from "./pages/tools/SoundCloudBannerSplitter
 import { Tools } from "./pages/tools/Tools";
 import { NotFound } from "./pages/NotFound";
 import { Privacy, Terms, Accessibility } from "./pages/Legal";
+import { Store } from "./pages/Store";
+import { isPreview } from "./lib/drafts";
 
 // One Layout for every page, so the nav, the preloader and the page transition persist across
 // page changes. useOutlet hands the page over as an element, so the old page can fade out as itself.
@@ -89,6 +91,8 @@ export const router = createBrowserRouter([
         path: "/accessibility",
         Component: Accessibility,
       },
+      // draft: the store exists only on preview addresses; on musicbystripes.com /store is a 404
+      ...(isPreview() ? [{ path: "/store", Component: Store }] : []),
       {
         path: "*",
         Component: NotFound,

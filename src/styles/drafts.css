@@ -1,0 +1,295 @@
+/* Drafts, on preview addresses only (lib/drafts.ts): the player bar, the nav's Listen button, the
+   Drafts panel and the hidden store. */
+
+/* nav: listen while you browse */
+.s-nav-listen {
+  gap: 6px;
+}
+.s-nav-listen[aria-pressed="true"] {
+  border-color: var(--s-hi);
+  color: var(--s-hi);
+}
+.s-brand-pulse {
+  display: inline-flex;
+  transform-origin: 50% 60%;
+}
+@media (max-width: 700px) {
+  .s-nav-listen {
+    display: none;
+  }
+}
+
+/* player bar: a slim strip along the bottom that stays between pages */
+.s-pb {
+  position: fixed;
+  z-index: 45;
+  left: var(--s-inset);
+  right: var(--s-inset);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-inset));
+  display: grid;
+  grid-template-columns: auto minmax(120px, 220px) minmax(0, 1fr) auto auto auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--s-panel) 86%, transparent);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--s-line);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+  animation: s-pb-in 0.45s var(--s-ease);
+}
+@keyframes s-pb-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+.s-pb-ctl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.s-pb-play {
+  width: 36px;
+  height: 36px;
+  border-color: var(--s-hi);
+  color: var(--s-hi);
+}
+.s-pb-skip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.s-pb-pause {
+  width: 8px;
+  height: 10px;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}
+.s-pb-prev,
+.s-pb-next {
+  width: 8px;
+  height: 9px;
+  border-left: 2px solid currentColor;
+  position: relative;
+}
+.s-pb-prev::after,
+.s-pb-next::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  border-top: 4.5px solid transparent;
+  border-bottom: 4.5px solid transparent;
+}
+.s-pb-prev::after {
+  left: 0;
+  border-right: 6px solid currentColor;
+}
+.s-pb-next {
+  border-left: 0;
+  border-right: 2px solid currentColor;
+}
+.s-pb-next::after {
+  right: 0;
+  border-left: 6px solid currentColor;
+}
+.s-pb-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font: 500 condensed 11px/1.4 var(--s-label);
+  letter-spacing: 0.03em;
+  color: var(--s-muted);
+}
+.s-pb-meta b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--s-fg);
+}
+.s-pb-meta b,
+.s-pb-meta span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.s-pb-wave {
+  position: relative;
+  height: 34px;
+  cursor: pointer;
+  touch-action: none;
+  border-radius: 4px;
+}
+.s-pb-wave:focus-visible {
+  outline: 1px solid var(--s-hi);
+  outline-offset: 3px;
+}
+.s-pb-wave > div {
+  position: absolute;
+  inset: 0;
+}
+.s-pb-wave svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.s-pb-wave-base svg {
+  fill: var(--s-line-strong);
+}
+.s-pb-wave:not(.is-real) .s-pb-wave-base svg {
+  opacity: 0.5;
+}
+.s-pb-wave-played svg {
+  fill: var(--s-hi);
+}
+.s-pb-time {
+  min-width: 74px;
+  font-size: 12px;
+  color: var(--s-muted);
+  text-align: right;
+}
+.s-pb-vol input {
+  width: 64px;
+}
+.s-pb-close span {
+  font-size: 16px;
+  line-height: 1;
+}
+/* the old floating chip moves up out of its way */
+.s-pb ~ .s-np {
+  display: none;
+}
+@media (max-width: 860px) {
+  .s-pb {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "ctl meta close" "wave wave wave";
+    row-gap: 6px;
+  }
+  .s-pb-ctl {
+    grid-area: ctl;
+  }
+  .s-pb-meta {
+    grid-area: meta;
+  }
+  .s-pb-close {
+    grid-area: close;
+  }
+  .s-pb-wave {
+    grid-area: wave;
+    height: 26px;
+  }
+  .s-pb-time,
+  .s-pb-vol,
+  .s-pb-go {
+    display: none;
+  }
+}
+
+/* drafts panel: bottom left, opening upwards, and lifted over the player bar when it's showing */
+.s-drafts {
+  position: fixed;
+  z-index: 46;
+  left: calc(var(--s-inset) + 8px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-inset) + 8px);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 8px;
+}
+.s-pb ~ .s-drafts {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-inset) + 72px);
+}
+@media (max-width: 860px) {
+  .s-pb ~ .s-drafts {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-inset) + 104px);
+  }
+}
+.s-drafts-btn {
+  background: color-mix(in srgb, var(--s-panel) 86%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-style: dashed;
+}
+.s-drafts-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--s-panel) 94%, transparent);
+  border: 1px dashed var(--s-line-strong);
+  border-radius: 14px;
+}
+.s-drafts-list .s-mono {
+  margin: 0 0 6px;
+  color: var(--s-muted);
+}
+.s-drafts-list .s-btn {
+  margin-top: 8px;
+}
+
+/* the hidden store */
+.s-store-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 32px 24px;
+}
+.s-store-item .s-slot {
+  border-radius: 10px;
+}
+.s-store-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 14px;
+}
+.s-store-info p {
+  margin: 0;
+}
+.s-store-name {
+  margin: 0;
+  font: 400 22px/1.2 var(--s-sans);
+  letter-spacing: -0.01em;
+}
+.s-store-inc {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--s-muted);
+}
+.s-store-inc li::before {
+  content: "+ ";
+  color: var(--s-hi);
+}
+.s-store-buy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--s-line);
+}
+.s-store-price {
+  font: 400 18px/1 var(--s-sans);
+}
+.s-store-buy .s-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.s-store-note {
+  margin: 36px 0 0;
+  color: var(--s-muted);
+}
+
+/* the texture's hand-drawn outline (texture.css), in lime on the draft buttons that are lit */
+:root .s-pb-play::before,
+:root .s-nav-listen[aria-pressed="true"]::before {
+  border-color: var(--s-hi);
+}

@@ -8,6 +8,7 @@ import { audio, type Track } from "../../lib/audio";
 import { useAudio } from "../../lib/useAudio";
 import { Eq } from "./Eq";
 import { ImageSlot } from "../ImageSlot";
+import { isPreview } from "../../lib/drafts";
 
 const credits = (r: Release) => (r.collaborators.length ? "with " + r.collaborators.map((c) => c.name).join(", ") : "Stripes");
 export const trackFor = (r: Release): Track | null => {
@@ -81,7 +82,15 @@ export function ReleaseList({ count = 8, full = false }: { count?: number; full?
   };
   const leaveList = () => {
     setHover(-1);
-    if (previews && list.some((r) => audio.isCurrent(r.link))) audio.stop();
+    // draft: something played on purpose keeps playing in the player bar
+    if (previews && list.some((r) => audio.isCurrent(r.link)) && (!isPreview() || audio.isHoverPreview())) audio.stop();
+  };
+  // draft: a row's play button plays on through the rest of the list
+  const queue = list.map(trackFor).filter((t): t is Track => !!t);
+  const play = (t: Track, playing: boolean) => {
+    if (!isPreview()) return audio.toggle(t);
+    if (playing && !audio.isHoverPreview()) audio.pause();
+    else audio.playQueue(queue, queue.findIndex((q) => q.id === t.id));
   };
   const togglePreviews = () => {
     const on = !previews;
@@ -153,7 +162,7 @@ export function ReleaseList({ count = 8, full = false }: { count?: number; full?
                 <span className="s-mono s-rel-type">{r.type}</span>
                 <span className="s-mono s-rel-date">{r.date}</span>
                 {track ? (
-                  <button type="button" className="s-icon-btn" aria-label={(playing ? "Stop " : "Preview ") + r.title} aria-pressed={playing} onClick={() => audio.toggle(track)}>
+                  <button type="button" className="s-icon-btn" aria-label={(playing ? "Stop " : "Preview ") + r.title} aria-pressed={playing} onClick={() => play(track, playing)}>
                     {playing ? <Eq on /> : <span className="s-tri" aria-hidden="true" />}
                   </button>
                 ) : (

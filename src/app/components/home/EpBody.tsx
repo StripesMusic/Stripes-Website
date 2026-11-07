@@ -6,8 +6,16 @@ import { audio, type Track } from "../../lib/audio";
 import { useAudio } from "../../lib/useAudio";
 import { ImageSlot } from "../ImageSlot";
 import { Eq } from "./Eq";
+import { isPreview } from "../../lib/drafts";
 
 export const epTracks: Track[] = ep.tracks.map((t) => ({ id: `${ep.link}#${t.n}`, title: t.title, sub: t.artists, url: clipUrl(t.preview), href: ep.link }));
+
+// draft: a track plays on through the rest of the EP in the player bar
+const playFrom = (i: number, on: boolean) => {
+  if (!isPreview()) return audio.toggle(epTracks[i]);
+  if (on) audio.pause();
+  else audio.playQueue(epTracks, i);
+};
 
 export function EpBody({ onMusic = false }: { onMusic?: boolean }) {
   const s = useAudio();
@@ -27,7 +35,7 @@ export function EpBody({ onMusic = false }: { onMusic?: boolean }) {
             const tr = epTracks[i], on = playing(tr);
             return (
               <li key={t.n} className={on ? "is-playing" : ""}>
-                <button type="button" aria-pressed={on} aria-label={on ? `Stop ${t.title}` : `Preview ${t.title}`} onClick={() => audio.toggle(tr)}>
+                <button type="button" aria-pressed={on} aria-label={on ? `Stop ${t.title}` : `Preview ${t.title}`} onClick={() => playFrom(i, on)}>
                   <span className="s-num">{t.n}</span>
                   <span className="s-ep-track">
                     <span>{t.title}</span>

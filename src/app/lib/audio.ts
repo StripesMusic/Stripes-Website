@@ -11,6 +11,10 @@ export type AudioState = {
   unavailable: boolean; // the last requested clip couldn't be loaded
   armed: boolean; // the visitor has clicked something, so browsers allow sound
   volume: number; // 0..1 slider position
+  paused: boolean; // a clip is loaded but paused from the player bar
+  bar: boolean; // the player bar should show: something was played on purpose, not a hover preview
+  queue: Track[]; // what plays next when a clip ends (the player bar's next and previous)
+  qi: number; // the current track's place in the queue, or -1
 };
 type PlayOpts = { loop?: boolean; demoFallback?: boolean; quiet?: boolean }; // quiet: no "unavailable" notice (hover previews)
 type Current = { el: HTMLAudioElement; gain: GainNode | null; track: Track; opts: PlayOpts; plain: boolean };
@@ -35,7 +39,7 @@ function savedVolume() {
 const volGain = (v: number) => v * v;
 
 class AudioBus {
-  state: AudioState = { track: null, playing: false, demo: false, unavailable: false, armed: false, volume: savedVolume() };
+  state: AudioState = { track: null, playing: false, demo: false, unavailable: false, armed: false, volume: savedVolume(), paused: false, bar: false, queue: [], qi: -1 };
   private unavailableTimer = 0;
   // the sub-bass envelope, 0..1, scaled to the loudest recent bass so any mix reaches 1
   level = 0;
@@ -139,6 +143,11 @@ class AudioBus {
     this.set({ volume: v });
   }
 
+  // true while a hover preview (not something played on purpose) is what's playing
+  isHoverPreview() {
+    return !!this.cur?.opts.quiet;
+  }
+
   isCurrent(id: string) {
     return this.state.playing && this.state.track?.id === id;
   }
@@ -148,10 +157,50 @@ class AudioBus {
     else this.play(track, opts);
   }
 
+  // Plays a list in order, starting at i: the player bar's next and previous step through it.
+  playQueue(queue: Track[], i = 0, opts: PlayOpts = {}) {
+    if (!queue[i]) return;
+    this.play(queue[i], opts);
+    this.set({ queue, qi: i });
+  }
+  next(step = 1) {
+    const { queue, qi } = this.state;
+    const i = qi + step;
+    if (queue[i]) this.playQueue(queue, i, this.cur?.opts ?? {});
+  }
+  pause() {
+    if (!this.cur || this.state.paused) return;
+    this.cur.el.pause();
+    this.set({ playing: false, paused: true });
+  }
+  resume() {
+    if (!this.cur || !this.state.paused) return;
+    this.arm();
+    this.cur.el.play().catch(() => {});
+    this.set({ playing: true, paused: false });
+    this.watch();
+  }
+  // where the current clip is, in seconds, for the player bar's progress
+  position() {
+    const el = this.cur?.el;
+    return el && isFinite(el.duration) ? { t: el.currentTime, d: el.duration } : { t: 0, d: 0 };
+  }
+  seek(frac: number) {
+    const el = this.cur?.el;
+    if (el && isFinite(el.duration)) el.currentTime = Math.max(0, Math.min(1, frac)) * el.duration;
+  }
+  // closes the player bar, stopping whatever plays
+  close() {
+    this.stop();
+    this.set({ bar: false, track: null, queue: [], qi: -1 });
+  }
+
   play(track: Track, opts: PlayOpts = {}) {
     this.arm();
     if (!this.ac) return;
     this.stop(120);
+    // a hover preview leaves the bar as it was; anything played on purpose shows it, as a queue of one
+    if (!opts.quiet) this.set({ bar: true, queue: [track], qi: 0 });
     if (this.missing.has(track.url)) return this.fail(track, opts);
     this.load(track, opts, false);
   }
@@ -184,7 +233,10 @@ class AudioBus {
       this.fail(track, opts);
     });
     el.addEventListener("ended", () => {
-      if (this.cur === cur) this.stop(0);
+      if (this.cur !== cur) return;
+      const { queue, qi } = this.state;
+      if (queue[qi + 1] && queue[qi]?.id === track.id) this.playQueue(queue, qi + 1, opts);
+      else this.stop(0);
     });
     el.play()
       .then(() => {
@@ -193,7 +245,7 @@ class AudioBus {
       .catch((err: DOMException) => {
         if (this.cur === cur && err.name === "NotAllowedError") this.stop(0);
       });
-    this.set({ track, playing: true, demo: false, unavailable: false });
+    this.set({ track, playing: true, paused: false, demo: false, unavailable: false });
     this.watch();
   }
 
@@ -220,7 +272,7 @@ class AudioBus {
       if (this.ac) out.gain.setTargetAtTime(0, this.ac.currentTime, 0.03);
       this.synth = null;
     }
-    if (this.state.playing) this.set({ playing: false, demo: false });
+    if (this.state.playing || this.state.paused) this.set({ playing: false, paused: false, demo: false });
   }
 
   // A 128 BPM stand-in beat, used for the hero preview until its clip is uploaded.
