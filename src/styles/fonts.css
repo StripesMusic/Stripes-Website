@@ -1,12 +1,8 @@
-/* Every font is served from the site itself, not from Google Fonts or another font CDN, so a
-   visit doesn't send anyone's IP address to a third party. All of them are under the SIL Open
-   Font License. Barlow and Figtree are for the older pages and the Spotify Art Tester. */
+/* These fonts are served from the site itself, all under the SIL Open Font License. The
+   exceptions are Degular and Please (headings and labels), which Adobe Fonts' license only allows loading from
+   Adobe: see the link in index.html and the privacy page. Figtree is for the older pages and the Spotify Art Tester. */
 @import "@fontsource-variable/host-grotesk/index.css";
-@import "@fontsource-variable/bricolage-grotesque/standard.css";
 @import "@fontsource-variable/doto/index.css";
-@import "@fontsource/barlow/700.css";
-@import "@fontsource/barlow/800.css";
-@import "@fontsource/barlow/900.css";
 @import "@fontsource/figtree/300.css";
 @import "@fontsource/figtree/400.css";
 @import "@fontsource/figtree/500.css";
@@ -14,14 +10,3 @@
 @import "@fontsource/figtree/700.css";
 @import "@fontsource/figtree/800.css";
 @import "@fontsource/figtree/900.css";
-
-/* Host Grotesk draws its hyphen long and high, so "Artist - Title" reads like an en dash. Text in
-   Host Grotesk takes just the hyphen from Bricolage, which is short and sits on the middle. */
-@font-face {
-  font-family: "Stripes Hyphen";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 200 800;
-  src: url("../../node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2") format("woff2-variations");
-  unicode-range: U+002D;
-}

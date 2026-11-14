@@ -15,10 +15,16 @@
   --s-line: color-mix(in srgb, var(--s-fg) 15%, transparent);
   --s-line-strong: color-mix(in srgb, var(--s-fg) 36%, transparent);
   --s-accent-hi: color-mix(in oklab, var(--s-accent), white 14%);
-  --s-sans: "Stripes Hyphen", "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --s-display: "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
-  /* small labels: Bricolage at its condensed width (set with font-stretch); numbers in Doto */
-  --s-label: "Bricolage Grotesque Variable", "Arial Narrow", ui-sans-serif, sans-serif;
+  --s-sans: "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* From Jake's Adobe Fonts project (linked in index.html), with Host Grotesk as the fallback if
+     Adobe's servers are slow or blocked. lib/adobeFonts.ts reads the
+     families' real CSS names from Adobe's stylesheet and sets --s-please-fam / --s-degular-fam:
+     - the thin big headings and the animated STRIPES words: Please Variable (it animates weight)
+     - the other headings and the small labels: Degular */
+  --s-display: var(--s-please-fam, "please-variable"), "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --s-wordmark: var(--s-display);
+  --s-head: var(--s-degular-fam, "degular"), "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --s-label: var(--s-degular-fam, "degular"), "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   --s-num: "Doto Variable", ui-monospace, monospace;
   --s-radius: 28px;
   --s-inset: 8px;
@@ -893,7 +899,7 @@ html.s-locked {
   margin: 0;
   display: flex;
   white-space: nowrap;
-  font-family: var(--s-display);
+  font-family: var(--s-wordmark);
   font-weight: 200;
   font-size: 1em;
   line-height: 0.78;
@@ -976,7 +982,7 @@ html.s-locked {
   color: var(--s-hi);
 }
 .s-lip-title {
-  font-family: var(--s-display);
+  font-family: var(--s-head);
   font-size: clamp(21px, 2.2vw, 30px);
   font-weight: 300;
   font-variation-settings: "wdth" 85, "opsz" 96;
@@ -1746,7 +1752,7 @@ html.s-locked {
   color: var(--s-muted);
 }
 .s-tools-name {
-  font-family: var(--s-display);
+  font-family: var(--s-head);
   font-size: clamp(22px, 2.4vw, 34px);
   font-weight: 300;
   font-variation-settings: "wdth" 85, "opsz" 96;
@@ -2138,7 +2144,7 @@ html.s-locked {
   margin: 0;
   display: flex;
   justify-content: space-between;
-  font-family: var(--s-display);
+  font-family: var(--s-wordmark);
   font-size: 22vw;
   font-weight: 200;
   line-height: 0.75;
@@ -2259,7 +2265,7 @@ html.s-locked {
   align-items: baseline;
   gap: 14px;
   margin: 0 0 14px;
-  font-family: var(--s-display);
+  font-family: var(--s-head);
   font-size: clamp(26px, 2.6vw, 38px);
   font-weight: 300;
   font-variation-settings: "wdth" 85, "opsz" 96;
@@ -2448,7 +2454,7 @@ html.s-preloading {
   margin: 0 0 calc(var(--t) * 0.06);
   display: flex;
   flex-direction: column;
-  font-family: var(--s-display);
+  font-family: var(--s-head);
   font-size: calc(var(--t) * 0.27);
   font-weight: 700;
   font-variation-settings: "wdth" 75, "opsz" 96;

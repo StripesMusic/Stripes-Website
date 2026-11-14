@@ -7,6 +7,7 @@ import { LOGO_H, LOGO_THIN, LOGO_W } from "./logoPaths";
 import { audio } from "../../lib/audio";
 import { onFrame } from "../../lib/ticker";
 import { whenReady } from "../../lib/intro";
+import { pleaseFamily } from "../../lib/adobeFonts";
 import { getTheme, onTheme } from "../../lib/theme";
 
 // cover: 0 with the hero in full view, 1 once the first panel has slid over it
@@ -15,10 +16,22 @@ type HeroOpts = { plane?: HTMLElement | null; area: () => { top: number; bottom:
 
 // The layout: "Stripes" set big along the left, and the S oversized behind its end, cropped
 // off the right edge, as texture rather than a logo lockup. cx/cy are the S centre from the
-// stage centre; the word box is in stage px. Bricolage at rest (wght 200, wdth 80): the word is
-// WORD_W font-sizes wide, its caps 0.66 tall, the cap top 0.056 below the box top.
+// stage centre; the word box is in stage px. The word is about WORD_W font-sizes wide, its
+// caps 0.66 tall, the cap top 0.056 below the box top. Once the word's font (Please Variable, from
+// Adobe Fonts) has loaded, WORD_W is measured from it instead.
 const ASPECT = LOGO_W / LOGO_H;
-export const WORD_W = 1.55;
+let WORD_W = 1.55;
+function measureWord() {
+  const fam = pleaseFamily();
+  const cx = fam && document.createElement("canvas").getContext("2d");
+  if (!cx || !document.fonts?.check(`200 100px "${fam}"`)) return false;
+  cx.font = `200 100px "${fam}"`;
+  // the word is set at letter-spacing -0.05em, after each of its 7 letters
+  const w = cx.measureText("Stripes").width / 100 - 0.35;
+  if (!(w > 0.5 && w < 4)) return false;
+  WORD_W = w;
+  return true;
+}
 export function lockupLayout(W: number, H: number, top: number, bottom: number) {
   const narrow = W < 700 || W < H * 0.9;
   const room = Math.max(120, bottom - top), pad = narrow ? 16 : 28;
@@ -658,7 +671,13 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
   };
   refit();
   // fonts change the hero text's height, and so the room left for the lockup
-  document.fonts?.ready.then(refit);
+  document.fonts?.ready.then(() => {
+    if (measureWord()) fit = "";
+    refit();
+  });
+  // Please arrives from Adobe after the first layout: measure again once it has
+  const fam = pleaseFamily();
+  if (fam) document.fonts?.load(`200 100px "${fam}"`).then(() => measureWord() && ((fit = ""), refit())).catch(() => {});
   const offReady = whenReady(() => (pose.born = performance.now()));
   const offTheme = onTheme(() => {
     pal = PALETTES[getTheme()];
