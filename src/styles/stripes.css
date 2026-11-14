@@ -1049,7 +1049,7 @@ html.s-locked {
 }
 .s-ep-title {
   margin: 0;
-  font-family: var(--s-head);
+  font-family: var(--s-display);
   font-size: clamp(72px, 11.5vw, 210px);
   font-weight: 600;
   font-variation-settings: "wdth" 80, "opsz" 96;
