@@ -1,7 +1,7 @@
 // Degular and Please Variable come from Jake's Adobe Fonts project (the stylesheet linked in
 // index.html). Adobe picks the CSS names of its families, so rather than guess them, read them
 // from the fonts that stylesheet declares and hand them to the CSS (--s-please-fam, --s-degular-fam
-// in stripes.css). Until then, or if Adobe can't be reached, the pages fall back to Bricolage.
+// in stripes.css). Until then, or if Adobe can't be reached, the pages fall back to Host Grotesk.
 const KIT = "use.typekit.net";
 let please = "";
 let degular = "";

@@ -16,9 +16,9 @@ type HeroOpts = { plane?: HTMLElement | null; area: () => { top: number; bottom:
 
 // The layout: "Stripes" set big along the left, and the S oversized behind its end, cropped
 // off the right edge, as texture rather than a logo lockup. cx/cy are the S centre from the
-// stage centre; the word box is in stage px. Bricolage at rest (wght 200, wdth 80): the word is
-// WORD_W font-sizes wide, its caps 0.66 tall, the cap top 0.056 below the box top. When the word's
-// font (Please Variable, from Adobe Fonts) has loaded, WORD_W is measured from it instead.
+// stage centre; the word box is in stage px. The word is about WORD_W font-sizes wide, its
+// caps 0.66 tall, the cap top 0.056 below the box top. Once the word's font (Please Variable, from
+// Adobe Fonts) has loaded, WORD_W is measured from it instead.
 const ASPECT = LOGO_W / LOGO_H;
 let WORD_W = 1.55;
 function measureWord() {
