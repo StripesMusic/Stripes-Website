@@ -1,6 +1,6 @@
-/* Every font is served from the site itself, not from Google Fonts or another font CDN, so a
-   visit doesn't send anyone's IP address to a third party. All of them are under the SIL Open
-   Font License. Barlow and Figtree are for the older pages and the Spotify Art Tester. */
+/* These fonts are served from the site itself, all under the SIL Open Font License. The one
+   exception is Degular (headings and labels), which Adobe Fonts' license only allows loading from
+   Adobe: see the link in index.html and the privacy page. Barlow and Figtree are for the older pages and the Spotify Art Tester. */
 @import "@fontsource-variable/host-grotesk/index.css";
 @import "@fontsource-variable/bricolage-grotesque/standard.css";
 @import "@fontsource-variable/doto/index.css";

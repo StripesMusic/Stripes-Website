@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 
-const UPDATED = "October 25, 2026";
+const UPDATED = "November 14, 2026";
 
 type Section = { id: string; title: string; body: ReactNode };
 
@@ -79,15 +79,24 @@ export function Privacy() {
           id: "hosting",
           title: "Visiting the site",
           body: (
+            <>
             <p>
               The site, its photos and its audio previews are hosted by{" "}
               <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">
                 Cloudflare
               </a>
               . To deliver pages and protect them from abuse, Cloudflare processes technical details of each request, such as your IP address, browser type and the
-              page you asked for. I don't use those details to identify or profile you, and the fonts are served from this site, so loading a page doesn't contact
-              Google or any other font service.
+              page you asked for. I don't use those details to identify or profile you.
             </p>
+            <p>
+              The heading font, Degular, is licensed through{" "}
+              <a href="https://www.adobe.com/privacy/policies/adobe-fonts.html" target="_blank" rel="noopener noreferrer">
+                Adobe Fonts
+              </a>
+              , so your browser loads it from Adobe's servers. Adobe receives your IP address and the page's address, and counts page views for licensing. It doesn't
+              set cookies. All other fonts are served from this site.
+            </p>
+            </>
           ),
         },
         {

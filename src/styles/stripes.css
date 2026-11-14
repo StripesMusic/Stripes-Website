@@ -16,9 +16,13 @@
   --s-line-strong: color-mix(in srgb, var(--s-fg) 36%, transparent);
   --s-accent-hi: color-mix(in oklab, var(--s-accent), white 14%);
   --s-sans: "Stripes Hyphen", "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --s-display: "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
-  /* small labels: Bricolage at its condensed width (set with font-stretch); numbers in Doto */
-  --s-label: "Bricolage Grotesque Variable", "Arial Narrow", ui-sans-serif, sans-serif;
+  /* headings and small labels: Degular, from Jake's Adobe Fonts project (index.html). Bricolage
+     stays as the fallback, so a page still looks right if Adobe's servers are slow or blocked. */
+  --s-display: "degular", "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --s-label: "degular", "Bricolage Grotesque Variable", "Arial Narrow", ui-sans-serif, sans-serif;
+  /* the big STRIPES words in the hero and footer stay Bricolage: their weight and width animate,
+     which needs a variable font, and the hero's sizing is measured from Bricolage */
+  --s-wordmark: "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   --s-num: "Doto Variable", ui-monospace, monospace;
   --s-radius: 28px;
   --s-inset: 8px;
@@ -893,7 +897,7 @@ html.s-locked {
   margin: 0;
   display: flex;
   white-space: nowrap;
-  font-family: var(--s-display);
+  font-family: var(--s-wordmark);
   font-weight: 200;
   font-size: 1em;
   line-height: 0.78;
@@ -2138,7 +2142,7 @@ html.s-locked {
   margin: 0;
   display: flex;
   justify-content: space-between;
-  font-family: var(--s-display);
+  font-family: var(--s-wordmark);
   font-size: 22vw;
   font-weight: 200;
   line-height: 0.75;
