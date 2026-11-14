@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { ep } from "../data/releases";
 import { loopPreloader, markReady } from "../lib/intro";
 import { onFrame } from "../lib/ticker";
+import { pleaseFamily } from "../lib/adobeFonts";
 
 const SEG = 30; // segments per channel
 const RED = 4; // the last few are the clip zone, 0 to +3 dB
@@ -52,7 +53,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
       doneT = window.setTimeout(() => done.current(), reduce ? 320 : 640);
     };
     // start once the title's font is in (or soon anyway), so it never swaps mid-animation
-    const fontIn = document.fonts?.load('200 100px "please-variable", "Bricolage Grotesque Variable"').catch(() => {}) ?? Promise.resolve();
+    const fontIn = document.fonts?.load(`200 100px ${pleaseFamily() ? `"${pleaseFamily()}", ` : ""}"Bricolage Grotesque Variable"`).catch(() => {}) ?? Promise.resolve();
     const go = () => {
       if (phase === "wait") {
         phase = "run";

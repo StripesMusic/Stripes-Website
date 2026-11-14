@@ -47,7 +47,7 @@
   --sky-blue: #87ceeb;
   
   /* Custom font */
-  --font-heading: 'Barlow', sans-serif;
+  --font-heading: var(--s-head);
 }
 
 .dark {

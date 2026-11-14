@@ -1,12 +1,9 @@
 /* These fonts are served from the site itself, all under the SIL Open Font License. The one
    exceptions are Degular and Please (headings and labels), which Adobe Fonts' license only allows loading from
-   Adobe: see the link in index.html and the privacy page. Barlow and Figtree are for the older pages and the Spotify Art Tester. */
+   Adobe: see the link in index.html and the privacy page. Figtree is for the older pages and the Spotify Art Tester. */
 @import "@fontsource-variable/host-grotesk/index.css";
 @import "@fontsource-variable/bricolage-grotesque/standard.css";
 @import "@fontsource-variable/doto/index.css";
-@import "@fontsource/barlow/700.css";
-@import "@fontsource/barlow/800.css";
-@import "@fontsource/barlow/900.css";
 @import "@fontsource/figtree/300.css";
 @import "@fontsource/figtree/400.css";
 @import "@fontsource/figtree/500.css";

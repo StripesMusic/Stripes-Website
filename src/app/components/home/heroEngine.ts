@@ -7,6 +7,7 @@ import { LOGO_H, LOGO_THIN, LOGO_W } from "./logoPaths";
 import { audio } from "../../lib/audio";
 import { onFrame } from "../../lib/ticker";
 import { whenReady } from "../../lib/intro";
+import { pleaseFamily } from "../../lib/adobeFonts";
 import { getTheme, onTheme } from "../../lib/theme";
 
 // cover: 0 with the hero in full view, 1 once the first panel has slid over it
@@ -20,13 +21,10 @@ type HeroOpts = { plane?: HTMLElement | null; area: () => { top: number; bottom:
 // font (Please Variable, from Adobe Fonts) has loaded, WORD_W is measured from it instead.
 const ASPECT = LOGO_W / LOGO_H;
 let WORD_W = 1.55;
-const WORD_FONTS = ["please-variable", "please"];
 function measureWord() {
-  const loaded = new Set<string>();
-  document.fonts?.forEach((f) => f.status === "loaded" && loaded.add(f.family.replace(/["']/g, "")));
-  const fam = WORD_FONTS.find((f) => loaded.has(f));
+  const fam = pleaseFamily();
   const cx = fam && document.createElement("canvas").getContext("2d");
-  if (!cx) return false;
+  if (!cx || !document.fonts?.check(`200 100px "${fam}"`)) return false;
   cx.font = `200 100px "${fam}"`;
   // the word is set at letter-spacing -0.05em, after each of its 7 letters
   const w = cx.measureText("Stripes").width / 100 - 0.35;
@@ -677,6 +675,9 @@ export function createHero(stage: HTMLElement, cv: HTMLCanvasElement, getScroll:
     if (measureWord()) fit = "";
     refit();
   });
+  // Please arrives from Adobe after the first layout: measure again once it has
+  const fam = pleaseFamily();
+  if (fam) document.fonts?.load(`200 100px "${fam}"`).then(() => measureWord() && ((fit = ""), refit())).catch(() => {});
   const offReady = whenReady(() => (pose.born = performance.now()));
   const offTheme = onTheme(() => {
     pal = PALETTES[getTheme()];

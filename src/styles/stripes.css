@@ -17,13 +17,14 @@
   --s-accent-hi: color-mix(in oklab, var(--s-accent), white 14%);
   --s-sans: "Stripes Hyphen", "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   /* From Jake's Adobe Fonts project (linked in index.html), with Bricolage as the fallback so a
-     page still looks right if Adobe's servers are slow or blocked:
+     page still looks right if Adobe's servers are slow or blocked. lib/adobeFonts.ts reads the
+     families' real CSS names from Adobe's stylesheet and sets --s-please-fam / --s-degular-fam:
      - the thin big headings and the animated STRIPES words: Please Variable (it animates weight)
      - the other headings and the small labels: Degular */
-  --s-display: "please-variable", "please", "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --s-display: var(--s-please-fam, "please-variable"), "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   --s-wordmark: var(--s-display);
-  --s-head: "degular", "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
-  --s-label: "degular", "Bricolage Grotesque Variable", "Arial Narrow", ui-sans-serif, sans-serif;
+  --s-head: var(--s-degular-fam, "degular"), "Bricolage Grotesque Variable", "Host Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --s-label: var(--s-degular-fam, "degular"), "Bricolage Grotesque Variable", "Arial Narrow", ui-sans-serif, sans-serif;
   --s-num: "Doto Variable", ui-monospace, monospace;
   --s-radius: 28px;
   --s-inset: 8px;
