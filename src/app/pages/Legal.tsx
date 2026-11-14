@@ -89,11 +89,11 @@ export function Privacy() {
               page you asked for. I don't use those details to identify or profile you.
             </p>
             <p>
-              The heading font, Degular, is licensed through{" "}
+              The heading fonts, Degular and Please, are licensed through{" "}
               <a href="https://www.adobe.com/privacy/policies/adobe-fonts.html" target="_blank" rel="noopener noreferrer">
                 Adobe Fonts
               </a>
-              , so your browser loads it from Adobe's servers. Adobe receives your IP address and the page's address, and counts page views for licensing. It doesn't
+              , so your browser loads them from Adobe's servers. Adobe receives your IP address and the page's address, and counts page views for licensing. It doesn't
               set cookies. All other fonts are served from this site.
             </p>
             </>
