@@ -63,10 +63,10 @@ const shapes = new Map<string, number>();
 
 // one still (a cover, a version, a process shot): shown whole at its own shape, never cropped,
 // and enlarged on click
-function Still({ src, alt, label, caption, className = "", onOpen }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void }) {
+function Still({ src, alt, label, caption, className = "", onOpen, onShape }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void; onShape?: () => void }) {
   const [r, setR] = useState(() => shapes.get(src) ?? 1);
   return (
-    <figure className={"s-art-piece " + className} data-wide={r > 1.2 || undefined} style={{ "--r": r } as CSSProperties}>
+    <figure className={"s-art-piece " + className} data-wide={r > WIDE || undefined} style={{ "--r": r } as CSSProperties}>
       <button type="button" className="s-art-zoom" onClick={onOpen} aria-label={`Enlarge ${alt}`}>
         <ImageSlot
           src={src}
@@ -75,7 +75,10 @@ function Still({ src, alt, label, caption, className = "", onOpen }: { src: stri
           ratio={String(r)}
           onLoad={(img) => {
             const n = img.naturalWidth / img.naturalHeight;
-            shapes.set(src, n);
+            if (shapes.get(src) !== n) {
+              shapes.set(src, n);
+              onShape?.();
+            }
             setR(n);
           }}
         />
@@ -143,7 +146,31 @@ function Lightbox({ title, srcs, at, onAt }: { title: string; srcs: string[]; at
   );
 }
 
-function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string }) {
+const WIDE = 1.2; // wider than this, a still is cropped to fill the row instead of shown whole
+const MIN_WIDE = 240; // the least room a cropped wide still gets
+
+// In a pop-up, the pieces fill the card from top to bottom: one row, as tall as the card allows,
+// with portrait and square pieces (stills, the animated cover) whole and wide stills cropped beside
+// them. The row height shrinks only when the whole pieces wouldn't fit across. Returns the media
+// box's ref and the height to use, or null for the plain layout (on the page, on a phone).
+function useFill(on: boolean, pieces: number[]) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(0);
+  useEffect(() => {
+    if (!on) return;
+    const ro = new ResizeObserver(([e]) => setW(e.contentRect.width));
+    ro.observe(ref.current!);
+    return () => ro.disconnect();
+  }, [on]);
+  if (!on || w < 560 || !pieces.length) return { ref, fit: null };
+  const gap = 12;
+  const tall = pieces.filter((r) => r <= WIDE), wide = pieces.length - tall.length;
+  const sum = tall.reduce((a, r) => a + r, 0);
+  const fit = sum ? (w - gap * (pieces.length - 1) - wide * MIN_WIDE) / sum : w / Math.max(...pieces);
+  return { ref, fit: Math.max(200, fit) };
+}
+
+function CaseStudy({ p, n, headingId, fill = false }: { p: Pack; n: number; headingId?: string; fill?: boolean }) {
   const pieces = [
     !p.lyric || !p.solo ? (p.solo ? "Artwork" : "Cover") : "",
     ...p.versions.map((_, i) => `Version ${i + 2}`),
@@ -155,6 +182,11 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
   // every still in the pack, in page order, for the enlarged view
   const stills = [...(!(p.solo && p.lyric) ? [p.cover] : []), ...p.versions, ...p.process, ...p.mockups];
   const [zoom, setZoom] = useState<number | null>(null);
+  const [, reshape] = useState(0);
+  const onShape = () => reshape((t) => t + 1);
+  const shape = (u: string) => shapes.get(u) ?? 1;
+  const row = [...(!(p.solo && p.lyric) ? [shape(p.cover)] : []), ...(p.canvas ? [9 / 16] : []), ...[...p.versions, ...p.process, ...p.mockups].map(shape)];
+  const { ref: mediaRef, fit } = useFill(fill, row);
   return (
     <article className="s-art-case">
       <div className="s-art-meta">
@@ -201,17 +233,17 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
           </p>
         )}
       </div>
-      <div className={"s-art-media" + (!p.canvas && !p.lyric ? " is-fill" : "")}>
+      <div ref={mediaRef} className={"s-art-media" + (fit ? " is-fill" : "")} style={fit ? ({ "--fit": `${fit}px` } as CSSProperties) : undefined}>
         {!(p.solo && p.lyric) && (
-          <Still src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} className="s-art-cover" onOpen={() => setZoom(0)} />
+          <Still src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} className="s-art-cover" onOpen={() => setZoom(0)} onShape={onShape} />
         )}
         {p.canvas && <Canvas video={p.canvas.video} poster={p.canvas.poster} label={`${p.name} animated cover`} />}
         {p.versions.map((v, i) => (
-          <Still key={v} src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} caption={`Version ${i + 2}`} onOpen={() => setZoom(stills.indexOf(v))} />
+          <Still key={v} src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} caption={`Version ${i + 2}`} onOpen={() => setZoom(stills.indexOf(v))} onShape={onShape} />
         ))}
         {p.lyric && <Lyric id={p.lyric.id} title={p.lyric.title} />}
         {[...p.process.map((u) => ["Process", u]), ...p.mockups.map((u) => ["Mockup", u])].map(([kind, u]) => (
-          <Still key={u} src={u} alt={`${p.name} ${kind.toLowerCase()}`} label={kind} caption={kind} className="s-art-wide" onOpen={() => setZoom(stills.indexOf(u))} />
+          <Still key={u} src={u} alt={`${p.name} ${kind.toLowerCase()}`} label={kind} caption={kind} className="s-art-wide" onOpen={() => setZoom(stills.indexOf(u))} onShape={onShape} />
         ))}
       </div>
       <Lightbox title={p.name} srcs={stills} at={zoom} onAt={setZoom} />
@@ -481,7 +513,7 @@ export function Artwork() {
             <button type="button" className="s-btn s-art-close" onClick={() => setOpen(null)}>
               Close
             </button>
-            <CaseStudy p={open} n={gallery.indexOf(open) + 1} headingId="pack-title" />
+            <CaseStudy p={open} n={gallery.indexOf(open) + 1} headingId="pack-title" fill />
           </div>
         )}
       </dialog>
