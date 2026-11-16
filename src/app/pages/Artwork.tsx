@@ -47,10 +47,10 @@ function useScrollLock(on: boolean) {
     if (!on) return;
     const key = {};
     locks.add(key);
-    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden"; // on body, not html: locking html made the page jump to the top
     return () => {
       locks.delete(key);
-      if (!locks.size) document.documentElement.style.overflow = "";
+      if (!locks.size) document.body.style.overflow = "";
     };
   }, [on]);
 }
