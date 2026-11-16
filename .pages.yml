@@ -22,7 +22,7 @@ content:
             label: Title
             type: string
             required: true
-            description: 'e.g. "TON031 Cover Art" or "I Just Flow". A cover''s animated cover, lyric video and other visuals go on the cover''s own entry (fields below), not as separate entries.'
+            description: 'e.g. "TON031 Cover Art" or "I Just Flow". A cover''s animated cover, lyric video and other visuals go in its Visuals list below, not as separate entries.'
           - name: category
             label: Kind
             type: select
@@ -73,41 +73,60 @@ content:
             label: Feature at the top
             type: boolean
             description: 'Covers only. Ticked covers show open as big release packs at the top of Designs, newest first. Four looks best.'
-          - name: images
-            label: More images or clips
-            type: string
-            list: true
-            description: Alternate versions, or extra .mp4 clips.
-          - name: animatedCover
-            label: Animated cover
-            type: string
-            description: 'Covers only. The .mp4 Spotify Canvas loop: https://assets.musicbystripes.com/…'
-          - name: lyricVideo
-            label: Lyric video
-            type: string
-            description: 'Covers only. The YouTube link of the lyric video for this release.'
-          - name: extras
-            label: Extra visuals
+          - name: visuals
+            label: Visuals
             type: object
             list:
               collapsible:
                 collapsed: true
-                summary: '{label}'
-            description: 'Everything else made for this release (flyers, banners, thumbnails, reels, story loops, process shots). They show in the same card, under the cover. Images open big on click; .mp4 clips play on their own.'
+                summary: '{kind} {name}'
+            description: 'Everything else made for this piece, in the order to show it: alternate versions, the animated cover, the lyric video, flyers, banners, reels… Pick what it is, paste the link (from the assets bucket, or YouTube for a lyric video). For something new, pick "Other" and type its name.'
             fields:
-              - name: src
+              - name: kind
+                label: What is it
+                type: select
+                required: true
+                options:
+                  values:
+                    - name: version
+                      label: Alternate version
+                    - name: animated-cover
+                      label: Animated cover (Spotify Canvas .mp4)
+                    - name: lyric-video
+                      label: Lyric video (YouTube link)
+                    - name: clip
+                      label: Video clip (.mp4)
+                    - name: flyer
+                      label: Flyer
+                    - name: post
+                      label: Social post
+                    - name: reel
+                      label: Reel / story video (.mp4)
+                    - name: banner
+                      label: Banner (SoundCloud, YouTube…)
+                    - name: thumbnail
+                      label: YouTube thumbnail
+                    - name: background
+                      label: Background
+                    - name: process
+                      label: Process shot
+                    - name: mockup
+                      label: Mockup
+                    - name: other
+                      label: Other (add new, name it below)
+              - name: link
                 label: Link
                 type: string
                 required: true
-                description: 'An image or .mp4 from the assets bucket: https://assets.musicbystripes.com/…'
-              - name: label
-                label: Caption
+                description: 'https://assets.musicbystripes.com/… (or the YouTube link for a lyric video)'
+              - name: name
+                label: Name
                 type: string
-                description: 'Shown under it, e.g. "Pre-save flyer", "SoundCloud banner", "Out now reel".'
+                description: 'Shown under it on the site, e.g. "Pre-save flyer". Needed for "Other"; optional for the rest (they use the kind''s name).'
           - name: videoUrl
             label: Video link
             type: string
-            description: 'The .mp4 for an animation or clip that isn''t part of a cover (a cover''s loop goes in "Animated cover" above).'
+            description: 'The .mp4 for an animation or clip that isn''t part of a cover (a cover''s loop goes in Visuals as "Animated cover").'
           - name: youtubeUrl
             label: YouTube or site link
             type: string
