@@ -69,11 +69,25 @@ content:
             type: string
             required: true
             description: 'The cover (or a still), from the assets bucket: https://assets.musicbystripes.com/…'
+          - name: featured
+            label: Feature at the top
+            type: boolean
+            description: 'Covers only. Ticked covers show open as big release packs at the top of Designs, newest first. Four looks best.'
           - name: images
             label: More images or clips
             type: string
             list: true
             description: Alternate versions, or extra .mp4 clips.
+          - name: process
+            label: Process shots
+            type: string
+            list: true
+            description: 'Covers only. Work-in-progress images (sketches, Blender viewport, layers), shown full width in the pack. Links from the assets bucket.'
+          - name: mockups
+            label: Mockups
+            type: string
+            list: true
+            description: 'Covers only. The cover in use (phone, poster, vinyl, merch), shown full width in the pack. Links from the assets bucket.'
           - name: videoUrl
             label: Video link
             type: string

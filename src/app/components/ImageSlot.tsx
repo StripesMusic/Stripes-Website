@@ -15,9 +15,10 @@ type Props = {
   eager?: boolean;
   className?: string;
   fallback?: string;
+  onLoad?: (img: HTMLImageElement) => void; // once the image has loaded, e.g. to read its real size
 };
 
-export function ImageSlot({ src, srcSet, sizes, pos, alt = "", ratio = "1 / 1", label, hint, eager, className = "", fallback }: Props) {
+export function ImageSlot({ src, srcSet, sizes, pos, alt = "", ratio = "1 / 1", label, hint, eager, className = "", fallback, onLoad }: Props) {
   const [state, setState] = useState<"wait" | "ok" | "empty">(src ? "wait" : "empty");
   const [failed, setFailed] = useState(false);
   useEffect(() => {
@@ -39,9 +40,15 @@ export function ImageSlot({ src, srcSet, sizes, pos, alt = "", ratio = "1 / 1", 
           decoding="async"
           className={state === "ok" ? "on" : ""}
           ref={(el) => {
-            if (el?.complete && el.naturalWidth > 0 && state === "wait") setState("ok");
+            if (el?.complete && el.naturalWidth > 0 && state === "wait") {
+              setState("ok");
+              onLoad?.(el);
+            }
           }}
-          onLoad={() => setState("ok")}
+          onLoad={(e) => {
+            setState("ok");
+            onLoad?.(e.currentTarget);
+          }}
           onError={() => (fallback && !failed ? setFailed(true) : setState("empty"))}
         />
       )}

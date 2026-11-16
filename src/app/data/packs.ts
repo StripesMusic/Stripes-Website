@@ -25,6 +25,7 @@ export type Pack = {
   credit?: ArtworkItem["credit"];
   tools: string[];
   kinds: Kind[];
+  featured?: boolean; // ticked "Feature at the top" in the content panel
   solo?: boolean; // a lyric video or misc piece on its own, not a release's cover
   idx: number; // position in artwork.json, which is stored oldest first: later entries count as newer
 };
@@ -84,8 +85,9 @@ function build(): Pack[] {
       sort: monthNum(it.date),
       cover: it.image,
       versions: (it.images ?? []).filter((u) => u !== it.image),
-      process: [],
-      mockups: [],
+      process: it.process?.filter(Boolean) ?? [],
+      mockups: it.mockups?.filter(Boolean) ?? [],
+      featured: !!it.featured,
       details: it.details ?? "",
       credit: it.credit,
       tools: (it.software ?? []).map((s) => s.replace(/^Adobe /, "")),
@@ -124,8 +126,8 @@ function build(): Pack[] {
   packs.forEach((p) => {
     const extra = packImages[p.key] ?? packImages[p.name];
     if (extra) {
-      p.process = extra.process ?? [];
-      p.mockups = extra.mockups ?? [];
+      p.process = [...p.process, ...(extra.process ?? [])];
+      p.mockups = [...p.mockups, ...(extra.mockups ?? [])];
     }
   });
 

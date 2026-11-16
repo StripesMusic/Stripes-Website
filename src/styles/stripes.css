@@ -2790,7 +2790,8 @@ html.s-preloading {
 }
 .s-art-media > .s-art-piece {
   flex: var(--r, 1) 1 0;
-  min-width: 0;
+  /* a tall poster beside a wide banner would shrink to a sliver: keep it readable */
+  min-width: min(100%, 200px);
 }
 .s-art-piece {
   margin: 0;
@@ -2801,6 +2802,130 @@ html.s-preloading {
 .s-art-piece .s-slot {
   border-radius: 6px;
 }
+/* in a pop-up: the pieces fill the card top to bottom (the row height comes from Artwork.tsx).
+   Portrait and square pieces show whole at that height; wide stills fill what's left beside them,
+   cropped (a click shows them whole); a lyric video gets its own row below */
+.s-art-media.is-fill {
+  --h: min(clamp(280px, calc(100dvh - 2 * var(--s-inset) - 140px), 760px), var(--fit));
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+.s-art-media.is-fill > .s-art-piece {
+  flex: 0 0 calc(var(--h) * var(--r));
+  max-width: 100%;
+  min-width: 0;
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] {
+  flex: 1 1 0;
+  min-width: min(100%, 240px);
+}
+.s-art-media.is-fill > .s-art-lyric {
+  flex: 1 1 100%;
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] .s-art-zoom {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] .s-slot {
+  flex: 1;
+  min-height: min(var(--h), 50vw);
+  aspect-ratio: auto !important;
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] .s-slot img {
+  object-fit: cover;
+}
+
+/* a still: shown whole (its slot takes the image's own shape), enlarged on click */
+.s-art-zoom {
+  display: block;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: zoom-in;
+}
+.s-art-zoom .s-slot img {
+  object-fit: contain;
+  transition: opacity 0.2s ease, transform 0.5s var(--s-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .s-art-zoom:hover .s-slot img.on {
+    transform: scale(1.015);
+  }
+}
+.s-art-zoom:focus-visible {
+  outline: 2px solid var(--s-accent);
+  outline-offset: 3px;
+}
+
+/* the enlarged view of a still */
+.s-zoom {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  color: var(--s-fg);
+  background: transparent;
+  border: 0;
+  overflow: hidden;
+}
+.s-zoom[open] {
+  display: flex;
+  flex-direction: column;
+  animation: s-zoom-in 0.22s var(--s-ease);
+}
+.s-zoom::backdrop {
+  background: color-mix(in srgb, var(--s-bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+@keyframes s-zoom-in {
+  from {
+    opacity: 0;
+  }
+}
+.s-zoom-stage {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
+  cursor: zoom-out;
+}
+.s-zoom-stage img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 72px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: default;
+}
+.s-zoom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.s-zoom-btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-zoom[open] {
+    animation: none;
+  }
+}
 .s-art-canvas {
   --r: 0.5625;
 }
@@ -2810,10 +2935,7 @@ html.s-preloading {
 .s-art-media > .s-art-wide {
   flex-basis: 100%;
 }
-.s-art-wide img {
-  width: 100%;
-  border-radius: 6px;
-}
+
 .s-art-piece video,
 .s-art-piece iframe {
   position: absolute;

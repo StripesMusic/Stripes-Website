@@ -2,7 +2,7 @@
 // video, process shots and mockups when there are any): a hand-picked few are shown open at the
 // top, then a contact sheet of every release and solo piece (lyric videos, misc) that opens each
 // one on click, filtered by kind, label and artist. Websites, set visuals and clips come last.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { LoopVideo } from "../components/LoopVideo";
 import { YouTube } from "../components/YouTube";
 import { Link } from "react-router";
@@ -12,14 +12,11 @@ import { MultiSelect } from "../components/MultiSelect";
 import { packs, gallery, artistNames, piecesIn, otherWork, LABELS, ytId, type Kind, type Pack } from "../data/packs";
 
 const KINDS: Kind[] = ["2D", "3D", "Motion", "Lyric video", "Misc"];
-// the packs shown open at the top, in order (by catalogue number or name); if one goes missing,
-// the fullest pack not already picked fills its slot
-const FEATURED = ["TMLS043", "TON031", "QDRN121", "SR044"];
+// the packs shown open at the top, newest first: the covers ticked "Feature at the top" in the
+// content panel. With none ticked, the four fullest packs stand in.
 const fullest = [...packs].sort((a, b) => piecesIn(b) - piecesIn(a) || b.sort - a.sort);
-const featured = FEATURED.map((k) => packs.find((p) => p.key === k || p.name === k)).reduce<Pack[]>(
-  (out, p) => [...out, p ?? fullest.find((f) => !out.includes(f) && !FEATURED.includes(f.key))!],
-  [],
-);
+const ticked = packs.filter((p) => p.featured);
+const featured = ticked.length ? ticked : fullest.slice(0, 4);
 const years = packs.map((p) => p.sort).filter(Boolean);
 const span = `${Math.floor(Math.min(...years) / 12)}–${Math.floor(Math.max(...years) / 12)}`;
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -43,7 +40,134 @@ function Lyric({ id, title }: { id: string; title: string }) {
   );
 }
 
-function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string }) {
+// while a pop-up is open, the wheel and touch scroll it, not the page behind
+const locks = new Set<object>();
+function useScrollLock(on: boolean) {
+  useEffect(() => {
+    if (!on) return;
+    const key = {};
+    locks.add(key);
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      locks.delete(key);
+      if (!locks.size) document.documentElement.style.overflow = "";
+    };
+  }, [on]);
+}
+
+// each image's real shape, once known, so a reopened pack lays out straight away
+const shapes = new Map<string, number>();
+
+// one still (a cover, a version, a process shot): shown whole at its own shape, never cropped,
+// and enlarged on click
+function Still({ src, alt, label, caption, className = "", onOpen, onShape }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void; onShape?: () => void }) {
+  const [r, setR] = useState(() => shapes.get(src) ?? 1);
+  return (
+    <figure className={"s-art-piece " + className} data-wide={r > WIDE || undefined} style={{ "--r": r } as CSSProperties}>
+      <button type="button" className="s-art-zoom" onClick={onOpen} aria-label={`Enlarge ${alt}`}>
+        <ImageSlot
+          src={src}
+          alt={alt}
+          label={label}
+          ratio={String(r)}
+          onLoad={(img) => {
+            const n = img.naturalWidth / img.naturalHeight;
+            if (shapes.get(src) !== n) {
+              shapes.set(src, n);
+              onShape?.();
+            }
+            setR(n);
+          }}
+        />
+      </button>
+      {caption && <figcaption className="s-mono">{caption}</figcaption>}
+    </figure>
+  );
+}
+
+// the enlarged view: one still at full resolution, as big as the screen allows (never blown up
+// past its real size), with the pack's other stills a click or an arrow key away
+function Lightbox({ title, srcs, at, onAt }: { title: string; srcs: string[]; at: number | null; onAt: (i: number | null) => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useScrollLock(at !== null);
+  useEffect(() => {
+    const d = ref.current!;
+    if (at !== null && !d.open) d.showModal();
+    if (at === null && d.open) d.close();
+  }, [at]);
+  const many = srcs.length > 1;
+  const go = (step: number) => at !== null && onAt((at + step + srcs.length) % srcs.length);
+  const src = at !== null ? srcs[at] : undefined;
+  return (
+    <dialog
+      ref={ref}
+      className="s-zoom"
+      aria-label={`${title}, enlarged`}
+      onClose={() => onAt(null)}
+      onClick={(e) => (e.target === ref.current || (e.target as HTMLElement).classList.contains("s-zoom-stage")) && onAt(null)}
+      onKeyDown={(e) => {
+        if (!many) return;
+        if (e.key === "ArrowRight") go(1);
+        if (e.key === "ArrowLeft") go(-1);
+      }}
+    >
+      {src && (
+        <>
+          <div className="s-zoom-stage">
+            <img key={src} src={src} alt={`${title}${many ? `, ${at! + 1} of ${srcs.length}` : ""}`} decoding="async" />
+          </div>
+          <div className="s-zoom-bar">
+            <span className="s-mono">{many ? `${pad(at! + 1)} / ${pad(srcs.length)}` : ""}</span>
+            <div className="s-zoom-btns">
+              {many && (
+                <>
+                  <button type="button" className="s-btn" onClick={() => go(-1)} aria-label="Previous image">
+                    ←
+                  </button>
+                  <button type="button" className="s-btn" onClick={() => go(1)} aria-label="Next image">
+                    →
+                  </button>
+                </>
+              )}
+              <a className="s-btn" href={src} target="_blank" rel="noopener noreferrer">
+                Original ↗
+              </a>
+              <button type="button" className="s-btn" onClick={() => onAt(null)} autoFocus>
+                Close
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </dialog>
+  );
+}
+
+const WIDE = 1.2; // wider than this, a still is cropped to fill the row instead of shown whole
+const MIN_WIDE = 240; // the least room a cropped wide still gets
+
+// In a pop-up, the pieces fill the card from top to bottom: one row, as tall as the card allows,
+// with portrait and square pieces (stills, the animated cover) whole and wide stills cropped beside
+// them. The row height shrinks only when the whole pieces wouldn't fit across. Returns the media
+// box's ref and the height to use, or null for the plain layout (on the page, on a phone).
+function useFill(on: boolean, pieces: number[]) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(0);
+  useEffect(() => {
+    if (!on) return;
+    const ro = new ResizeObserver(([e]) => setW(e.contentRect.width));
+    ro.observe(ref.current!);
+    return () => ro.disconnect();
+  }, [on]);
+  if (!on || w < 560 || !pieces.length) return { ref, fit: null };
+  const gap = 12;
+  const tall = pieces.filter((r) => r <= WIDE), wide = pieces.length - tall.length;
+  const sum = tall.reduce((a, r) => a + r, 0);
+  const fit = sum ? (w - gap * (pieces.length - 1) - wide * MIN_WIDE) / sum : w / Math.max(...pieces);
+  return { ref, fit: Math.max(200, fit) };
+}
+
+function CaseStudy({ p, n, headingId, fill = false }: { p: Pack; n: number; headingId?: string; fill?: boolean }) {
   const pieces = [
     !p.lyric || !p.solo ? (p.solo ? "Artwork" : "Cover") : "",
     ...p.versions.map((_, i) => `Version ${i + 2}`),
@@ -52,6 +176,14 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
     p.process.length > 0 && "Process",
     p.mockups.length > 0 && "Mockups",
   ].filter(Boolean) as string[];
+  // every still in the pack, in page order, for the enlarged view
+  const stills = [...(!(p.solo && p.lyric) ? [p.cover] : []), ...p.versions, ...p.process, ...p.mockups];
+  const [zoom, setZoom] = useState<number | null>(null);
+  const [, reshape] = useState(0);
+  const onShape = () => reshape((t) => t + 1);
+  const shape = (u: string) => shapes.get(u) ?? 1;
+  const row = [...(!(p.solo && p.lyric) ? [shape(p.cover)] : []), ...(p.canvas ? [9 / 16] : []), ...[...p.versions, ...p.process, ...p.mockups].map(shape)];
+  const { ref: mediaRef, fit } = useFill(fill, row);
   return (
     <article className="s-art-case">
       <div className="s-art-meta">
@@ -98,27 +230,20 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
           </p>
         )}
       </div>
-      <div className="s-art-media">
+      <div ref={mediaRef} className={"s-art-media" + (fit ? " is-fill" : "")} style={fit ? ({ "--fit": `${fit}px` } as CSSProperties) : undefined}>
         {!(p.solo && p.lyric) && (
-          <figure className="s-art-piece s-art-cover">
-            <ImageSlot src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} />
-          </figure>
+          <Still src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} className="s-art-cover" onOpen={() => setZoom(0)} onShape={onShape} />
         )}
         {p.canvas && <Canvas video={p.canvas.video} poster={p.canvas.poster} label={`${p.name} animated cover`} />}
         {p.versions.map((v, i) => (
-          <figure className="s-art-piece" key={v}>
-            <ImageSlot src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} />
-            <figcaption className="s-mono">Version {i + 2}</figcaption>
-          </figure>
+          <Still key={v} src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} caption={`Version ${i + 2}`} onOpen={() => setZoom(stills.indexOf(v))} onShape={onShape} />
         ))}
         {p.lyric && <Lyric id={p.lyric.id} title={p.lyric.title} />}
         {[...p.process.map((u) => ["Process", u]), ...p.mockups.map((u) => ["Mockup", u])].map(([kind, u]) => (
-          <figure className="s-art-piece s-art-wide" key={u}>
-            <img src={u} alt={`${p.name} ${kind.toLowerCase()}`} loading="lazy" />
-            <figcaption className="s-mono">{kind}</figcaption>
-          </figure>
+          <Still key={u} src={u} alt={`${p.name} ${kind.toLowerCase()}`} label={kind} caption={kind} className="s-art-wide" onOpen={() => setZoom(stills.indexOf(u))} onShape={onShape} />
         ))}
       </div>
+      <Lightbox title={p.name} srcs={stills} at={zoom} onAt={setZoom} />
     </article>
   );
 }
@@ -238,6 +363,7 @@ export function Artwork() {
   const [clip, setClip] = useState<Clip | null>(null);
   const dlg = useRef<HTMLDialogElement>(null);
   const clipDlg = useRef<HTMLDialogElement>(null);
+  useScrollLock(!!open || !!clip);
 
   // kind, and then any of the ticked labels or artists (nothing ticked shows everyone)
   const shown = useMemo(
@@ -378,13 +504,13 @@ export function Artwork() {
         </ul>
       </section>
 
-      <dialog ref={dlg} className="s-art-dialog" aria-labelledby="pack-title" onClose={() => setOpen(null)} onClick={(e) => e.target === dlg.current && setOpen(null)}>
+      <dialog ref={dlg} className="s-art-dialog" aria-labelledby="pack-title" onClose={(e) => e.target === e.currentTarget && setOpen(null)} onClick={(e) => e.target === dlg.current && setOpen(null)}>
         {open && (
           <div className="s-art-dialog-in">
             <button type="button" className="s-btn s-art-close" onClick={() => setOpen(null)}>
               Close
             </button>
-            <CaseStudy p={open} n={gallery.indexOf(open) + 1} headingId="pack-title" />
+            <CaseStudy p={open} n={gallery.indexOf(open) + 1} headingId="pack-title" fill />
           </div>
         )}
       </dialog>

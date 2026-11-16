@@ -17,6 +17,9 @@ export type ArtworkItem = {
   youtubeUrl?: string; // a YouTube video, or the site itself for websites
   software?: string[];
   client?: string;
+  featured?: boolean; // shown open as a release pack at the top of Designs (covers only)
+  process?: string[]; // work-in-progress shots, shown wide under the cover
+  mockups?: string[]; // the cover in use: posters, phones, merch
 };
 
 export const artworkItems = data.items as ArtworkItem[];
