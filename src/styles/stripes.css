@@ -2836,6 +2836,32 @@ html.s-preloading {
   object-fit: cover;
 }
 
+/* a pack's extra visuals (flyers, banners, reels): a strip of rows under the main pieces, each
+   at its own shape and the same height */
+.s-art-media > .s-art-extras {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px 12px;
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--s-line);
+  --xh: clamp(160px, 26vh, 280px);
+}
+.s-art-extras > .s-art-piece {
+  flex: 0 0 auto;
+  width: min(100%, calc(var(--xh) * var(--r)));
+}
+.s-art-extras video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
 /* a still: shown whole (its slot takes the image's own shape), enlarged on click */
 .s-art-zoom {
   display: block;

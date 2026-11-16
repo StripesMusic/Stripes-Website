@@ -1,8 +1,7 @@
 // The Artwork page shows one pack per release: its cover plus whatever else was made for it
 // (an animated cover for the Spotify Canvas, a lyric video, alternate versions). Pieces are
 // matched by catalogue number (SR038, TON031…) or by the release's name.
-import { artworkItems, type ArtworkItem } from "./artwork";
-import { packImages } from "./images";
+import { artworkItems, type ArtworkItem, type Extra } from "./artwork";
 
 export type Kind = "2D" | "3D" | "Motion" | "Lyric video" | "Misc";
 export type Pack = {
@@ -19,8 +18,7 @@ export type Pack = {
   versions: string[]; // alternate cover versions
   canvas?: { video: string; poster: string };
   lyric?: { id: string; title: string };
-  process: string[];
-  mockups: string[];
+  extras: Extra[]; // flyers, banners, reels, process shots… shown under the main pieces
   details: string;
   credit?: ArtworkItem["credit"];
   tools: string[];
@@ -85,8 +83,7 @@ function build(): Pack[] {
       sort: monthNum(it.date),
       cover: it.image,
       versions: (it.images ?? []).filter((u) => u !== it.image),
-      process: it.process?.filter(Boolean) ?? [],
-      mockups: it.mockups?.filter(Boolean) ?? [],
+      extras: (it.extras ?? []).filter((x) => x?.src),
       featured: !!it.featured,
       details: it.details ?? "",
       credit: it.credit,
@@ -122,21 +119,12 @@ function build(): Pack[] {
     }
   }
 
-  // process shots and mockups, once they're uploaded (data/images.ts)
-  packs.forEach((p) => {
-    const extra = packImages[p.key] ?? packImages[p.name];
-    if (extra) {
-      p.process = [...p.process, ...(extra.process ?? [])];
-      p.mockups = [...p.mockups, ...(extra.mockups ?? [])];
-    }
-  });
-
   return [...packs.values()].sort(newest);
 }
 
 export const packs = build();
 // richest first: packs with more than a cover get the full case-study treatment
-export const piecesIn = (p: Pack) => 1 + p.versions.length + (p.canvas ? 1 : 0) + (p.lyric ? 1 : 0) + p.process.length + p.mockups.length;
+export const piecesIn = (p: Pack) => 1 + p.versions.length + (p.canvas ? 1 : 0) + (p.lyric ? 1 : 0) + p.extras.length;
 
 // Lyric videos with no cover in the archive, and the misc pieces (playlist covers, the mashup
 // pack…), as entries of their own in the gallery beside the releases
@@ -153,8 +141,7 @@ const solo = (it: ArtworkItem, kind: Kind, cover: string, lyric?: Pack["lyric"])
   cover,
   versions: (it.images ?? []).filter((u) => u !== it.image && !/\.mp4$/i.test(u)),
   lyric,
-  process: [],
-  mockups: [],
+  extras: (it.extras ?? []).filter((x) => x?.src),
   details: it.details ?? "",
   credit: it.credit,
   tools: (it.software ?? []).map((s) => s.replace(/^Adobe /, "")),

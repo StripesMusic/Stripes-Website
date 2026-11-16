@@ -78,16 +78,24 @@ content:
             type: string
             list: true
             description: Alternate versions, or extra .mp4 clips.
-          - name: process
-            label: Process shots
-            type: string
-            list: true
-            description: 'Covers only. Work-in-progress images (sketches, Blender viewport, layers), shown full width in the pack. Links from the assets bucket.'
-          - name: mockups
-            label: Mockups
-            type: string
-            list: true
-            description: 'Covers only. The cover in use (phone, poster, vinyl, merch), shown full width in the pack. Links from the assets bucket.'
+          - name: extras
+            label: Extra visuals
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: '{label}'
+            description: 'Everything else made for this release (flyers, banners, thumbnails, reels, story loops, process shots). They show in the same card, under the cover. Images open big on click; .mp4 clips play on their own.'
+            fields:
+              - name: src
+                label: Link
+                type: string
+                required: true
+                description: 'An image or .mp4 from the assets bucket: https://assets.musicbystripes.com/…'
+              - name: label
+                label: Caption
+                type: string
+                description: 'Shown under it, e.g. "Pre-save flyer", "SoundCloud banner", "Out now reel".'
           - name: videoUrl
             label: Video link
             type: string

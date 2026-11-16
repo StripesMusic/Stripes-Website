@@ -18,8 +18,9 @@ export type ArtworkItem = {
   software?: string[];
   client?: string;
   featured?: boolean; // shown open as a release pack at the top of Designs (covers only)
-  process?: string[]; // work-in-progress shots, shown wide under the cover
-  mockups?: string[]; // the cover in use: posters, phones, merch
+  extras?: Extra[]; // supplementary visuals made for the release: flyers, banners, reels, process shots
 };
+
+export type Extra = { src: string; label?: string };
 
 export const artworkItems = data.items as ArtworkItem[];
