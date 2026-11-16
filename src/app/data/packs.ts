@@ -91,16 +91,28 @@ function build(): Pack[] {
       kinds: [it.category === "2d" ? "2D" : "3D"],
       idx: artworkItems.indexOf(it),
     };
+    // the animated cover and lyric video, filled in on the cover's own entry
+    if (it.animatedCover) {
+      p.canvas = { video: it.animatedCover, poster: it.image };
+      p.kinds.push("Motion");
+    }
+    const lyricId = ytId(it.lyricVideo);
+    if (lyricId) {
+      p.lyric = { id: lyricId, title: `${release || name} (Lyric Video)` };
+      p.kinds.push("Lyric video");
+      if (!p.tools.includes("After Effects")) p.tools.push("After Effects");
+    }
     packs.set(key, p);
     const song = songOf(release);
     if (song) bySong.set(song, p);
   }
 
+  // older separate entries for an animated cover or lyric video still join their cover by name
   for (const it of artworkItems) {
     if (it.category === "animations") {
       const code = codeOf(it.title), name = norm(nameOf(it.title));
       const p = (code && packs.get(code)) || packs.get(name);
-      if (p && it.videoUrl) {
+      if (p && it.videoUrl && !p.canvas) {
         p.canvas = { video: it.videoUrl, poster: it.image };
         p.kinds.push("Motion");
         (it.software ?? []).forEach((s) => {
@@ -111,7 +123,7 @@ function build(): Pack[] {
     } else if (it.category === "lyric-videos") {
       const song = songOf(it.title.replace(/\s*\((?:Official|Concept|Fan-Made) Lyric Video\)$/, ""));
       const p = bySong.get(song), id = ytId(it.youtubeUrl);
-      if (p && id) {
+      if (p && id && !p.lyric) {
         p.lyric = { id, title: it.title };
         p.kinds.push("Lyric video");
         if (!p.tools.includes("After Effects")) p.tools.push("After Effects");

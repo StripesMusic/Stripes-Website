@@ -18,6 +18,8 @@ export type ArtworkItem = {
   software?: string[];
   client?: string;
   featured?: boolean; // shown open as a release pack at the top of Designs (covers only)
+  animatedCover?: string; // covers only: the .mp4 Spotify Canvas loop
+  lyricVideo?: string; // covers only: the lyric video on YouTube
   extras?: Extra[]; // supplementary visuals made for the release: flyers, banners, reels, process shots
 };
 

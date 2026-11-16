@@ -22,7 +22,7 @@ content:
             label: Title
             type: string
             required: true
-            description: 'e.g. "TON031 Cover Art" or "I Just Flow". Animated covers end in " - Animated Cover" so they join the cover with the same name.'
+            description: 'e.g. "TON031 Cover Art" or "I Just Flow". A cover''s animated cover, lyric video and other visuals go on the cover''s own entry (fields below), not as separate entries.'
           - name: category
             label: Kind
             type: select
@@ -34,7 +34,7 @@ content:
                 - name: 3d
                   label: 3D cover
                 - name: animations
-                  label: Animated cover / animation
+                  label: Animation (not part of a cover)
                 - name: lyric-videos
                   label: Lyric video
                 - name: misc
@@ -78,6 +78,14 @@ content:
             type: string
             list: true
             description: Alternate versions, or extra .mp4 clips.
+          - name: animatedCover
+            label: Animated cover
+            type: string
+            description: 'Covers only. The .mp4 Spotify Canvas loop: https://assets.musicbystripes.com/…'
+          - name: lyricVideo
+            label: Lyric video
+            type: string
+            description: 'Covers only. The YouTube link of the lyric video for this release.'
           - name: extras
             label: Extra visuals
             type: object
@@ -99,7 +107,7 @@ content:
           - name: videoUrl
             label: Video link
             type: string
-            description: 'The .mp4 for an animated cover or clip.'
+            description: 'The .mp4 for an animation or clip that isn''t part of a cover (a cover''s loop goes in "Animated cover" above).'
           - name: youtubeUrl
             label: YouTube or site link
             type: string
