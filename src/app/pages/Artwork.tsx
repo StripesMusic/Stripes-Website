@@ -12,14 +12,11 @@ import { MultiSelect } from "../components/MultiSelect";
 import { packs, gallery, artistNames, piecesIn, otherWork, LABELS, ytId, type Kind, type Pack } from "../data/packs";
 
 const KINDS: Kind[] = ["2D", "3D", "Motion", "Lyric video", "Misc"];
-// the packs shown open at the top, in order (by catalogue number or name); if one goes missing,
-// the fullest pack not already picked fills its slot
-const FEATURED = ["TMLS043", "TON031", "QDRN121", "SR044"];
+// the packs shown open at the top, newest first: the covers ticked "Feature at the top" in the
+// content panel. With none ticked, the four fullest packs stand in.
 const fullest = [...packs].sort((a, b) => piecesIn(b) - piecesIn(a) || b.sort - a.sort);
-const featured = FEATURED.map((k) => packs.find((p) => p.key === k || p.name === k)).reduce<Pack[]>(
-  (out, p) => [...out, p ?? fullest.find((f) => !out.includes(f) && !FEATURED.includes(f.key))!],
-  [],
-);
+const ticked = packs.filter((p) => p.featured);
+const featured = ticked.length ? ticked : fullest.slice(0, 4);
 const years = packs.map((p) => p.sort).filter(Boolean);
 const span = `${Math.floor(Math.min(...years) / 12)}–${Math.floor(Math.max(...years) / 12)}`;
 const pad = (n: number) => String(n).padStart(2, "0");
