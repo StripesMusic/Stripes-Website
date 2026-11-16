@@ -2,7 +2,7 @@
 // video, process shots and mockups when there are any): a hand-picked few are shown open at the
 // top, then a contact sheet of every release and solo piece (lyric videos, misc) that opens each
 // one on click, filtered by kind, label and artist. Websites, set visuals and clips come last.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { LoopVideo } from "../components/LoopVideo";
 import { YouTube } from "../components/YouTube";
 import { Link } from "react-router";
@@ -43,6 +43,90 @@ function Lyric({ id, title }: { id: string; title: string }) {
   );
 }
 
+// each image's real shape, once known, so a reopened pack lays out straight away
+const shapes = new Map<string, number>();
+
+// one still (a cover, a version, a process shot): shown whole at its own shape, never cropped,
+// and enlarged on click
+function Still({ src, alt, label, caption, className = "", onOpen }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void }) {
+  const [r, setR] = useState(() => shapes.get(src) ?? 1);
+  return (
+    <figure className={"s-art-piece " + className} style={{ "--r": r } as CSSProperties}>
+      <button type="button" className="s-art-zoom" onClick={onOpen} aria-label={`Enlarge ${alt}`}>
+        <ImageSlot
+          src={src}
+          alt={alt}
+          label={label}
+          ratio={String(r)}
+          onLoad={(img) => {
+            const n = img.naturalWidth / img.naturalHeight;
+            shapes.set(src, n);
+            setR(n);
+          }}
+        />
+      </button>
+      {caption && <figcaption className="s-mono">{caption}</figcaption>}
+    </figure>
+  );
+}
+
+// the enlarged view: one still at full resolution, as big as the screen allows (never blown up
+// past its real size), with the pack's other stills a click or an arrow key away
+function Lightbox({ title, srcs, at, onAt }: { title: string; srcs: string[]; at: number | null; onAt: (i: number | null) => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const d = ref.current!;
+    if (at !== null && !d.open) d.showModal();
+    if (at === null && d.open) d.close();
+  }, [at]);
+  const many = srcs.length > 1;
+  const go = (step: number) => at !== null && onAt((at + step + srcs.length) % srcs.length);
+  const src = at !== null ? srcs[at] : undefined;
+  return (
+    <dialog
+      ref={ref}
+      className="s-zoom"
+      aria-label={`${title}, enlarged`}
+      onClose={() => onAt(null)}
+      onClick={(e) => (e.target === ref.current || (e.target as HTMLElement).classList.contains("s-zoom-stage")) && onAt(null)}
+      onKeyDown={(e) => {
+        if (!many) return;
+        if (e.key === "ArrowRight") go(1);
+        if (e.key === "ArrowLeft") go(-1);
+      }}
+    >
+      {src && (
+        <>
+          <div className="s-zoom-stage">
+            <img key={src} src={src} alt={`${title}${many ? `, ${at! + 1} of ${srcs.length}` : ""}`} decoding="async" />
+          </div>
+          <div className="s-zoom-bar">
+            <span className="s-mono">{many ? `${pad(at! + 1)} / ${pad(srcs.length)}` : ""}</span>
+            <div className="s-zoom-btns">
+              {many && (
+                <>
+                  <button type="button" className="s-btn" onClick={() => go(-1)} aria-label="Previous image">
+                    ←
+                  </button>
+                  <button type="button" className="s-btn" onClick={() => go(1)} aria-label="Next image">
+                    →
+                  </button>
+                </>
+              )}
+              <a className="s-btn" href={src} target="_blank" rel="noopener noreferrer">
+                Original ↗
+              </a>
+              <button type="button" className="s-btn" onClick={() => onAt(null)} autoFocus>
+                Close
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </dialog>
+  );
+}
+
 function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string }) {
   const pieces = [
     !p.lyric || !p.solo ? (p.solo ? "Artwork" : "Cover") : "",
@@ -52,6 +136,9 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
     p.process.length > 0 && "Process",
     p.mockups.length > 0 && "Mockups",
   ].filter(Boolean) as string[];
+  // every still in the pack, in page order, for the enlarged view
+  const stills = [...(!(p.solo && p.lyric) ? [p.cover] : []), ...p.versions, ...p.process, ...p.mockups];
+  const [zoom, setZoom] = useState<number | null>(null);
   return (
     <article className="s-art-case">
       <div className="s-art-meta">
@@ -100,25 +187,18 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
       </div>
       <div className="s-art-media">
         {!(p.solo && p.lyric) && (
-          <figure className="s-art-piece s-art-cover">
-            <ImageSlot src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} />
-          </figure>
+          <Still src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} className="s-art-cover" onOpen={() => setZoom(0)} />
         )}
         {p.canvas && <Canvas video={p.canvas.video} poster={p.canvas.poster} label={`${p.name} animated cover`} />}
         {p.versions.map((v, i) => (
-          <figure className="s-art-piece" key={v}>
-            <ImageSlot src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} />
-            <figcaption className="s-mono">Version {i + 2}</figcaption>
-          </figure>
+          <Still key={v} src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} caption={`Version ${i + 2}`} onOpen={() => setZoom(stills.indexOf(v))} />
         ))}
         {p.lyric && <Lyric id={p.lyric.id} title={p.lyric.title} />}
         {[...p.process.map((u) => ["Process", u]), ...p.mockups.map((u) => ["Mockup", u])].map(([kind, u]) => (
-          <figure className="s-art-piece s-art-wide" key={u}>
-            <img src={u} alt={`${p.name} ${kind.toLowerCase()}`} loading="lazy" />
-            <figcaption className="s-mono">{kind}</figcaption>
-          </figure>
+          <Still key={u} src={u} alt={`${p.name} ${kind.toLowerCase()}`} label={kind} caption={kind} className="s-art-wide" onOpen={() => setZoom(stills.indexOf(u))} />
         ))}
       </div>
+      <Lightbox title={p.name} srcs={stills} at={zoom} onAt={setZoom} />
     </article>
   );
 }
@@ -378,7 +458,7 @@ export function Artwork() {
         </ul>
       </section>
 
-      <dialog ref={dlg} className="s-art-dialog" aria-labelledby="pack-title" onClose={() => setOpen(null)} onClick={(e) => e.target === dlg.current && setOpen(null)}>
+      <dialog ref={dlg} className="s-art-dialog" aria-labelledby="pack-title" onClose={(e) => e.target === e.currentTarget && setOpen(null)} onClick={(e) => e.target === dlg.current && setOpen(null)}>
         {open && (
           <div className="s-art-dialog-in">
             <button type="button" className="s-btn s-art-close" onClick={() => setOpen(null)}>
