@@ -1,5 +1,5 @@
 // Designs: cover art, motion and web work. Every release is a pack (cover, animated cover, lyric
-// video, process shots and mockups when there are any): a hand-picked few are shown open at the
+// video, and any extra visuals: flyers, banners, reels, process shots): a hand-picked few are shown open at the
 // top, then a contact sheet of every release and solo piece (lyric videos, misc) that opens each
 // one on click, filtered by kind, label and artist. Websites, set visuals and clips come last.
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
@@ -58,7 +58,7 @@ function useScrollLock(on: boolean) {
 // each image's real shape, once known, so a reopened pack lays out straight away
 const shapes = new Map<string, number>();
 
-// one still (a cover, a version, a process shot): shown whole at its own shape, never cropped,
+// one still (a cover, a version): shown whole at its own shape, never cropped,
 // and enlarged on click
 function Still({ src, alt, label, caption, className = "", onOpen, onShape }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void; onShape?: () => void }) {
   const [r, setR] = useState(() => shapes.get(src) ?? 1);
@@ -81,6 +81,40 @@ function Still({ src, alt, label, caption, className = "", onOpen, onShape }: { 
         />
       </button>
       {caption && <figcaption className="s-mono">{caption}</figcaption>}
+    </figure>
+  );
+}
+
+const isClip = (u: string) => /\.(mp4|webm|mov)$/i.test(u.split("?")[0]);
+
+// an extra clip (a reel, a story loop): plays silently while on screen, at its own shape, with
+// controls to unmute
+function Clip({ src, label }: { src: string; label: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [r, setR] = useState(9 / 16);
+  useEffect(() => {
+    const v = ref.current!;
+    v.muted = true;
+    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()), { threshold: 0.3 });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <figure className="s-art-piece s-art-extra-clip" style={{ "--r": r } as CSSProperties}>
+      <span className="s-slot" style={{ aspectRatio: String(r) }}>
+        <video
+          ref={ref}
+          src={src}
+          muted
+          loop
+          playsInline
+          controls
+          preload="metadata"
+          aria-label={label}
+          onLoadedMetadata={(e) => e.currentTarget.videoWidth && setR(e.currentTarget.videoWidth / e.currentTarget.videoHeight)}
+        />
+      </span>
+      <figcaption className="s-mono">{label}</figcaption>
     </figure>
   );
 }
@@ -173,16 +207,16 @@ function CaseStudy({ p, n, headingId, fill = false }: { p: Pack; n: number; head
     ...p.versions.map((_, i) => `Version ${i + 2}`),
     p.canvas && "Animated cover",
     p.lyric && "Lyric video",
-    p.process.length > 0 && "Process",
-    p.mockups.length > 0 && "Mockups",
+    p.extras.length > 0 && (p.extras.length === 1 ? "1 extra visual" : `${p.extras.length} extra visuals`),
   ].filter(Boolean) as string[];
   // every still in the pack, in page order, for the enlarged view
-  const stills = [...(!(p.solo && p.lyric) ? [p.cover] : []), ...p.versions, ...p.process, ...p.mockups];
+  const extraStills = p.extras.filter((x) => !isClip(x.src));
+  const stills = [...(!(p.solo && p.lyric) ? [p.cover] : []), ...p.versions, ...extraStills.map((x) => x.src)];
   const [zoom, setZoom] = useState<number | null>(null);
   const [, reshape] = useState(0);
   const onShape = () => reshape((t) => t + 1);
   const shape = (u: string) => shapes.get(u) ?? 1;
-  const row = [...(!(p.solo && p.lyric) ? [shape(p.cover)] : []), ...(p.canvas ? [9 / 16] : []), ...[...p.versions, ...p.process, ...p.mockups].map(shape)];
+  const row = [...(!(p.solo && p.lyric) ? [shape(p.cover)] : []), ...(p.canvas ? [9 / 16] : []), ...p.versions.map(shape)];
   const { ref: mediaRef, fit } = useFill(fill, row);
   return (
     <article className="s-art-case">
@@ -239,9 +273,17 @@ function CaseStudy({ p, n, headingId, fill = false }: { p: Pack; n: number; head
           <Still key={v} src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} caption={`Version ${i + 2}`} onOpen={() => setZoom(stills.indexOf(v))} onShape={onShape} />
         ))}
         {p.lyric && <Lyric id={p.lyric.id} title={p.lyric.title} />}
-        {[...p.process.map((u) => ["Process", u]), ...p.mockups.map((u) => ["Mockup", u])].map(([kind, u]) => (
-          <Still key={u} src={u} alt={`${p.name} ${kind.toLowerCase()}`} label={kind} caption={kind} className="s-art-wide" onOpen={() => setZoom(stills.indexOf(u))} onShape={onShape} />
-        ))}
+        {p.extras.length > 0 && (
+          <div className="s-art-extras">
+            {p.extras.map((x, i) =>
+              isClip(x.src) ? (
+                <Clip key={x.src + i} src={x.src} label={x.label || `${p.name} clip`} />
+              ) : (
+                <Still key={x.src + i} src={x.src} alt={x.label ? `${p.name}, ${x.label}` : `${p.name}, extra visual`} label={x.label || "Extra"} caption={x.label} onOpen={() => setZoom(stills.indexOf(x.src))} />
+              ),
+            )}
+          </div>
+        )}
       </div>
       <Lightbox title={p.name} srcs={stills} at={zoom} onAt={setZoom} />
     </article>
