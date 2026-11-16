@@ -41,7 +41,12 @@
       "details": "A clean, emotional, scrapbook-style artwork.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Send_Me_An_Angel_Artwork.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SendMeAnAngelAnimation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SendMeAnAngelAnimation.mp4"
+        }
+      ],
       "software": [
         "Adobe Photoshop",
         "Adobe After Effects"
@@ -165,7 +170,12 @@
       "details": "A dark, futuristic artwork with a sleek cyberpunk edge.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/QDRN108.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN108Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN108Animation.mp4"
+        }
+      ],
       "software": [
         "Adobe Photoshop",
         "Adobe After Effects"
@@ -229,7 +239,12 @@
       "details": "A mysterious night forest artwork with dense trees, warm glowing light, and atmospheric fog illuminating the scene.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN111.jpeg",
       "featured": false,
-      "lyricVideo": "https://www.youtube.com/watch?v=W3OyWIeCZOc",
+      "visuals": [
+        {
+          "kind": "lyric-video",
+          "link": "https://www.youtube.com/watch?v=W3OyWIeCZOc"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -295,7 +310,12 @@
       "details": "A mystical cave artwork with glowing crystals, a shattered heart on rocky ground, and a star-filled sky opening above.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN115_RCSV057.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN115_RCSV057Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN115_RCSV057Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -393,7 +413,12 @@
       "details": "A surreal storm canyon artwork with glowing neon geometry, rocky cliffs, and electric lightning illuminating a futuristic structure.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN120.jpeg",
       "featured": true,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN120Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN120Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -411,7 +436,12 @@
       "details": "An underwater ruins artwork with glowing teal structures, submerged stone pillars, and drifting particles beneath rolling ocean waves.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN121.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN121Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN121Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -525,7 +555,12 @@
       "details": "A bright meadow artwork with wildflowers, rocks, drifting clouds, and a clear blue sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN128.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN128Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN128Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -623,7 +658,12 @@
       "details": "A dreamy purple landscape artwork where nature meets a distant city.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN134.jpeg",
       "featured": false,
-      "lyricVideo": "https://www.youtube.com/watch?v=8ymRbuqmVPg",
+      "visuals": [
+        {
+          "kind": "lyric-video",
+          "link": "https://www.youtube.com/watch?v=8ymRbuqmVPg"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -641,7 +681,12 @@
       "details": "A vibrant, tropical artwork bathed in neon pink light.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN135.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN135Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN135Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -723,7 +768,12 @@
       "details": "A high-energy night road artwork featuring a sleek red sports car with a glowing golden illuminated wheel racing along a dark highway, surrounded by sparks of light and reflections beneath a starry night sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SolvanaRadio.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SolvanaRadioAnimation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SolvanaRadioAnimation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -757,7 +807,12 @@
       "details": "A mysterious cosmic landscape artwork with a glowing violet energy spiral hovering above a rocky alien terrain, surrounded by reflective crystal-like spheres and distant mountains beneath a deep star-filled night sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON010.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON010Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON010Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -806,7 +861,12 @@
       "details": "A vibrant cosmic meadow artwork with a glowing purple energy spiral hovering above colorful flowers and lush alien vegetation, surrounded by distant planets and a swirling nebula beneath a star-filled night sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON012.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON012Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON012Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -824,7 +884,12 @@
       "details": "A glowing futuristic festival landscape artwork with luminous geometric structures rising from reflective water and rocky terrain, surrounded by floating illuminated cubes beneath a dramatic golden sunset sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/MNTNxSolvana.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/MNTNxSolvanaAnimation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/MNTNxSolvanaAnimation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -874,7 +939,12 @@
       "details": "A bright fantasy nature landscape artwork with a glowing teal futuristic structure rising from a lush grassy clearing, surrounded by wildflowers, rocky hills, and distant mountains beneath a clear blue sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR034.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR034Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR034Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -959,7 +1029,12 @@
       "details": "A surreal crimson cosmic landscape artwork with glowing red spheres floating above a rugged alien terrain, surrounded by towering rock formations and distant planets beneath a dramatic star-filled sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR036.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR036Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR036Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -993,7 +1068,12 @@
       "details": "A warm desert sunset landscape artwork with glowing futuristic cube structures scattered across rocky cliffs and sandy terrain, surrounded by towering cacti and distant hills beneath a golden sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR038.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR038Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR038Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -1027,7 +1107,12 @@
       "details": "A lush enchanted forest artwork with glowing golden structures, vibrant wildflowers, cascading waterfalls, and warm sunlight illuminating a vivid natural paradise.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON019.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON019Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON019Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -1045,7 +1130,12 @@
       "details": "Fiery mountain festival scene with artist logos.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/I_Just_Flow_Artwork.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/IJustFlowAnimation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/IJustFlowAnimation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -1079,7 +1169,12 @@
       "details": "A frozen winter valley artwork with glowing icy structures, snow-covered trees, and shimmering blue light reflecting across a crystalline river.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON021.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON021Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON021Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -1175,7 +1270,12 @@
       "details": "A dramatic storm artwork with towering ruins, intense lightning strikes, and dark swirling clouds illuminating a powerful electric sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON024.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON024Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON024Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -1256,7 +1356,12 @@
       "details": "A surreal rocky landscape artwork with ancient spiral stone formations, scattered ruins, and glowing embers beneath a colorful twilight sky.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON026.jpeg",
       "featured": false,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON026Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON026Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -1382,9 +1487,15 @@
       "details": "Vintage, hip-hop tapes, brutalist style artwork (2 versions, different colors).",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR044_1.png",
       "featured": true,
-      "images": [
-        "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR044_1.png",
-        "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR044_2.jpeg"
+      "visuals": [
+        {
+          "kind": "version",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR044_1.png"
+        },
+        {
+          "kind": "version",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR044_2.jpeg"
+        }
       ],
       "software": [
         "Adobe Photoshop"
@@ -1461,8 +1572,11 @@
       "details": "Dark, colorful, highly detailed 2D event poster with artist press photo, text info, and swirl FX in a tight layout.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/misc/Timeless%20RileyJames%20Demo%20Drop%209x16.jpg",
       "featured": false,
-      "images": [
-        "https://assets.musicbystripes.com/client%20cover%20arts/misc/Timeless%20RileyJames%20Demo%20Drop%205x2.jpg"
+      "visuals": [
+        {
+          "kind": "version",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/misc/Timeless%20RileyJames%20Demo%20Drop%205x2.jpg"
+        }
       ],
       "software": [
         "Adobe Photoshop"
@@ -1477,11 +1591,23 @@
       "details": "Collection of custom DJ set visuals created for AVIS performances. Features dynamic motion graphics, branding elements, and synchronized visual effects.",
       "image": "https://assets.musicbystripes.com/set%20visuals/Avisv2_1_thumb.png",
       "featured": false,
-      "images": [
-        "https://assets.musicbystripes.com/set%20visuals/Avisv2_1.mp4",
-        "https://assets.musicbystripes.com/set%20visuals/Avisv2_2.mp4",
-        "https://assets.musicbystripes.com/set%20visuals/Avisv2_3.mp4",
-        "https://assets.musicbystripes.com/set%20visuals/Avisv2_4.mp4"
+      "visuals": [
+        {
+          "kind": "clip",
+          "link": "https://assets.musicbystripes.com/set%20visuals/Avisv2_1.mp4"
+        },
+        {
+          "kind": "clip",
+          "link": "https://assets.musicbystripes.com/set%20visuals/Avisv2_2.mp4"
+        },
+        {
+          "kind": "clip",
+          "link": "https://assets.musicbystripes.com/set%20visuals/Avisv2_3.mp4"
+        },
+        {
+          "kind": "clip",
+          "link": "https://assets.musicbystripes.com/set%20visuals/Avisv2_4.mp4"
+        }
       ],
       "videoUrl": "https://assets.musicbystripes.com/set%20visuals/Avisv2_1.mp4",
       "software": [
@@ -1518,7 +1644,12 @@
       "details": "A tropical sunset artwork with palm trees and smooth grass.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON031.jpeg",
       "featured": true,
-      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON031Animation.mp4",
+      "visuals": [
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON031Animation.mp4"
+        }
+      ],
       "software": [
         "Blender",
         "Adobe Photoshop",
@@ -1552,7 +1683,12 @@
       "details": "Floaty light-blue cover art with clean text, clouds, and geometric objects/textures.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS043.jpg",
       "featured": true,
-      "lyricVideo": "https://www.youtube.com/watch?v=CVymDXIjxZ4",
+      "visuals": [
+        {
+          "kind": "lyric-video",
+          "link": "https://www.youtube.com/watch?v=CVymDXIjxZ4"
+        }
+      ],
       "software": [
         "Adobe Photoshop",
         "Adobe After Effects"
