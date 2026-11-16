@@ -39,23 +39,11 @@
       "details": "A clean, emotional, scrapbook-style artwork.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Send_Me_An_Angel_Artwork.jpeg",
       "software": [
-        "Adobe Photoshop"
-      ],
-      "id": 8
-    },
-    {
-      "title": "Send Me An Angel - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Jan 2024",
-      "client": "Quadron Records/Myself",
-      "details": "8-second looping 2D animation of the Send Me An Angel artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/Send_Me_An_Angel_Artwork.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SendMeAnAngelAnimation.mp4",
-      "software": [
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2012
+      "id": 8,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SendMeAnAngelAnimation.mp4"
     },
     {
       "title": "Nexoria - Rewind (ft. Charlie Copper) (Official Lyric Video)",
@@ -167,37 +155,11 @@
       "details": "A dark, futuristic artwork with a sleek cyberpunk edge.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/QDRN108.jpeg",
       "software": [
-        "Adobe Photoshop"
-      ],
-      "id": 10
-    },
-    {
-      "title": "QDRN108 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Sep 2024",
-      "client": "Quadron Records",
-      "details": "8-second looping 2D animation of the QDRN108 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/QDRN108.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN108Animation.mp4",
-      "software": [
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2018
-    },
-    {
-      "title": "Wyko, Cl04k, Sghob - In My Mind (ft. Barmuda) (Official Lyric Video)",
-      "category": "lyric-videos",
-      "type": "Lyric Video",
-      "date": "Oct 2024",
-      "client": "Quadron Records",
-      "details": "Full-length lyric video with animated text and visual effects synchronized to the music.",
-      "image": "https://img.youtube.com/vi/W3OyWIeCZOc/maxresdefault.jpg",
-      "youtubeUrl": "https://www.youtube.com/watch?v=W3OyWIeCZOc",
-      "software": [
-        "Adobe After Effects"
-      ],
-      "id": 3002
+      "id": 10,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN108Animation.mp4"
     },
     {
       "title": "OCT023 Cover Art",
@@ -254,9 +216,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN111.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
+        "Adobe Photoshop",
+        "Adobe After Effects"
       ],
-      "id": 1029
+      "id": 1029,
+      "lyricVideo": "https://www.youtube.com/watch?v=W3OyWIeCZOc"
     },
     {
       "title": "QDRN112 Cover Art",
@@ -314,24 +278,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN115_RCSV057.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1025
-    },
-    {
-      "title": "QDRN115/RCSV057 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Nov 2024",
-      "client": "Quadron Records/Recursive Recordings",
-      "details": "8-second looping 3D animation of the QDRN115/RCSV057 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN115_RCSV057.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN115_RCSV057Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2017
+      "id": 1025,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN115_RCSV057Animation.mp4"
     },
     {
       "title": "Quadron Best of 2024",
@@ -419,24 +370,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN120.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1020
-    },
-    {
-      "title": "QDRN120 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Jan 2025",
-      "client": "Quadron Records",
-      "details": "8-second looping 3D animation of the QDRN120 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN120.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN120Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2016
+      "id": 1020,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN120Animation.mp4"
     },
     {
       "title": "QDRN121 Cover Art",
@@ -449,25 +387,12 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN121.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1019,
-      "featured": true
-    },
-    {
-      "title": "QDRN121 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Jan 2025",
-      "client": "Quadron Records",
-      "details": "8-second looping 3D animation of the QDRN121 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN121.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN121Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2015
+      "id": 1019,
+      "featured": true,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN121Animation.mp4"
     },
     {
       "title": "QDRN122 Cover Art",
@@ -570,24 +495,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN128.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1012
-    },
-    {
-      "title": "QDRN128 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Mar 2025",
-      "client": "Quadron Records",
-      "details": "8-second looping 3D animation of the QDRN128 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN128.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN128Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2014
+      "id": 1012,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN128Animation.mp4"
     },
     {
       "title": "QDRN129 Cover Art",
@@ -635,20 +547,6 @@
       "id": 1009
     },
     {
-      "title": "Daevo, paulø, Adi - Wondering (ft. VINC) (Concept Lyric Video)",
-      "category": "lyric-videos",
-      "type": "Lyric Video",
-      "date": "Apr 2025",
-      "client": "Quadron Records",
-      "details": "Full-length lyric video with animated text, interesting backgrounds, and visual effects synchronized to the music.",
-      "image": "https://img.youtube.com/vi/8ymRbuqmVPg/maxresdefault.jpg",
-      "youtubeUrl": "https://www.youtube.com/watch?v=8ymRbuqmVPg",
-      "software": [
-        "Adobe After Effects"
-      ],
-      "id": 4001
-    },
-    {
       "title": "QDRN132 Cover Art",
       "category": "3d",
       "type": "Single Cover",
@@ -689,9 +587,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN134.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
+        "Adobe Photoshop",
+        "Adobe After Effects"
       ],
-      "id": 1006
+      "id": 1006,
+      "lyricVideo": "https://www.youtube.com/watch?v=8ymRbuqmVPg"
     },
     {
       "title": "QDRN135 Cover Art",
@@ -704,24 +604,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN135.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1005
-    },
-    {
-      "title": "QDRN135 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Apr 2025",
-      "client": "Quadron Records",
-      "details": "8-second looping 3D animation of the QDRN135 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/QDRN135.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN135Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2013
+      "id": 1005,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN135Animation.mp4"
     },
     {
       "title": "Love Me Too",
@@ -794,24 +681,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SolvanaRadio.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1027
-    },
-    {
-      "title": "Solvana Records Radio - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Jul 2025",
-      "client": "Solvana Records",
-      "details": "8-second looping 3D animation of the Solvana Records Radio artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SolvanaRadio.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SolvanaRadioAnimation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2005
+      "id": 1027,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SolvanaRadioAnimation.mp4"
     },
     {
       "title": "TON009 Cover Art",
@@ -839,24 +713,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON010.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1019
-    },
-    {
-      "title": "TON010 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Aug 2025",
-      "client": "TON 618",
-      "details": "8-second looping 3D animation of the TON010 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON010.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON010Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2011
+      "id": 1019,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON010Animation.mp4"
     },
     {
       "title": "TON011 Cover Art",
@@ -898,24 +759,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON012.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1017
-    },
-    {
-      "title": "TON012 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Sep 2025",
-      "client": "TON 618",
-      "details": "8-second looping 3D animation of the TON012 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON012.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON012Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2010
+      "id": 1017,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON012Animation.mp4"
     },
     {
       "title": "MNTN X Solvana ADE EP Cover Art",
@@ -928,24 +776,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/MNTNxSolvana.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1026
-    },
-    {
-      "title": "MNTN X Solvana ADE EP - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Oct 2025",
-      "client": "MNTN Records/Solvana Records",
-      "details": "8-second looping 3D animation of the MNTN X Solvana ADE EP artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/MNTNxSolvana.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/MNTNxSolvanaAnimation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2004
+      "id": 1026,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/MNTNxSolvanaAnimation.mp4"
     },
     {
       "title": "TON014 Cover Art",
@@ -988,24 +823,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR034.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1025
-    },
-    {
-      "title": "SR034 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Oct 2025",
-      "client": "Solvana Records",
-      "details": "8-second looping 3D animation of the SR034 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR034.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR034Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2003
+      "id": 1025,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR034Animation.mp4"
     },
     {
       "title": "SR035 Cover Art",
@@ -1081,24 +903,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR036.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1023
-    },
-    {
-      "title": "SR036 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Nov 2025",
-      "client": "Solvana Records",
-      "details": "8-second looping 3D animation of the SR036 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR036.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR036Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2002
+      "id": 1023,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR036Animation.mp4"
     },
     {
       "title": "SR037 Cover Art",
@@ -1126,24 +935,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR038.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1021
-    },
-    {
-      "title": "SR038 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Nov 2025",
-      "client": "Solvana Records",
-      "details": "8-second looping 3D animation of the SR038 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/SR038.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR038Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2001
+      "id": 1021,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/SR038Animation.mp4"
     },
     {
       "title": "TON018 Cover Art",
@@ -1171,24 +967,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON019.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1011
-    },
-    {
-      "title": "TON019 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Dec 2025",
-      "client": "TON 618",
-      "details": "8-second looping 3D animation of the TON019 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON019.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON019Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2009
+      "id": 1011,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON019Animation.mp4"
     },
     {
       "title": "I Just Flow",
@@ -1201,24 +984,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/I_Just_Flow_Artwork.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1001
-    },
-    {
-      "title": "I Just Flow - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Jan 2026",
-      "client": "Myself/Hilefex",
-      "details": "8-second looping 3D animation of the I Just Flow artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/I_Just_Flow_Artwork.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/IJustFlowAnimation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 1030
+      "id": 1001,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/IJustFlowAnimation.mp4"
     },
     {
       "title": "TON020 Cover Art",
@@ -1246,24 +1016,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON021.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1009
-    },
-    {
-      "title": "TON021 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Jan 2026",
-      "client": "TON 618",
-      "details": "8-second looping 3D animation of the TON021 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON021.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON021Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2008
+      "id": 1009,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON021Animation.mp4"
     },
     {
       "title": "TON022 Cover Art",
@@ -1349,24 +1106,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON024.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1006
-    },
-    {
-      "title": "TON024 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Feb 2026",
-      "client": "TON 618",
-      "details": "8-second looping 3D animation of the TON024 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON024.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON024Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2007
+      "id": 1006,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON024Animation.mp4"
     },
     {
       "title": "SR040 Cover Art",
@@ -1438,24 +1182,11 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON026.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1004
-    },
-    {
-      "title": "TON026 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Mar 2026",
-      "client": "TON 618",
-      "details": "8-second looping 3D animation of the TON026 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON026.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON026Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2006
+      "id": 1004,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON026Animation.mp4"
     },
     {
       "title": "SR041 Cover Art",
@@ -1698,25 +1429,12 @@
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON031.jpeg",
       "software": [
         "Blender",
-        "Adobe Photoshop"
-      ],
-      "id": 1037,
-      "featured": true
-    },
-    {
-      "title": "TON031 - Animated Cover",
-      "category": "animations",
-      "type": "Animation",
-      "date": "Jun 2026",
-      "client": "TON 618",
-      "details": "8-second looping 3D animation of the TON031 artwork optimized for a Spotify Canvas.",
-      "image": "https://assets.musicbystripes.com/client%20cover%20arts/3d/TON031.jpeg",
-      "videoUrl": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON031Animation.mp4",
-      "software": [
-        "Blender",
+        "Adobe Photoshop",
         "Adobe After Effects"
       ],
-      "id": 2020
+      "id": 1037,
+      "featured": true,
+      "animatedCover": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON031Animation.mp4"
     },
     {
       "title": "Heartsick EP Visuals",
@@ -1734,20 +1452,6 @@
       "id": 1038
     },
     {
-      "title": "Bukkoy, Ray - Flying So High (Official Lyric Video)",
-      "category": "lyric-videos",
-      "type": "Lyric Video",
-      "date": "Aug 2026",
-      "client": "Timeless",
-      "details": "Full-length lyric video with animated text, animated backgrounds, and visual effects synchronized to the music matching the official cover art.",
-      "image": "https://img.youtube.com/vi/CVymDXIjxZ4/maxresdefault.jpg",
-      "youtubeUrl": "https://www.youtube.com/watch?v=CVymDXIjxZ4",
-      "software": [
-        "Adobe After Effects"
-      ],
-      "id": 4002
-    },
-    {
       "title": "TMLS043 Cover Art",
       "category": "2d",
       "type": "Single Cover",
@@ -1757,10 +1461,12 @@
       "details": "Floaty light-blue cover art with clean text, clouds, and geometric objects/textures.",
       "image": "https://assets.musicbystripes.com/client%20cover%20arts/2d/TMLS043.jpg",
       "software": [
-        "Adobe Photoshop"
+        "Adobe Photoshop",
+        "Adobe After Effects"
       ],
       "id": 18,
-      "featured": true
+      "featured": true,
+      "lyricVideo": "https://www.youtube.com/watch?v=CVymDXIjxZ4"
     },
     {
       "title": "TMLS044 Cover Art",
