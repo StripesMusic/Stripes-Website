@@ -43,6 +43,21 @@ function Lyric({ id, title }: { id: string; title: string }) {
   );
 }
 
+// while a pop-up is open, the wheel and touch scroll it, not the page behind
+const locks = new Set<object>();
+function useScrollLock(on: boolean) {
+  useEffect(() => {
+    if (!on) return;
+    const key = {};
+    locks.add(key);
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      locks.delete(key);
+      if (!locks.size) document.documentElement.style.overflow = "";
+    };
+  }, [on]);
+}
+
 // each image's real shape, once known, so a reopened pack lays out straight away
 const shapes = new Map<string, number>();
 
@@ -51,7 +66,7 @@ const shapes = new Map<string, number>();
 function Still({ src, alt, label, caption, className = "", onOpen }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void }) {
   const [r, setR] = useState(() => shapes.get(src) ?? 1);
   return (
-    <figure className={"s-art-piece " + className} style={{ "--r": r } as CSSProperties}>
+    <figure className={"s-art-piece " + className} data-wide={r > 1.2 || undefined} style={{ "--r": r } as CSSProperties}>
       <button type="button" className="s-art-zoom" onClick={onOpen} aria-label={`Enlarge ${alt}`}>
         <ImageSlot
           src={src}
@@ -74,6 +89,7 @@ function Still({ src, alt, label, caption, className = "", onOpen }: { src: stri
 // past its real size), with the pack's other stills a click or an arrow key away
 function Lightbox({ title, srcs, at, onAt }: { title: string; srcs: string[]; at: number | null; onAt: (i: number | null) => void }) {
   const ref = useRef<HTMLDialogElement>(null);
+  useScrollLock(at !== null);
   useEffect(() => {
     const d = ref.current!;
     if (at !== null && !d.open) d.showModal();
@@ -185,7 +201,7 @@ function CaseStudy({ p, n, headingId }: { p: Pack; n: number; headingId?: string
           </p>
         )}
       </div>
-      <div className="s-art-media">
+      <div className={"s-art-media" + (!p.canvas && !p.lyric ? " is-fill" : "")}>
         {!(p.solo && p.lyric) && (
           <Still src={p.cover} alt={p.solo ? p.name : `${p.name} cover art for ${p.client}`} label={p.name} className="s-art-cover" onOpen={() => setZoom(0)} />
         )}
@@ -318,6 +334,7 @@ export function Artwork() {
   const [clip, setClip] = useState<Clip | null>(null);
   const dlg = useRef<HTMLDialogElement>(null);
   const clipDlg = useRef<HTMLDialogElement>(null);
+  useScrollLock(!!open || !!clip);
 
   // kind, and then any of the ticked labels or artists (nothing ticked shows everyone)
   const shown = useMemo(

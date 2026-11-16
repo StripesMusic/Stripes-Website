@@ -2802,6 +2802,34 @@ html.s-preloading {
 .s-art-piece .s-slot {
   border-radius: 6px;
 }
+/* a pack of stills only: the row is as tall as the pop-up allows. Portrait and square stills
+   show whole at that height; wide ones fill what's left beside them, cropped (click shows all) */
+.s-art-media.is-fill {
+  --h: clamp(280px, calc(100dvh - 2 * var(--s-inset) - 140px), 760px);
+  align-items: stretch;
+}
+.s-art-media.is-fill > .s-art-piece {
+  flex: 0 1 calc(var(--h) * var(--r));
+  max-width: 100%;
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] {
+  flex: 1 1 0;
+  min-width: min(100%, 240px);
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] .s-art-zoom {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] .s-slot {
+  flex: 1;
+  min-height: min(var(--h), 100vw * 0.5);
+  aspect-ratio: auto !important;
+}
+.s-art-media.is-fill > .s-art-piece[data-wide] .s-slot img {
+  object-fit: cover;
+}
+
 /* a still: shown whole (its slot takes the image's own shape), enlarged on click */
 .s-art-zoom {
   display: block;
@@ -2858,6 +2886,7 @@ html.s-preloading {
 .s-zoom-stage {
   flex: 1;
   min-height: 0;
+  overflow: hidden;
   display: grid;
   place-items: center;
   padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
@@ -2866,7 +2895,7 @@ html.s-preloading {
 .s-zoom-stage img {
   display: block;
   max-width: 100%;
-  max-height: 100%;
+  max-height: calc(100dvh - 72px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   width: auto;
   height: auto;
   object-fit: contain;
