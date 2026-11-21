@@ -1499,6 +1499,14 @@
         {
           "kind": "version",
           "link": "https://assets.musicbystripes.com/client%20cover%20arts/2d/SR044_2.jpeg"
+        },
+        {
+          "kind": "wallpaper",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/SR044_Thrilla_BGLandscape.webp"
+        },
+        {
+          "kind": "background",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/SR044_Thrilla_CoverArtNoText.webp"
         }
       ],
       "software": [
@@ -1652,6 +1660,18 @@
         {
           "kind": "animated-cover",
           "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/TON031Animation.mp4"
+        },
+        {
+          "kind": "banner",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TON031_SoundCloudBanner.webp"
+        },
+        {
+          "kind": "background",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TON031_CoverArtNoLogo.webp"
+        },
+        {
+          "kind": "background",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TON031_CoverArtNoText.webp"
         }
       ],
       "software": [
