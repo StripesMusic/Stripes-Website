@@ -417,6 +417,10 @@
         {
           "kind": "animated-cover",
           "link": "https://assets.musicbystripes.com/client%20cover%20arts/animations/QDRN120Animation.mp4"
+        },
+        {
+          "kind": "banner",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/QDRN120_SoundCloud_Banner.png"
         }
       ],
       "software": [
