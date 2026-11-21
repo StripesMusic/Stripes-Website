@@ -201,7 +201,10 @@ function useFill(on: boolean, pieces: number[]) {
   return { ref, fit: Math.max(200, fit) };
 }
 
-function CaseStudy({ p, n, headingId, fill = false }: { p: Pack; n: number; headingId?: string; fill?: boolean }) {
+// onMore: on the page, the extra visuals stay hidden (and unloaded) behind a button that opens
+// the full card
+function CaseStudy({ p, n, headingId, fill = false, onMore }: { p: Pack; n: number; headingId?: string; fill?: boolean; onMore?: () => void }) {
+  const showExtras = !onMore;
   const pieces = [
     !p.lyric || !p.solo ? (p.solo ? "Artwork" : "Cover") : "",
     ...p.versions.map((_, i) => `Version ${i + 2}`),
@@ -263,6 +266,11 @@ function CaseStudy({ p, n, headingId, fill = false }: { p: Pack; n: number; head
             )}
           </p>
         )}
+        {onMore && p.extras.length > 0 && (
+          <button type="button" className="s-btn s-art-more" onClick={onMore}>
+            See all {p.extras.length + 1 + p.versions.length + (p.canvas ? 1 : 0) + (p.lyric ? 1 : 0)} visuals →
+          </button>
+        )}
       </div>
       <div ref={mediaRef} className={"s-art-media" + (fit ? " is-fill" : "")} style={fit ? ({ "--fit": `${fit}px` } as CSSProperties) : undefined}>
         {!(p.solo && p.lyric) && (
@@ -273,7 +281,7 @@ function CaseStudy({ p, n, headingId, fill = false }: { p: Pack; n: number; head
           <Still key={v} src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} caption={`Version ${i + 2}`} onOpen={() => setZoom(stills.indexOf(v))} onShape={onShape} />
         ))}
         {p.lyric && <Lyric id={p.lyric.id} title={p.lyric.title} />}
-        {p.extras.length > 0 && (
+        {showExtras && p.extras.length > 0 && (
           <div className="s-art-extras">
             {p.extras.map((x, i) =>
               isClip(x.src) ? (
@@ -462,7 +470,7 @@ export function Artwork() {
           </h2>
         </div>
         {featured.map((p, i) => (
-          <CaseStudy p={p} n={i + 1} key={p.key} />
+          <CaseStudy p={p} n={i + 1} key={p.key} onMore={() => setOpen(p)} />
         ))}
       </section>
 

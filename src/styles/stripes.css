@@ -2778,6 +2778,10 @@ html.s-preloading {
   line-height: 1.5;
   color: var(--s-muted);
 }
+.s-art-more {
+  align-self: flex-start;
+  margin-top: 6px;
+}
 .s-art-details a {
   color: var(--s-fg);
 }
