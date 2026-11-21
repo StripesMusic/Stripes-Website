@@ -22,7 +22,6 @@ content:
             label: Title
             type: string
             required: true
-            description: 'e.g. "TON031 Cover Art" or "I Just Flow". A cover''s animated cover, lyric video and other visuals go in its Visuals list below, not as separate entries.'
           - name: category
             label: Kind
             type: select
@@ -46,33 +45,26 @@ content:
           - name: type
             label: Type
             type: string
-            description: 'Shown under the title, e.g. "Single Cover", "EP Cover", "Lyric Video".'
           - name: date
             label: Date
             type: string
             required: true
-            description: 'Month and year, like "Oct 2026".'
           - name: client
             label: Client
             type: string
-            description: 'A label (Timeless, Solvana Records, TON 618, Quadron Records, Stardust Records) or the artist. Several go with slashes: "Myself/Hilefex". "N/A" for fan-made.'
           - name: release
             label: Release
             type: string
-            description: 'The release it was made for, as "Artist - Title". Lyric videos find their cover through this.'
           - name: details
             label: Description
             type: text
-            description: One or two sentences about the art itself.
           - name: image
             label: Image link
             type: string
             required: true
-            description: 'The cover (or a still), from the assets bucket: https://assets.musicbystripes.com/…'
           - name: featured
             label: Feature at the top
             type: boolean
-            description: 'Covers only. Ticked covers show open as big release packs at the top of Designs, newest first. Four looks best.'
           - name: visuals
             label: Visuals
             type: object
@@ -80,7 +72,6 @@ content:
               collapsible:
                 collapsed: true
                 summary: '{kind} {name}'
-            description: 'Everything else made for this piece, in the order to show it: alternate versions, the animated cover, the lyric video, flyers, banners, reels… Pick what it is, paste the link (from the assets bucket, or YouTube for a lyric video). For something new, pick "Other" and type its name.'
             fields:
               - name: kind
                 label: What is it
@@ -120,24 +111,19 @@ content:
                 label: Link
                 type: string
                 required: true
-                description: 'https://assets.musicbystripes.com/… (or the YouTube link for a lyric video)'
               - name: name
                 label: Name
                 type: string
-                description: 'Shown under it on the site, e.g. "Pre-save flyer". Needed for "Other"; optional for the rest (they use the kind''s name).'
           - name: videoUrl
             label: Video link
             type: string
-            description: 'The .mp4 for an animation or clip that isn''t part of a cover (a cover''s loop goes in Visuals as "Animated cover").'
           - name: youtubeUrl
             label: YouTube or site link
             type: string
-            description: 'A lyric video on YouTube, or the address of a website.'
           - name: software
             label: Tools
             type: string
             list: true
-            description: 'e.g. "Adobe Photoshop", "Blender".'
           - name: credit
             label: Made with
             type: object
@@ -151,7 +137,6 @@ content:
           - name: id
             label: Number
             type: number
-            description: Optional, and only used internally. Leave it empty for new work.
 
   - name: releases
     label: Music
