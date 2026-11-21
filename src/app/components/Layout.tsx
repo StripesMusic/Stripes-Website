@@ -123,7 +123,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {!isLinkPage && (
         <div id="s-menu" className={"s-menu" + (menuOpen ? " open" : "")} aria-hidden={!menuOpen}>
-          <nav className="s-pad" aria-label="Mobile">
+          <nav className="s-pad s-menu-pad" aria-label="Mobile">
             {[{ name: "Home", path: "/" }, ...navLinks, { name: "Contact", path: "/contact" }].map((l) => (
               <Link key={l.path} to={l.path} tabIndex={menuOpen ? 0 : -1} aria-current={isActive(l.path) ? "page" : undefined}>
                 {l.name}

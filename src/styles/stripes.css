@@ -243,6 +243,18 @@ html.s-locked {
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
 }
+/* full-width bars and page heads sit outside the inset cards, so they add the inset to their
+   padding: everything on a page then starts and ends on the same two lines */
+.s-pad:is(.s-nav, .s-pre-row, .s-pre-mid, .s-hero-ui, .s-phead, .s-art-head, .s-gate-top, .s-legal-mini, .s-menu-pad) {
+  padding-left: calc(max(24px, env(safe-area-inset-left, 0px)) + var(--s-inset));
+  padding-right: calc(max(24px, env(safe-area-inset-right, 0px)) + var(--s-inset));
+}
+@media (max-width: 700px) {
+  .s-pad:is(.s-nav, .s-pre-row, .s-pre-mid, .s-hero-ui, .s-phead, .s-art-head, .s-gate-top, .s-legal-mini, .s-menu-pad, .s-gate-in) {
+    padding-left: calc(max(16px, env(safe-area-inset-left, 0px)) + var(--s-inset));
+    padding-right: calc(max(16px, env(safe-area-inset-right, 0px)) + var(--s-inset));
+  }
+}
 .s-main {
   padding-top: var(--s-nav-h);
 }
@@ -2731,10 +2743,6 @@ html.s-preloading {
   flex-direction: column;
   gap: 14px;
 }
-.s-art-n {
-  font-size: 15px;
-  color: var(--s-hi);
-}
 .s-art-name {
   margin: 0;
   font-family: var(--s-display);
@@ -3118,22 +3126,33 @@ html.s-preloading {
   }
 }
 .s-art-dialog-in {
+  --pad-l: max(24px, env(safe-area-inset-left, 0px));
+  --pad-r: max(24px, env(safe-area-inset-right, 0px));
   position: relative;
-  padding: 16px max(24px, env(safe-area-inset-right, 0px)) 8px max(24px, env(safe-area-inset-left, 0px));
+  padding: 0 var(--pad-r) 8px var(--pad-l);
 }
-.s-art-close {
+/* the pop-up's top bar: number left, Close right, so nothing below loses width to the button */
+.s-art-bar {
   position: sticky;
   top: 0;
-  z-index: 2;
-  float: right;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 calc(-1 * var(--pad-r)) 0 calc(-1 * var(--pad-l));
+  padding: 14px var(--pad-r) 10px var(--pad-l);
   background: var(--s-panel);
+}
+.s-art-bar > .s-btn {
+  margin-left: auto;
 }
 .s-art-dialog .s-art-case {
   border-top: 0;
   padding-top: 8px;
 }
 .s-art-dialog .s-art-meta {
-  top: 56px;
+  top: 72px;
 }
 @media (max-width: 860px) {
   .s-art-case {

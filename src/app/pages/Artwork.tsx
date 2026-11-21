@@ -258,7 +258,7 @@ function Extras({ p, onOpen }: { p: Pack; onOpen: (src: string) => void }) {
 
 // onMore: on the page, the extra visuals stay hidden (and unloaded) behind a button that opens
 // the full card
-function CaseStudy({ p, n, headingId, fill = false, onMore }: { p: Pack; n: number; headingId?: string; fill?: boolean; onMore?: () => void }) {
+function CaseStudy({ p, headingId, fill = false, onMore }: { p: Pack; headingId?: string; fill?: boolean; onMore?: () => void }) {
   const showExtras = !onMore;
   const pieces = [
     !p.lyric || !p.solo ? (p.solo ? "Artwork" : "Cover") : "",
@@ -279,7 +279,6 @@ function CaseStudy({ p, n, headingId, fill = false, onMore }: { p: Pack; n: numb
   return (
     <article className="s-art-case">
       <div className="s-art-meta">
-        <span className="s-num s-art-n">{pad(n)}</span>
         <h3 className="s-art-name" id={headingId}>
           {p.name}
         </h3>
@@ -514,8 +513,8 @@ export function Artwork() {
             Release packs
           </h2>
         </div>
-        {featured.map((p, i) => (
-          <CaseStudy p={p} n={i + 1} key={p.key} onMore={() => setOpen(p)} />
+        {featured.map((p) => (
+          <CaseStudy p={p} key={p.key} onMore={() => setOpen(p)} />
         ))}
       </section>
 
@@ -602,10 +601,12 @@ export function Artwork() {
       <dialog ref={dlg} className="s-art-dialog" aria-labelledby="pack-title" onClose={(e) => e.target === e.currentTarget && setOpen(null)} onClick={(e) => e.target === dlg.current && setOpen(null)}>
         {open && (
           <div className="s-art-dialog-in">
-            <button type="button" className="s-btn s-art-close" onClick={() => setOpen(null)}>
-              Close
-            </button>
-            <CaseStudy p={open} n={gallery.indexOf(open) + 1} headingId="pack-title" fill />
+            <div className="s-art-bar">
+              <button type="button" className="s-btn" onClick={() => setOpen(null)}>
+                Close
+              </button>
+            </div>
+            <CaseStudy p={open} headingId="pack-title" fill />
           </div>
         )}
       </dialog>
@@ -613,9 +614,11 @@ export function Artwork() {
       <dialog ref={clipDlg} className="s-art-dialog s-clip-dialog" aria-labelledby="clip-title" onClose={() => setClip(null)} onClick={(e) => e.target === clipDlg.current && setClip(null)}>
         {clip && (
           <div className="s-art-dialog-in">
-            <button type="button" className="s-btn s-art-close" onClick={() => setClip(null)}>
-              Close
-            </button>
+            <div className="s-art-bar">
+              <button type="button" className="s-btn" onClick={() => setClip(null)}>
+                Close
+              </button>
+            </div>
             <ClipPlayer clip={clip} />
           </div>
         )}
