@@ -2842,20 +2842,22 @@ html.s-preloading {
 
 /* a pack's extra visuals (flyers, banners, reels): a strip of rows under the main pieces, each
    at its own shape and the same height */
-.s-art-media > .s-art-extras {
-  flex: 1 1 100%;
+/* the extras run under both columns, so the details can't stay pinned over them */
+.s-art-case:has(> .s-art-extras) > .s-art-meta {
+  position: static;
+}
+.s-art-case > .s-art-extras {
+  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 16px 12px;
-  margin-top: 12px;
   padding-top: 20px;
   border-top: 1px solid var(--s-line);
-  --xh: clamp(160px, 26vh, 280px);
 }
 .s-art-extras > .s-art-piece {
   flex: 0 0 auto;
-  width: min(100%, calc(var(--xh) * var(--r)));
+  max-width: 100%;
 }
 .s-art-extras video {
   position: absolute;
