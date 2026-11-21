@@ -107,7 +107,9 @@ content:
                     - name: thumbnail
                       label: YouTube thumbnail
                     - name: background
-                      label: Background
+                      label: Background (textless/logoless)
+                    - name: wallpaper
+                      label: Wallpaper
                     - name: process
                       label: Process shot
                     - name: mockup
