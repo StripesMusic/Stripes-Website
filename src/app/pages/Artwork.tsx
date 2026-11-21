@@ -60,10 +60,10 @@ const shapes = new Map<string, number>();
 
 // one still (a cover, a version): shown whole at its own shape, never cropped,
 // and enlarged on click
-function Still({ src, alt, label, caption, className = "", onOpen, onShape }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void; onShape?: () => void }) {
+function Still({ src, alt, label, caption, className = "", onOpen, onShape, width }: { src: string; alt: string; label: string; caption?: string; className?: string; onOpen: () => void; onShape?: () => void; width?: number }) {
   const [r, setR] = useState(() => shapes.get(src) ?? 1);
   return (
-    <figure className={"s-art-piece " + className} data-wide={r > WIDE || undefined} style={{ "--r": r } as CSSProperties}>
+    <figure className={"s-art-piece " + className} data-wide={r > WIDE || undefined} style={{ "--r": r, width } as CSSProperties}>
       <button type="button" className="s-art-zoom" onClick={onOpen} aria-label={`Enlarge ${alt}`}>
         <ImageSlot
           src={src}
@@ -89,9 +89,9 @@ const isClip = (u: string) => /\.(mp4|webm|mov)$/i.test(u.split("?")[0]);
 
 // an extra clip (a reel, a story loop): plays silently while on screen, at its own shape, with
 // controls to unmute
-function Clip({ src, label }: { src: string; label: string }) {
+function Clip({ src, label, onShape, width }: { src: string; label: string; onShape?: () => void; width?: number }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [r, setR] = useState(9 / 16);
+  const [r, setR] = useState(() => shapes.get(src) ?? 9 / 16);
   useEffect(() => {
     const v = ref.current!;
     v.muted = true;
@@ -100,7 +100,7 @@ function Clip({ src, label }: { src: string; label: string }) {
     return () => io.disconnect();
   }, []);
   return (
-    <figure className="s-art-piece s-art-extra-clip" style={{ "--r": r } as CSSProperties}>
+    <figure className="s-art-piece s-art-extra-clip" style={{ "--r": r, width } as CSSProperties}>
       <span className="s-slot" style={{ aspectRatio: String(r) }}>
         <video
           ref={ref}
@@ -111,7 +111,16 @@ function Clip({ src, label }: { src: string; label: string }) {
           controls
           preload="metadata"
           aria-label={label}
-          onLoadedMetadata={(e) => e.currentTarget.videoWidth && setR(e.currentTarget.videoWidth / e.currentTarget.videoHeight)}
+          onLoadedMetadata={(e) => {
+            const v = e.currentTarget;
+            if (!v.videoWidth) return;
+            const n = v.videoWidth / v.videoHeight;
+            if (shapes.get(src) !== n) {
+              shapes.set(src, n);
+              onShape?.();
+            }
+            setR(n);
+          }}
         />
       </span>
       <figcaption className="s-mono">{label}</figcaption>
@@ -201,9 +210,55 @@ function useFill(on: boolean, pieces: number[]) {
   return { ref, fit: Math.max(200, fit) };
 }
 
+// a pack's extra visuals in justified rows across the whole card: each row is filled edge to edge
+// at one height (close to ROW_H), every piece whole at its own shape
+const ROW_H = 230;
+function Extras({ p, onOpen }: { p: Pack; onOpen: (src: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(0);
+  const [, reshape] = useState(0);
+  useEffect(() => {
+    const ro = new ResizeObserver(([e]) => setW(e.contentRect.width));
+    ro.observe(ref.current!);
+    return () => ro.disconnect();
+  }, []);
+  const gap = 12;
+  const target = w < 560 ? 210 : ROW_H;
+  const rs = p.extras.map((x) => shapes.get(x.src) ?? (isClip(x.src) ? 9 / 16 : 1));
+  // rows in order: add pieces while the row is shorter than the target height would make it; at the
+  // piece that tips it over, keep whichever choice (with it or without it) lands closer to the target
+  const fitH = (sum: number, n: number) => (w - gap * (n - 1)) / sum;
+  const widths: number[] = [];
+  for (let i = 0; i < rs.length; ) {
+    let j = i + 1, sum = rs[i];
+    while (j < rs.length && fitH(sum, j - i) > target) {
+      const withNext = fitH(sum + rs[j], j - i + 1);
+      if (withNext < target && target - withNext > fitH(sum, j - i) - target) break;
+      sum += rs[j++];
+    }
+    const last = j >= rs.length && fitH(sum, j - i) > target;
+    const h = last ? target : Math.min(fitH(sum, j - i), target * 1.6);
+    for (let k = i; k < j; k++) widths.push(Math.max(1, Math.floor(rs[k] * h)));
+    i = j;
+  }
+  const onShape = () => reshape((t) => t + 1);
+  return (
+    <div className="s-art-extras" ref={ref}>
+      {w > 0 &&
+        p.extras.map((x, i) =>
+          isClip(x.src) ? (
+            <Clip key={x.src + i} src={x.src} label={x.label || `${p.name} clip`} onShape={onShape} width={widths[i]} />
+          ) : (
+            <Still key={x.src + i} src={x.src} alt={x.label ? `${p.name}, ${x.label}` : `${p.name}, extra visual`} label={x.label || "Extra"} caption={x.label} onOpen={() => onOpen(x.src)} onShape={onShape} width={widths[i]} />
+          ),
+        )}
+    </div>
+  );
+}
+
 // onMore: on the page, the extra visuals stay hidden (and unloaded) behind a button that opens
 // the full card
-function CaseStudy({ p, n, headingId, fill = false, onMore }: { p: Pack; n: number; headingId?: string; fill?: boolean; onMore?: () => void }) {
+function CaseStudy({ p, headingId, fill = false, onMore }: { p: Pack; headingId?: string; fill?: boolean; onMore?: () => void }) {
   const showExtras = !onMore;
   const pieces = [
     !p.lyric || !p.solo ? (p.solo ? "Artwork" : "Cover") : "",
@@ -224,7 +279,6 @@ function CaseStudy({ p, n, headingId, fill = false, onMore }: { p: Pack; n: numb
   return (
     <article className="s-art-case">
       <div className="s-art-meta">
-        <span className="s-num s-art-n">{pad(n)}</span>
         <h3 className="s-art-name" id={headingId}>
           {p.name}
         </h3>
@@ -281,18 +335,8 @@ function CaseStudy({ p, n, headingId, fill = false, onMore }: { p: Pack; n: numb
           <Still key={v} src={v} alt={`${p.name}, version ${i + 2}`} label={`Version ${i + 2}`} caption={`Version ${i + 2}`} onOpen={() => setZoom(stills.indexOf(v))} onShape={onShape} />
         ))}
         {p.lyric && <Lyric id={p.lyric.id} title={p.lyric.title} />}
-        {showExtras && p.extras.length > 0 && (
-          <div className="s-art-extras">
-            {p.extras.map((x, i) =>
-              isClip(x.src) ? (
-                <Clip key={x.src + i} src={x.src} label={x.label || `${p.name} clip`} />
-              ) : (
-                <Still key={x.src + i} src={x.src} alt={x.label ? `${p.name}, ${x.label}` : `${p.name}, extra visual`} label={x.label || "Extra"} caption={x.label} onOpen={() => setZoom(stills.indexOf(x.src))} />
-              ),
-            )}
-          </div>
-        )}
       </div>
+      {showExtras && p.extras.length > 0 && <Extras p={p} onOpen={(src) => setZoom(stills.indexOf(src))} />}
       <Lightbox title={p.name} srcs={stills} at={zoom} onAt={setZoom} />
     </article>
   );
@@ -469,8 +513,8 @@ export function Artwork() {
             Release packs
           </h2>
         </div>
-        {featured.map((p, i) => (
-          <CaseStudy p={p} n={i + 1} key={p.key} onMore={() => setOpen(p)} />
+        {featured.map((p) => (
+          <CaseStudy p={p} key={p.key} onMore={() => setOpen(p)} />
         ))}
       </section>
 
@@ -557,10 +601,12 @@ export function Artwork() {
       <dialog ref={dlg} className="s-art-dialog" aria-labelledby="pack-title" onClose={(e) => e.target === e.currentTarget && setOpen(null)} onClick={(e) => e.target === dlg.current && setOpen(null)}>
         {open && (
           <div className="s-art-dialog-in">
-            <button type="button" className="s-btn s-art-close" onClick={() => setOpen(null)}>
-              Close
-            </button>
-            <CaseStudy p={open} n={gallery.indexOf(open) + 1} headingId="pack-title" fill />
+            <div className="s-art-bar">
+              <button type="button" className="s-btn" onClick={() => setOpen(null)}>
+                Close
+              </button>
+            </div>
+            <CaseStudy p={open} headingId="pack-title" fill />
           </div>
         )}
       </dialog>
@@ -568,9 +614,11 @@ export function Artwork() {
       <dialog ref={clipDlg} className="s-art-dialog s-clip-dialog" aria-labelledby="clip-title" onClose={() => setClip(null)} onClick={(e) => e.target === clipDlg.current && setClip(null)}>
         {clip && (
           <div className="s-art-dialog-in">
-            <button type="button" className="s-btn s-art-close" onClick={() => setClip(null)}>
-              Close
-            </button>
+            <div className="s-art-bar">
+              <button type="button" className="s-btn" onClick={() => setClip(null)}>
+                Close
+              </button>
+            </div>
             <ClipPlayer clip={clip} />
           </div>
         )}
