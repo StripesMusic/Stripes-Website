@@ -2104,6 +2104,14 @@ html.s-locked {
 }
 
 /* footer */
+/* the big STRIPES glyphs overhang their tight line box (and the ink filter lifts them into their
+   own layer), so keep the links above and below on top or the letters swallow their clicks */
+.s-footer-top,
+.s-footer-cols,
+.s-footer-base {
+  position: relative;
+  z-index: 1;
+}
 .s-footer {
   padding-top: var(--s-inset);
 }
