@@ -1711,6 +1711,46 @@
         {
           "kind": "lyric-video",
           "link": "https://www.youtube.com/watch?v=CVymDXIjxZ4"
+        },
+        {
+          "kind": "reel",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_PreSaveReel.mp4"
+        },
+        {
+          "kind": "reel",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_OutNowReel.mp4"
+        },
+        {
+          "kind": "animated-cover",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_SpotifyCanvas.mp4"
+        },
+        {
+          "kind": "banner",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_SoundCloudBanner.webp"
+        },
+        {
+          "kind": "thumbnail",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_YouTubeThumbnail.webp"
+        },
+        {
+          "kind": "flyer",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_FlyerPreSave.webp"
+        },
+        {
+          "kind": "flyer",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_FlyerOutNow.webp"
+        },
+        {
+          "kind": "background",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_BGSquare.webp"
+        },
+        {
+          "kind": "background",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_BGPortrait.webp"
+        },
+        {
+          "kind": "wallpaper",
+          "link": "https://assets.musicbystripes.com/client%20cover%20arts/extra%20release%20pack%20assets/TMLS043_BGLandscape.webp"
         }
       ],
       "software": [
