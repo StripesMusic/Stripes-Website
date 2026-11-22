@@ -43,6 +43,13 @@
 .s-fadebox {
   background: var(--s-paper), var(--s-panel);
 }
+/* the hero: its old grain layer becomes the paper. It sits over the photo montage and the spectrum
+   but under the dust S and the wordmark */
+:root .s-stage-inner .s-grain {
+  opacity: 1;
+  mix-blend-mode: normal;
+  background: var(--s-paper);
+}
 /* the pinned Designs stage carries its own paper, so it stays still while the page scrolls under
    it (isolate keeps the cover wall, z-index -1, above this background) */
 .s-packs-pin {
